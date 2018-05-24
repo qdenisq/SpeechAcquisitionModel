@@ -357,7 +357,7 @@ def get_default_actor_settings():
         'actor_learning_rate': 0.0001,
         'actor_tau': 0.01,
         'actor_lstm_num_cells': 200,
-        'actor_batch_size': 128
+        'actor_batch_size': 64
     }
     return settings
 
@@ -520,7 +520,7 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
 
             # there are at least minibatch size samples
             # Keep adding experience to the memory until
-            if terminal and replay_buffer.size() > minibatch_size:
+            if replay_buffer.size() > minibatch_size:
                 s_batch, a_batch, r_batch, t_batch, s2_batch = \
                     replay_buffer.sample_batch(minibatch_size)
 
@@ -548,7 +548,7 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
 
                 tic = time.time()
                 # Update the critic given the targets
-                y_i = np.expand_dims(y_i, axis=2)
+                y_i = np.reshape(y_i, (minibatch_size, episode_length, 1))
                 predicted_q_value, _, critic_loss = critic.train(
                     s_batch, target_actions, y_i, [episode_length] * minibatch_size)
                 timer['critic_train_time'] += time.time() - tic

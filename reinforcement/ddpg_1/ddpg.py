@@ -371,7 +371,7 @@ def train(sess, env, args, actor, critic, actor_noise):
 
             # Keep adding experience to the memory until
             # there are at least minibatch size samples
-            if replay_buffer.size() > int(args['minibatch_size']):
+            if terminal and replay_buffer.size() > int(args['minibatch_size']):
                 s_batch, a_batch, r_batch, t_batch, s2_batch = \
                     replay_buffer.sample_batch(int(args['minibatch_size']))
 

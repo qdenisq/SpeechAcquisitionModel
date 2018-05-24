@@ -2,10 +2,36 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000000.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000000.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000001.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000001.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000008.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000008.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000027.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000027.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000000.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000000.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000001.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000001.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000008.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000008.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000027.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000027.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000064.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000064.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000125.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000125.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000216.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000216.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000343.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000343.mp4" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_05_01_PM/events.out.tfevents.1527145278.W8421444" afterPath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_05_01_PM/events.out.tfevents.1527145278.W8421444" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_24_2018_04_39_PM/events.out.tfevents.1527143988.W8421444" afterPath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_24_2018_04_39_PM/events.out.tfevents.1527143988.W8421444" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py" afterPath="$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" afterPath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -16,11 +42,11 @@
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="lstm_ddpg.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="lstm_ddpg.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="880">
-              <caret line="575" column="42" lean-forward="true" selection-start-line="575" selection-start-column="42" selection-end-line="575" selection-end-column="42" />
+            <state relative-caret-position="240">
+              <caret line="555" column="30" lean-forward="false" selection-start-line="555" selection-start-column="30" selection-end-line="555" selection-end-column="30" />
               <folding>
                 <element signature="e#293#316#0" expanded="true" />
               </folding>
@@ -48,11 +74,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="ddpg.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="ddpg.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="383">
-              <caret line="389" column="62" lean-forward="true" selection-start-line="389" selection-start-column="62" selection-end-line="389" selection-end-column="62" />
+            <state relative-caret-position="1763">
+              <caret line="416" column="44" lean-forward="false" selection-start-line="416" selection-start-column="44" selection-end-line="416" selection-end-column="44" />
               <folding>
                 <element signature="e#293#316#0" expanded="true" />
               </folding>
@@ -164,12 +190,12 @@
         <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/lstm_ddpg.py" />
         <option value="$PROJECT_DIR$/reinforcement/ddpg_1/replay_buffer.py" />
         <option value="$PROJECT_DIR$/reinforcement/ddpg/ddpg.py" />
-        <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
         <option value="$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py" />
+        <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="-100" />
     <option name="y" value="-12" />
     <option name="width" value="1918" />
@@ -392,17 +418,17 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1176" extended-state="7" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20362474" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32276657" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.32276657" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32949087" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32853025" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25264168" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25264168" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
       <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
@@ -822,20 +848,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
+    <entry file="file://$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="880">
-          <caret line="575" column="42" lean-forward="true" selection-start-line="575" selection-start-column="42" selection-end-line="575" selection-end-column="42" />
+        <state relative-caret-position="1763">
+          <caret line="416" column="44" lean-forward="false" selection-start-line="416" selection-start-column="44" selection-end-line="416" selection-end-column="44" />
           <folding>
             <element signature="e#293#316#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py">
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="383">
-          <caret line="389" column="62" lean-forward="true" selection-start-line="389" selection-start-column="62" selection-end-line="389" selection-end-column="62" />
+        <state relative-caret-position="240">
+          <caret line="555" column="30" lean-forward="false" selection-start-line="555" selection-start-column="30" selection-end-line="555" selection-end-column="30" />
           <folding>
             <element signature="e#293#316#0" expanded="true" />
           </folding>
