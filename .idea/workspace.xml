@@ -1,0 +1,956 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/reinforcement/ddpg_1/.ipynb_checkpoints/DDPG_test-checkpoint.ipynb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/reinforcement/ddpg_1/DDPG_test.ipynb" />
+      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/reinforcement/ddpg_1/replay_buffer.py" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000000.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000000.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000001.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000001.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000008.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000008.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000027.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000027.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000064.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000064.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000125.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000125.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000216.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000216.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000343.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000343.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000512.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000512.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000729.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video000729.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video001000.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video001000.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video002000.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video002000.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video003000.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.9080.video003000.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11704.video000000.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11704.video000000.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11704.video000001.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11704.video000001.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11704.video000008.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11704.video000008.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11704.video000027.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11704.video000027.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.996.video000000.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.996.video000000.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.996.video000001.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.996.video000001.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/gym_ddpg/openaigym.video.0.15464.video000000.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/gym_ddpg/openaigym.video.0.15464.video000000.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/gym_ddpg/openaigym.video.0.15464.video000001.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/gym_ddpg/openaigym.video.0.15464.video000001.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/gym_ddpg/openaigym.video.0.15464.video000008.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/gym_ddpg/openaigym.video.0.15464.video000008.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/gym_ddpg/openaigym.video.0.15464.video000027.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/gym_ddpg/openaigym.video.0.15464.video000027.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/gym_ddpg/openaigym.video.0.15464.video000064.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/gym_ddpg/openaigym.video.0.15464.video000064.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_03_20_PM/events.out.tfevents.1526620835.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_03_37_PM/events.out.tfevents.1526621868.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_03_39_PM/events.out.tfevents.1526621983.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_03_40_PM/events.out.tfevents.1526622055.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_06_02_PM/events.out.tfevents.1526630547.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_06_04_PM/events.out.tfevents.1526630640.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_06_35_PM/events.out.tfevents.1526632514.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_06_35_PM/events.out.tfevents.1526632547.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_06_37_PM/events.out.tfevents.1526632626.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_06_38_PM/events.out.tfevents.1526632690.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_06_51_PM/events.out.tfevents.1526633482.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_07_20_PM/events.out.tfevents.1526635252.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_07_23_PM/events.out.tfevents.1526635386.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_07_24_PM/events.out.tfevents.1526635446.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_07_26_PM/events.out.tfevents.1526635611.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_07_27_PM/events.out.tfevents.1526635675.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_07_42_PM/events.out.tfevents.1526636534.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_07_44_PM/events.out.tfevents.1526636675.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_05_18_2018_07_53_PM/events.out.tfevents.1526637188.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/results/tf_ddpg_1/events.out.tfevents.1526039546.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.7532.video000000.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.7532.video000000.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.7532.video000001.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.7532.video000001.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.7532.video000008.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.7532.video000008.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.7532.video000027.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.7532.video000027.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.7532.video000064.meta.json" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.7532.video000064.mp4" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_07_18_PM/events.out.tfevents.1526980700.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_07_18_PM/events.out.tfevents.1526980735.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_07_41_PM/events.out.tfevents.1526982068.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_07_44_PM/events.out.tfevents.1526982263.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_07_45_PM/events.out.tfevents.1526982331.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_07_49_PM/events.out.tfevents.1526982546.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_07_53_PM/events.out.tfevents.1526982790.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_07_55_PM/events.out.tfevents.1526982931.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_07_57_PM/events.out.tfevents.1526983049.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_08_06_PM/events.out.tfevents.1526983577.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_08_07_PM/events.out.tfevents.1526983634.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_08_08_PM/events.out.tfevents.1526983737.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_08_10_PM/events.out.tfevents.1526983856.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_08_52_PM/events.out.tfevents.1526986372.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_09_12_PM/events.out.tfevents.1526987561.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_22_2018_09_34_PM/events.out.tfevents.1526988868.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_23_2018_02_05_PM/events.out.tfevents.1527048357.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_23_2018_02_07_PM/events.out.tfevents.1527048420.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_23_2018_02_08_PM/events.out.tfevents.1527048484.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_23_2018_03_08_PM/events.out.tfevents.1527052120.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_23_2018_03_10_PM/events.out.tfevents.1527052223.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_23_2018_03_12_PM/events.out.tfevents.1527052339.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_23_2018_03_46_PM/events.out.tfevents.1527054392.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_23_2018_04_15_PM/events.out.tfevents.1527056144.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_23_2018_04_17_PM/events.out.tfevents.1527056265.W8421444" afterPath="" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/tf_ddpg_05_24_2018_03_16_PM/events.out.tfevents.1527139008.W8421444" afterPath="$PROJECT_DIR$/reinforcement/ddpg/results/tf_ddpg_05_24_2018_03_16_PM/events.out.tfevents.1527139008.W8421444" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg/events.out.tfevents.1527063264.W8421444" afterPath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg/events.out.tfevents.1527063264.W8421444" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_03_15_PM/events.out.tfevents.1527138936.W8421444" afterPath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_03_15_PM/events.out.tfevents.1527138936.W8421444" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/ddpg/ddpg.py" afterPath="$PROJECT_DIR$/reinforcement/ddpg/ddpg.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py" afterPath="$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py" />
+      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" afterPath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="TRACKING_ENABLED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileEditorManager">
+    <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
+      <file leaf-file-name="lstm_ddpg.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="880">
+              <caret line="575" column="42" lean-forward="true" selection-start-line="575" selection-start-column="42" selection-end-line="575" selection-end-column="42" />
+              <folding>
+                <element signature="e#293#316#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="math_ops.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/math_ops.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="226">
+              <caret line="1108" column="0" lean-forward="false" selection-start-line="1108" selection-start-column="0" selection-end-line="1108" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="losses_impl.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/losses/losses_impl.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="251">
+              <caret line="570" column="4" lean-forward="false" selection-start-line="570" selection-start-column="4" selection-end-line="570" selection-end-column="4" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ddpg.py" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="-17">
+              <caret line="369" column="29" lean-forward="true" selection-start-line="369" selection-start-column="29" selection-end-line="369" selection-end-column="29" />
+              <folding>
+                <element signature="e#293#316#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="ddpg.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/reinforcement/ddpg/ddpg.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="389">
+              <caret line="353" column="0" lean-forward="false" selection-start-line="353" selection-start-column="0" selection-end-line="353" selection-end-column="0" />
+              <folding>
+                <element signature="e#293#316#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="array_ops.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/array_ops.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="248">
+              <caret line="1076" column="0" lean-forward="false" selection-start-line="1076" selection-start-column="0" selection-end-line="1076" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="core.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tflearn/layers/core.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="141" column="0" lean-forward="false" selection-start-line="141" selection-start-column="0" selection-end-line="141" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="_methods.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/numpy/core/_methods.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="240">
+              <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="wrappers.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/keras/_impl/keras/layers/wrappers.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="288">
+              <caret line="171" column="32" lean-forward="false" selection-start-line="171" selection-start-column="32" selection-end-line="171" selection-end-column="32" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="session.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/client/session.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="243">
+              <caret line="1112" column="0" lean-forward="false" selection-start-line="1112" selection-start-column="0" selection-end-line="1112" selection-end-column="0" />
+              <folding />
+            </state>
+          </provider>
+        </entry>
+      </file>
+    </leaf>
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Jupyter Notebook" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="FindInProjectRecents">
+    <findStrings>
+      <find>annota</find>
+      <find>loss</find>
+    </findStrings>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="IdeDocumentHistory">
+    <option name="CHANGED_PATHS">
+      <list>
+        <option value="$PROJECT_DIR$/NeuralModel.py" />
+        <option value="$PROJECT_DIR$/neural_mapping.py" />
+        <option value="$PROJECT_DIR$/getting_started.ipynb" />
+        <option value="$PROJECT_DIR$/.ipynb_checkpoints/utils.py" />
+        <option value="$PROJECT_DIR$/utils.py" />
+        <option value="$PROJECT_DIR$/../AAM/babbling.py" />
+        <option value="$PROJECT_DIR$/../AAM/utils.py" />
+        <option value="$PROJECT_DIR$/../AAM/main.py" />
+        <option value="$PROJECT_DIR$/neural_map.py" />
+        <option value="$PROJECT_DIR$/test.py" />
+        <option value="$PROJECT_DIR$/ddpg/ddpg.py" />
+        <option value="$PROJECT_DIR$/reinforcement/model_based_ddpg/mbddpg.py" />
+        <option value="$PROJECT_DIR$/reinforcement/model_based_ddpg/actor_test.py" />
+        <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg/world_modeler_test.py" />
+        <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg/sequence_replay_buffer.py" />
+        <option value="$PROJECT_DIR$/../Speech_command_classification/Conv_reccurent_network.ipynb" />
+        <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg/lstm_ddpg.py" />
+        <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/lstm_ddpg.py" />
+        <option value="$PROJECT_DIR$/reinforcement/ddpg_1/replay_buffer.py" />
+        <option value="$PROJECT_DIR$/reinforcement/ddpg/ddpg.py" />
+        <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
+        <option value="$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectFrameBounds" extendedState="6">
+    <option name="x" value="-100" />
+    <option name="y" value="-12" />
+    <option name="width" value="1918" />
+    <option name="height" value="1078" />
+  </component>
+  <component name="ProjectView">
+    <navigator currentView="ProjectPane" proportions="" version="1">
+      <flattenPackages />
+      <showMembers />
+      <showModules />
+      <showLibraryContents />
+      <hideEmptyPackages />
+      <abbreviatePackageNames />
+      <autoscrollToSource />
+      <autoscrollFromSource />
+      <sortByType />
+      <manualOrder />
+      <foldersAlwaysOnTop value="true" />
+    </navigator>
+    <panes>
+      <pane id="Scratches" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="conv_rnn_model" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+              <item name="ddpg" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+              <item name="ddpg_1" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+              <item name="lstm_ddpg_dynamic" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="Scope" />
+    </panes>
+  </component>
+  <component name="PropertiesComponent">
+    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+  </component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\reinforcement" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Python.ddpg">
+    <configuration name="SpeechAcquisitionModel" type="Python.Ipnb" factoryName="Jupyter Notebook">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="additionalOptions" value="" />
+      <option name="ipnbHost" value="127.0.0.1" />
+      <option name="ipnbPort" value="8888" />
+    </configuration>
+    <configuration name="ddpg (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/reinforcement/ddpg" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/reinforcement/ddpg/ddpg.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="ddpg" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/reinforcement/ddpg_1" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="lstm_ddpg (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/reinforcement/lstm_ddpg_1" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/lstm_ddpg.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="lstm_ddpg (2)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <configuration name="lstm_ddpg" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/reinforcement/lstm_ddpg" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/reinforcement/lstm_ddpg/lstm_ddpg.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+    </configuration>
+    <list size="6">
+      <item index="0" class="java.lang.String" itemvalue="Jupyter Notebook.SpeechAcquisitionModel" />
+      <item index="1" class="java.lang.String" itemvalue="Python.ddpg (1)" />
+      <item index="2" class="java.lang.String" itemvalue="Python.lstm_ddpg" />
+      <item index="3" class="java.lang.String" itemvalue="Python.lstm_ddpg (1)" />
+      <item index="4" class="java.lang.String" itemvalue="Python.lstm_ddpg (2)" />
+      <item index="5" class="java.lang.String" itemvalue="Python.ddpg" />
+    </list>
+    <recent_temporary>
+      <list size="5">
+        <item index="0" class="java.lang.String" itemvalue="Python.ddpg" />
+        <item index="1" class="java.lang.String" itemvalue="Python.lstm_ddpg (2)" />
+        <item index="2" class="java.lang.String" itemvalue="Python.ddpg (1)" />
+        <item index="3" class="java.lang.String" itemvalue="Python.lstm_ddpg (1)" />
+        <item index="4" class="java.lang.String" itemvalue="Python.lstm_ddpg" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="ShelveChangesManager" show_recycled="false">
+    <option name="remove_strategy" value="false" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="" />
+      <created>1522915754925</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1522915754925</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="TestHistory">
+    <history-entry file="Nosetests_in_neural_map_py - 2018.04.11 at 19h 52m 13s.xml">
+      <configuration name="Nosetests in neural_map.py" configurationId="tests" />
+    </history-entry>
+  </component>
+  <component name="ToolWindowManager">
+    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
+    <editor active="true" />
+    <layout>
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20362474" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
+      <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32276657" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32949087" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32853025" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25264168" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
+      <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
+      <window_info id="Inspection" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="5" side_tool="false" content_ui="tabs" />
+      <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
+      <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+    </layout>
+  </component>
+  <component name="VcsContentAnnotationSettings">
+    <option name="myLimit" value="2678400000" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/reinforcement/lstm_ddpg/lstm_ddpg.py</url>
+          <line>715</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+      </breakpoints>
+      <default-breakpoints>
+        <breakpoint type="python-exception">
+          <properties notifyOnTerminate="true" exception="BaseException">
+            <option name="notifyOnTerminate" value="true" />
+          </properties>
+        </breakpoint>
+      </default-breakpoints>
+      <option name="time" value="58" />
+    </breakpoint-manager>
+    <watches-manager />
+  </component>
+  <component name="editorHistoryManager">
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/gradients_impl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="173">
+          <caret line="399" column="4" lean-forward="false" selection-start-line="399" selection-start-column="4" selection-end-line="399" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tflearn/objectives.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="719">
+          <caret line="154" column="4" lean-forward="false" selection-start-line="154" selection-start-column="4" selection-end-line="154" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/model_based_ddpg/replay_buffer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="323">
+          <caret line="21" column="14" lean-forward="false" selection-start-line="21" selection-start-column="14" selection-end-line="21" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/model_based_ddpg/actor_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="255">
+          <caret line="72" column="0" lean-forward="false" selection-start-line="72" selection-start-column="0" selection-end-line="72" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/model_based_ddpg/mbddpg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="211">
+          <caret line="660" column="71" lean-forward="false" selection-start-line="660" selection-start-column="8" selection-end-line="660" selection-end-column="71" />
+          <folding>
+            <element signature="e#293#316#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg/actor_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="10" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="162" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/framework/common_shapes.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="475">
+          <caret line="690" column="0" lean-forward="false" selection-start-line="690" selection-start-column="0" selection-end-line="690" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/layers/base.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="1166" column="0" lean-forward="false" selection-start-line="1166" selection-start-column="0" selection-end-line="1166" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/gym/envs/classic_control/pendulum.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="173">
+          <caret line="36" column="0" lean-forward="false" selection-start-line="36" selection-start-column="0" selection-end-line="36" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/gym/wrappers/monitor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="30" column="0" lean-forward="false" selection-start-line="30" selection-start-column="0" selection-end-line="30" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/numpy/core/fromnumeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="61" column="0" lean-forward="false" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/variable_scope.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="746" column="0" lean-forward="false" selection-start-line="746" selection-start-column="0" selection-end-line="746" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/framework/errors_impl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="628">
+          <caret line="512" column="39" lean-forward="false" selection-start-line="512" selection-start-column="39" selection-end-line="512" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg/sequence_replay_buffer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="382">
+          <caret line="42" column="67" lean-forward="false" selection-start-line="42" selection-start-column="67" selection-end-line="42" selection-end-column="67" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg/world_modeler_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="560">
+          <caret line="109" column="112" lean-forward="false" selection-start-line="108" selection-start-column="71" selection-end-line="109" selection-end-column="112" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$APPLICATION_HOME_DIR$/helpers/pydev/_pydev_imps/_pydev_execfile.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Speech_command_classification/test_conv_rnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-1298">
+          <caret line="17" column="45" lean-forward="false" selection-start-line="17" selection-start-column="45" selection-end-line="17" selection-end-column="45" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Speech_command_classification/Conv_reccurent_network.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../Speech_command_classification/convRNN.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="997">
+          <caret line="168" column="0" lean-forward="false" selection-start-line="168" selection-start-column="0" selection-end-line="168" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_1/MBDDPG_test.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_1/actor_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="0">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg/lstm_ddpg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="520">
+          <caret line="698" column="37" lean-forward="false" selection-start-line="698" selection-start-column="37" selection-end-line="698" selection-end-column="37" />
+          <folding>
+            <element signature="e#293#316#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_1/lstm_ddpg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="422">
+          <caret line="510" column="39" lean-forward="false" selection-start-line="510" selection-start-column="39" selection-end-line="510" selection-end-column="39" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../quadrocopter-deep-q-learning-tensorflow-master/TensorflowGraph/create_graph_2d_ddpg_mlp_seq.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1520">
+          <caret line="76" column="15" lean-forward="false" selection-start-line="76" selection-start-column="15" selection-end-line="76" selection-end-column="15" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../quadrocopter-deep-q-learning-tensorflow-master/TensorflowGraph/tf_rl/lstm_mlp_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-420">
+          <caret line="21" column="24" lean-forward="false" selection-start-line="21" selection-start-column="24" selection-end-line="21" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../quadrocopter-deep-q-learning-tensorflow-master/TensorflowGraph/tf_rl/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="500">
+          <caret line="28" column="27" lean-forward="false" selection-start-line="28" selection-start-column="27" selection-end-line="28" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../quadrocopter-deep-q-learning-tensorflow-master/TensorflowGraph/tf_rl/lstm_model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="840">
+          <caret line="44" column="29" lean-forward="false" selection-start-line="44" selection-start-column="29" selection-end-line="44" selection-end-column="29" />
+          <folding>
+            <element signature="e#0#23#0" expanded="false" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../quadrocopter-deep-q-learning-tensorflow-master/TensorflowGraph/tf_rl/controller/continnous_deepq_lstm_stepped.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2640">
+          <caret line="136" column="44" lean-forward="false" selection-start-line="136" selection-start-column="44" selection-end-line="136" selection-end-column="44" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/variables.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7240">
+          <caret line="381" column="0" lean-forward="false" selection-start-line="381" selection-start-column="0" selection-end-line="381" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/eager/execute.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2580">
+          <caret line="142" column="0" lean-forward="false" selection-start-line="142" selection-start-column="0" selection-end-line="142" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/rnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12640">
+          <caret line="649" column="34" lean-forward="false" selection-start-line="649" selection-start-column="34" selection-end-line="649" selection-end-column="34" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/framework/ops.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="7160">
+          <caret line="399" column="0" lean-forward="false" selection-start-line="399" selection-start-column="0" selection-end-line="399" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/framework/tensor_shape.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="33" column="0" lean-forward="false" selection-start-line="33" selection-start-column="0" selection-end-line="33" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/numpy/core/numeric.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="20">
+          <caret line="491" column="0" lean-forward="false" selection-start-line="491" selection-start-column="0" selection-end-line="491" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/framework/op_def_library.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2702">
+          <caret line="787" column="0" lean-forward="false" selection-start-line="787" selection-start-column="0" selection-end-line="787" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/framework/tensor_util.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="173">
+          <caret line="420" column="0" lean-forward="false" selection-start-line="420" selection-start-column="0" selection-end-line="420" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/gym/wrappers/monitoring/stats_recorder.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="328">
+          <caret line="45" column="0" lean-forward="false" selection-start-line="45" selection-start-column="0" selection-end-line="45" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/sequence_replay_buffer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="40" column="27" lean-forward="false" selection-start-line="40" selection-start-column="27" selection-end-line="40" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/keras/_impl/keras/engine/topology.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="618" column="0" lean-forward="false" selection-start-line="618" selection-start-column="0" selection-end-line="618" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/ddpg_1/replay_buffer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="522">
+          <caret line="46" column="90" lean-forward="false" selection-start-line="46" selection-start-column="69" selection-end-line="46" selection-end-column="90" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/ddpg/replay_buffer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-418">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/keras/_impl/keras/layers/wrappers.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="288">
+          <caret line="171" column="32" lean-forward="false" selection-start-line="171" selection-start-column="32" selection-end-line="171" selection-end-column="32" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/array_ops.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="248">
+          <caret line="1076" column="0" lean-forward="false" selection-start-line="1076" selection-start-column="0" selection-end-line="1076" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tflearn/layers/core.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="141" column="0" lean-forward="false" selection-start-line="141" selection-start-column="0" selection-end-line="141" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/numpy/core/_methods.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/client/session.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="243">
+          <caret line="1112" column="0" lean-forward="false" selection-start-line="1112" selection-start-column="0" selection-end-line="1112" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/ddpg/ddpg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="389">
+          <caret line="353" column="0" lean-forward="false" selection-start-line="353" selection-start-column="0" selection-end-line="353" selection-end-column="0" />
+          <folding>
+            <element signature="e#293#316#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/losses/losses_impl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="251">
+          <caret line="570" column="4" lean-forward="false" selection-start-line="570" selection-start-column="4" selection-end-line="570" selection-end-column="4" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/math_ops.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="226">
+          <caret line="1108" column="0" lean-forward="false" selection-start-line="1108" selection-start-column="0" selection-end-line="1108" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="880">
+          <caret line="575" column="42" lean-forward="true" selection-start-line="575" selection-start-column="42" selection-end-line="575" selection-end-column="42" />
+          <folding>
+            <element signature="e#293#316#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-17">
+          <caret line="369" column="29" lean-forward="true" selection-start-line="369" selection-start-column="29" selection-end-line="369" selection-end-column="29" />
+          <folding>
+            <element signature="e#293#316#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+  </component>
+</project>
