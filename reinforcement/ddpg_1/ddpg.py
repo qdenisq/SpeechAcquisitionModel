@@ -44,14 +44,28 @@ class ActorNetwork(object):
         self.learning_rate = learning_rate
         self.tau = tau
         self.batch_size = batch_size
+        self.lstm_num_cells = 100
+        self.episode_length = 10
 
-        # Actor Network
-        self.inputs, self.out, self.scaled_out = self.create_actor_network()
+        with tf.variable_scope('actor'):
+            # Actor Network
+            self.inputs,\
+            self.sequence_length_placeholder,\
+            self.initial_state,\
+            self.state,\
+            self.out,\
+            self.scaled_out = self.create_actor_network()
 
         self.network_params = tf.trainable_variables()
 
-        # Target Network
-        self.target_inputs, self.target_out, self.target_scaled_out = self.create_actor_network()
+        with tf.variable_scope('target_actor'):
+            # Target Network
+            self.target_inputs,\
+            self.target_sequence_length_placeholder, \
+            self.target_initial_state,\
+            self.target_state, \
+            self.target_out,\
+            self.target_scaled_out = self.create_actor_network()
 
         self.target_network_params = tf.trainable_variables()[
             len(self.network_params):]
@@ -69,7 +83,7 @@ class ActorNetwork(object):
         # Combine the gradients here
         self.unnormalized_actor_gradients = tf.gradients(
             self.scaled_out, self.network_params, -self.action_gradient)
-        self.actor_gradients = list(map(lambda x: tf.div(x, self.batch_size), self.unnormalized_actor_gradients))
+        self.actor_gradients = list(map(lambda x: tf.div(x, self.batch_size * self.episode_length), self.unnormalized_actor_gradients))
 
         # Optimization Op
         self.optimize = tf.train.AdamOptimizer(self.learning_rate).\
@@ -79,6 +93,7 @@ class ActorNetwork(object):
             self.network_params) + len(self.target_network_params)
 
     def create_actor_network(self):
+        sequence_length = tf.placeholder(tf.int32, shape=[None])
         inputs = Input(batch_shape=[None, None, self.s_dim])
 
         net = TimeDistributed(Dense(400))(inputs)
@@ -87,9 +102,16 @@ class ActorNetwork(object):
         net = TimeDistributed(Dense(300))(net)
         net = TimeDistributed(BatchNormalization())(net)
         net = TimeDistributed(Activation('relu'))(net)
+
+        init_state = tf.placeholder(dtype=tf.float32, shape=[2, None, self.lstm_num_cells])
+        rnn_cell = tf.nn.rnn_cell.LSTMCell(num_units=self.lstm_num_cells, state_is_tuple=True)
+        initial_state = tf.nn.rnn_cell.LSTMStateTuple(init_state[0], init_state[1])
+        val, state = tf.nn.dynamic_rnn(rnn_cell, net, initial_state=initial_state,
+                                       sequence_length=sequence_length,
+                                       time_major=False, dtype=tf.float32)
         # Final layer weights are init to Uniform[-3e-3, 3e-3]
         out = TimeDistributed(Dense(self.a_dim, activation='tanh',
-                                               kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003, seed=None)))(net)
+                                               kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003, seed=None)))(val)
         scaled_out = tf.multiply(out, self.action_bound)
 
         # inputs = tflearn.input_data(shape=[None, None, self.s_dim])
@@ -105,22 +127,34 @@ class ActorNetwork(object):
         # out = tflearn.time_distributed(net, tflearn.fully_connected, [self.a_dim, 'tanh', True, w_init])
         # # Scale output to -action_bound to action_bound
         # scaled_out = tf.multiply(out, self.action_bound)
-        return inputs, out, scaled_out
+        return inputs, sequence_length, init_state, state, out, scaled_out
 
-    def train(self, inputs, a_gradient):
+    def train(self, inputs, a_gradient, sequence_length, batch_size, initial_state=None):
+        if initial_state is None:
+            initial_state = np.zeros((2, batch_size, self.lstm_num_cells))
         return self.sess.run([self.optimize, self.actor_gradients], feed_dict={
+                self.inputs: inputs,
+                self.action_gradient: a_gradient,
+                self.sequence_length_placeholder: sequence_length,
+                self.initial_state: initial_state
+            })
+
+    def predict(self, inputs, seq_length, batch_size, initial_state=None):
+        if initial_state is None:
+            initial_state = np.zeros((2, batch_size, self.lstm_num_cells))
+        return self.sess.run([self.scaled_out, self.state], feed_dict={
             self.inputs: inputs,
-            self.action_gradient: a_gradient
+            self.sequence_length_placeholder: seq_length,
+            self.initial_state: initial_state
         })
 
-    def predict(self, inputs):
-        return self.sess.run(self.scaled_out, feed_dict={
-            self.inputs: inputs
-        })
-
-    def predict_target(self, inputs):
-        return self.sess.run(self.target_scaled_out, feed_dict={
-            self.target_inputs: inputs
+    def predict_target(self, inputs, seq_length, batch_size, initial_state=None):
+        if initial_state is None:
+            initial_state = np.zeros((2, batch_size, self.lstm_num_cells))
+        return self.sess.run([self.target_scaled_out, self.target_state], feed_dict={
+            self.target_inputs: inputs,
+            self.target_sequence_length_placeholder: seq_length,
+            self.target_initial_state: initial_state
         })
 
     def update_target_network(self):
@@ -144,16 +178,19 @@ class CriticNetwork(object):
         self.learning_rate = learning_rate
         self.tau = tau
         self.gamma = gamma
+        self.lstm_num_cells = 100
 
         # Create the critic network
-        self.inputs, self.action, self.out = self.create_critic_network()
+        with tf.variable_scope('critic'):
+            self.inputs, self.action, self.sequence_length_placeholder, self.out = self.create_critic_network()
 
-        self.network_params = tf.trainable_variables()[num_actor_vars:]
+            self.network_params = tf.trainable_variables()[num_actor_vars:]
 
         # Target Network
-        self.target_inputs, self.target_action, self.target_out = self.create_critic_network()
+        with tf.variable_scope('target_critic'):
+            self.target_inputs, self.target_action, self.target_sequence_length_placeholder, self.target_out = self.create_critic_network()
 
-        self.target_network_params = tf.trainable_variables()[(len(self.network_params) + num_actor_vars):]
+            self.target_network_params = tf.trainable_variables()[(len(self.network_params) + num_actor_vars):]
 
         # Op for periodically updating target network with online network
         # weights with regularization
@@ -178,68 +215,78 @@ class CriticNetwork(object):
         self.action_grads = tf.gradients(self.out, self.action)
 
     def create_critic_network(self):
-        # inputs = Input(batch_shape=[None, None, self.s_dim])
-        # action = Input(batch_shape=[None, None, self.a_dim])
-        #
-        # net = TimeDistributed(Dense(400))(inputs)
-        # net = TimeDistributed(BatchNormalization())(net)
-        # net = TimeDistributed(Activation('relu'))(net)
-        #
-        # # Add the action tensor in the 2nd hidden layer
-        # # Use two temp layers to get the corresponding weights and biases
-        # t1 = TimeDistributed(Dense(300))(net)
-        # t2 = TimeDistributed(Dense(300))(action)
-        #
-        # net = Add()([t1, t2])
-        # net = TimeDistributed(Activation('relu'))(net)
-        #
-        # # linear layer connected to 1 output representing Q(s,a)
-        # # Weights are init to Uniform[-3e-3, 3e-3]
-        # out = TimeDistributed(Dense(1, kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003, seed=None)))(net)
+        sequence_length = tf.placeholder(tf.int32, shape=[None])
+        inputs = Input(batch_shape=[None, None, self.s_dim])
+        action = Input(batch_shape=[None, None, self.a_dim])
 
-        inputs = tflearn.input_data(shape=[None, 10, self.s_dim])
-        action = tflearn.input_data(shape=[None, 10, self.a_dim])
-        net = tflearn.time_distributed(inputs, tflearn.fully_connected, [400])
-        net = tflearn.time_distributed(net, tflearn.layers.normalization.batch_normalization)
-        net = tflearn.time_distributed(net, tflearn.activations.relu)
+        net = TimeDistributed(Dense(400))(inputs)
+        net = TimeDistributed(BatchNormalization())(net)
+        net = TimeDistributed(Activation('relu'))(net)
 
         # Add the action tensor in the 2nd hidden layer
         # Use two temp layers to get the corresponding weights and biases
-        t1 = tflearn.time_distributed(net, tflearn.fully_connected, [300])
-        t2 = tflearn.time_distributed(action, tflearn.fully_connected, [300])
+        t1 = TimeDistributed(Dense(300))(net)
+        t2 = TimeDistributed(Dense(300))(action)
 
-        net = tflearn.merge([t1, t2], mode='elemwise_sum')
-        net = tflearn.time_distributed(net, tflearn.activations.relu)
+        net = Add()([t1, t2])
+        net = TimeDistributed(Activation('relu'))(net)
+
+        rnn_cell = tf.nn.rnn_cell.LSTMCell(num_units=self.lstm_num_cells, state_is_tuple=True)
+        val, state = tf.nn.dynamic_rnn(rnn_cell, net,
+                                       sequence_length=sequence_length,
+                                       time_major=False, dtype=tf.float32)
 
         # linear layer connected to 1 output representing Q(s,a)
         # Weights are init to Uniform[-3e-3, 3e-3]
-        w_init = tflearn.initializations.uniform(minval=-0.003, maxval=0.003)
-        out = tflearn.time_distributed(net, tflearn.fully_connected, [1, 'linear', True, w_init])
-        return inputs, action, out
+        out = TimeDistributed(Dense(1, kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003, seed=None)))(val)
 
-    def train(self, inputs, action, predicted_q_value):
-        return self.sess.run([self.out, self.loss, self.optimize], feed_dict={
-            self.inputs: inputs,
-            self.action: action,
-            self.predicted_q_value: predicted_q_value
+        # inputs = tflearn.input_data(shape=[None, 10, self.s_dim])
+        # action = tflearn.input_data(shape=[None, 10, self.a_dim])
+        # net = tflearn.time_distributed(inputs, tflearn.fully_connected, [400])
+        # net = tflearn.time_distributed(net, tflearn.layers.normalization.batch_normalization)
+        # net = tflearn.time_distributed(net, tflearn.activations.relu)
+        #
+        # # Add the action tensor in the 2nd hidden layer
+        # # Use two temp layers to get the corresponding weights and biases
+        # t1 = tflearn.time_distributed(net, tflearn.fully_connected, [300])
+        # t2 = tflearn.time_distributed(action, tflearn.fully_connected, [300])
+        #
+        # net = tflearn.merge([t1, t2], mode='elemwise_sum')
+        # net = tflearn.time_distributed(net, tflearn.activations.relu)
+        #
+        # # linear layer connected to 1 output representing Q(s,a)
+        # # Weights are init to Uniform[-3e-3, 3e-3]
+        # w_init = tflearn.initializations.uniform(minval=-0.003, maxval=0.003)
+        # out = tflearn.time_distributed(net, tflearn.fully_connected, [1, 'linear', True, w_init])
+        return inputs, action, sequence_length, out
+
+    def train(self, states, actions, predicted_q_values, sequence_length):
+        return self.sess.run([self.out, self.optimize, self.loss], feed_dict={
+            self.inputs: states,
+            self.action: actions,
+            self.predicted_q_value: predicted_q_values,
+            self.sequence_length_placeholder: sequence_length
         })
 
-    def predict(self, inputs, action):
+    def predict(self, inputs, action, sequence_length):
         return self.sess.run(self.out, feed_dict={
             self.inputs: inputs,
-            self.action: action
+            self.action: action,
+            self.sequence_length_placeholder: sequence_length
         })
 
-    def predict_target(self, inputs, action):
+    def predict_target(self, inputs, action, sequence_length):
         return self.sess.run(self.target_out, feed_dict={
             self.target_inputs: inputs,
-            self.target_action: action
+            self.target_action: action,
+            self.target_sequence_length_placeholder: sequence_length
         })
 
-    def action_gradients(self, inputs, actions):
+    def action_gradients(self, inputs, actions, sequence_length):
         return self.sess.run(self.action_grads, feed_dict={
             self.inputs: inputs,
-            self.action: actions
+            self.action: actions,
+            self.sequence_length_placeholder: sequence_length
         })
 
     def update_target_network(self):
@@ -332,6 +379,7 @@ def train(sess, env, args, actor, critic, actor_noise):
     # in other environments.
     # tflearn.is_training(True)
     episode_length = 10
+    minibatch_size = int(args['minibatch_size'])
     for i in range(int(args['max_episodes'])):
 
         s = env.reset()
@@ -346,20 +394,17 @@ def train(sess, env, args, actor, critic, actor_noise):
                         np.array(False),
                         np.reshape(s, (actor.s_dim,)))
         history = deque([zero_episode] * episode_length)
-
+        hidden_state = None
         for j in range(int(args['max_episode_len'])):
 
             if args['render_env']:
                 env.render()
 
             # Added exploration noise
-            #a = actor.predict(np.reshape(s, (1, 3))) + (1. / (1. + i))
-            a = actor.predict(np.reshape(s, (1, 1, actor.s_dim))) + actor_noise()
+            a, hidden_state = actor.predict(np.reshape(s, (1, 1, actor.s_dim)), [1], 1, hidden_state)
+            a = a + actor_noise()
             action_avg += np.squeeze(a)
             s2, r, terminal, info = env.step(a[0])
-
-            # replay_buffer.add(np.reshape(s, (actor.s_dim,)), np.reshape(a, (actor.a_dim,)), r,
-            #                   terminal, np.reshape(s2, (actor.s_dim,)))
 
             history.popleft()
             history.append((np.reshape(s, (actor.s_dim,)), np.reshape(a[:, -1, :], (actor.a_dim,)), np.array(r),
@@ -371,13 +416,13 @@ def train(sess, env, args, actor, critic, actor_noise):
 
             # Keep adding experience to the memory until
             # there are at least minibatch size samples
-            if terminal and replay_buffer.size() > int(args['minibatch_size']):
+            if replay_buffer.size() > int(args['minibatch_size']):
                 s_batch, a_batch, r_batch, t_batch, s2_batch = \
                     replay_buffer.sample_batch(int(args['minibatch_size']))
 
                 # Calculate targets
-                target_q = critic.predict_target(
-                    s2_batch, actor.predict_target(s2_batch))
+                target_action, _ = actor.predict_target(s2_batch, [episode_length] * minibatch_size, minibatch_size)
+                target_q = critic.predict_target(s2_batch, target_action, [episode_length] * minibatch_size)
 
                 # y_i = []
                 # for k in range(int(args['minibatch_size'])):
@@ -390,15 +435,14 @@ def train(sess, env, args, actor, critic, actor_noise):
                 y_i = np.squeeze(r_batch) + critic.gamma * t_q
 
                 # Update the critic given the targets
-                predicted_q_value, critic_loss, _ = critic.train(
-                    s_batch, a_batch, np.reshape(y_i, (int(args['minibatch_size']),  episode_length, 1)))
-
+                predicted_q_value, _, critic_loss = critic.train(
+                    s_batch, a_batch, np.reshape(y_i, (int(args['minibatch_size']),  episode_length, 1)), [episode_length] * minibatch_size)
                 ep_ave_max_q += np.amax(predicted_q_value)
 
                 # Update the actor policy using the sampled gradient
-                a_outs = actor.predict(s_batch)
-                grads = critic.action_gradients(s_batch, a_outs)
-                _, actor_grads = actor.train(s_batch, grads[0])
+                a_outs, _ = actor.predict(s_batch, [episode_length] * minibatch_size, minibatch_size)
+                grads = critic.action_gradients(s_batch, a_outs, [episode_length] * minibatch_size)
+                _, actor_grads = actor.train(s_batch, grads[0], [episode_length] * minibatch_size, minibatch_size)
 
                 # Update target networks
                 actor.update_target_network()
@@ -427,8 +471,10 @@ def train(sess, env, args, actor, critic, actor_noise):
                 writer.add_summary(summary_str, i)
                 writer.flush()
 
-                print('| Reward: {:d} | Episode: {:d} | Qmax: {:.4f}| Critic_loss: {:.4f}'.format(int(ep_reward), \
-                        i, (ep_ave_max_q / float(j)), critic_loss))
+                print('| Reward: {:d} | Episode: {:d} | Qmax: {:.2f}| Critic_loss: {:.2f}'.format(int(ep_reward),
+                                                                                                  i,
+                                                                                                  (ep_ave_max_q / float(j)),
+                                                                                                  critic_loss))
                 break
 
 def main(args):

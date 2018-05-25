@@ -2,34 +2,23 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000001.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000001.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000008.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000008.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000027.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/gym_ddpg/openaigym.video.0.11352.video000027.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000001.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000001.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000008.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000008.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000027.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000027.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000064.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000064.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000125.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000125.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000216.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000216.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000343.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/gym_ddpg/openaigym.video.0.10284.video000343.mp4" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_05_01_PM/events.out.tfevents.1527145278.W8421444" afterPath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_05_01_PM/events.out.tfevents.1527145278.W8421444" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_24_2018_04_39_PM/events.out.tfevents.1527143988.W8421444" afterPath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_24_2018_04_39_PM/events.out.tfevents.1527143988.W8421444" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.gitignore" afterPath="$PROJECT_DIR$/.gitignore" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_23_2018_07_02_PM/events.out.tfevents.1527066120.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_23_2018_07_10_PM/events.out.tfevents.1527066634.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_23_2018_07_19_PM/events.out.tfevents.1527067184.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_23_2018_07_35_PM/events.out.tfevents.1527068132.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_23_2018_07_50_PM/events.out.tfevents.1527069019.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_23_2018_07_55_PM/events.out.tfevents.1527069319.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_23_2018_07_56_PM/events.out.tfevents.1527069390.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_23_2018_08_04_PM/events.out.tfevents.1527069892.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_03_00_PM/events.out.tfevents.1527138015.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_03_05_PM/events.out.tfevents.1527138345.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_03_08_PM/events.out.tfevents.1527138533.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_03_12_PM/events.out.tfevents.1527138724.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_03_13_PM/events.out.tfevents.1527138787.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_04_51_PM/events.out.tfevents.1527144668.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_04_52_PM/events.out.tfevents.1527144738.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_05_00_PM/events.out.tfevents.1527145210.W8421444" afterPath="" />
+      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/results/tf_ddpg_05_24_2018_05_01_PM/events.out.tfevents.1527145278.W8421444" afterPath="" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py" afterPath="$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" afterPath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
     </list>
@@ -45,11 +34,21 @@
       <file leaf-file-name="lstm_ddpg.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="555" column="30" lean-forward="false" selection-start-line="555" selection-start-column="30" selection-end-line="555" selection-end-column="30" />
+            <state relative-caret-position="209">
+              <caret line="640" column="0" lean-forward="true" selection-start-line="640" selection-start-column="0" selection-end-line="640" selection-end-column="0" />
               <folding>
                 <element signature="e#293#316#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="sequence_replay_buffer.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/sequence_replay_buffer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="408">
+              <caret line="40" column="27" lean-forward="false" selection-start-line="40" selection-start-column="27" selection-end-line="40" selection-end-column="27" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -77,11 +76,21 @@
       <file leaf-file-name="ddpg.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1763">
-              <caret line="416" column="44" lean-forward="false" selection-start-line="416" selection-start-column="44" selection-end-line="416" selection-end-column="44" />
+            <state relative-caret-position="517">
+              <caret line="413" column="12" lean-forward="false" selection-start-line="413" selection-start-column="12" selection-end-line="413" selection-end-column="12" />
               <folding>
                 <element signature="e#293#316#0" expanded="true" />
               </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="variable_scope.py" pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/variable_scope.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="586">
+              <caret line="746" column="0" lean-forward="false" selection-start-line="746" selection-start-column="0" selection-end-line="746" selection-end-column="0" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -89,21 +98,11 @@
       <file leaf-file-name="ddpg.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reinforcement/ddpg/ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="389">
-              <caret line="353" column="0" lean-forward="false" selection-start-line="353" selection-start-column="0" selection-end-line="353" selection-end-column="0" />
+            <state relative-caret-position="357">
+              <caret line="329" column="60" lean-forward="false" selection-start-line="329" selection-start-column="20" selection-end-line="329" selection-end-column="60" />
               <folding>
                 <element signature="e#293#316#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="array_ops.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/array_ops.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="248">
-              <caret line="1076" column="0" lean-forward="false" selection-start-line="1076" selection-start-column="0" selection-end-line="1076" selection-end-column="0" />
-              <folding />
             </state>
           </provider>
         </entry>
@@ -123,16 +122,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="240">
               <caret line="25" column="0" lean-forward="false" selection-start-line="25" selection-start-column="0" selection-end-line="25" selection-end-column="0" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="wrappers.py" pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/keras/_impl/keras/layers/wrappers.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="288">
-              <caret line="171" column="32" lean-forward="false" selection-start-line="171" selection-start-column="32" selection-end-line="171" selection-end-column="32" />
               <folding />
             </state>
           </provider>
@@ -195,7 +184,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="7">
+  <component name="ProjectFrameBounds" extendedState="6">
     <option name="x" value="-100" />
     <option name="y" value="-12" />
     <option name="width" value="1918" />
@@ -279,7 +268,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.ddpg">
+  <component name="RunManager" selected="Python.lstm_ddpg (2)">
     <configuration name="SpeechAcquisitionModel" type="Python.Ipnb" factoryName="Jupyter Notebook">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -391,8 +380,8 @@
     </list>
     <recent_temporary>
       <list size="5">
-        <item index="0" class="java.lang.String" itemvalue="Python.ddpg" />
-        <item index="1" class="java.lang.String" itemvalue="Python.lstm_ddpg (2)" />
+        <item index="0" class="java.lang.String" itemvalue="Python.lstm_ddpg (2)" />
+        <item index="1" class="java.lang.String" itemvalue="Python.ddpg" />
         <item index="2" class="java.lang.String" itemvalue="Python.ddpg (1)" />
         <item index="3" class="java.lang.String" itemvalue="Python.lstm_ddpg (1)" />
         <item index="4" class="java.lang.String" itemvalue="Python.lstm_ddpg" />
@@ -418,7 +407,7 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1176" extended-state="7" />
+    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.20362474" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -459,7 +448,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="58" />
+      <option name="time" value="60" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -476,6 +465,7 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="719">
           <caret line="154" column="4" lean-forward="false" selection-start-line="154" selection-start-column="4" selection-end-line="154" selection-end-column="4" />
+          <folding />
         </state>
       </provider>
     </entry>
@@ -543,14 +533,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="248">
           <caret line="61" column="0" lean-forward="false" selection-start-line="61" selection-start-column="0" selection-end-line="61" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/variable_scope.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="248">
-          <caret line="746" column="0" lean-forward="false" selection-start-line="746" selection-start-column="0" selection-end-line="746" selection-end-column="0" />
           <folding />
         </state>
       </provider>
@@ -750,14 +732,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/sequence_replay_buffer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="408">
-          <caret line="40" column="27" lean-forward="false" selection-start-line="40" selection-start-column="27" selection-end-line="40" selection-end-column="27" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/keras/_impl/keras/engine/topology.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="226">
@@ -822,16 +796,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reinforcement/ddpg/ddpg.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="389">
-          <caret line="353" column="0" lean-forward="false" selection-start-line="353" selection-start-column="0" selection-end-line="353" selection-end-column="0" />
-          <folding>
-            <element signature="e#293#316#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/losses/losses_impl.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="251">
@@ -848,10 +812,36 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/variable_scope.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="586">
+          <caret line="746" column="0" lean-forward="false" selection-start-line="746" selection-start-column="0" selection-end-line="746" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/ddpg/ddpg.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="357">
+          <caret line="329" column="60" lean-forward="false" selection-start-line="329" selection-start-column="20" selection-end-line="329" selection-end-column="60" />
+          <folding>
+            <element signature="e#293#316#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/sequence_replay_buffer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="408">
+          <caret line="40" column="27" lean-forward="false" selection-start-line="40" selection-start-column="27" selection-end-line="40" selection-end-column="27" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1763">
-          <caret line="416" column="44" lean-forward="false" selection-start-line="416" selection-start-column="44" selection-end-line="416" selection-end-column="44" />
+        <state relative-caret-position="517">
+          <caret line="413" column="12" lean-forward="false" selection-start-line="413" selection-start-column="12" selection-end-line="413" selection-end-column="12" />
           <folding>
             <element signature="e#293#316#0" expanded="true" />
           </folding>
@@ -860,8 +850,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="555" column="30" lean-forward="false" selection-start-line="555" selection-start-column="30" selection-end-line="555" selection-end-column="30" />
+        <state relative-caret-position="209">
+          <caret line="640" column="0" lean-forward="true" selection-start-line="640" selection-start-column="0" selection-end-line="640" selection-end-column="0" />
           <folding>
             <element signature="e#293#316#0" expanded="true" />
           </folding>

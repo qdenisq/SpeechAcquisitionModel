@@ -72,10 +72,11 @@ class LSTMCriticNetwork(object):
                                     for i in range(len(self.target_network_params))]
 
         # Network target (y_i)
-        self.predicted_q_value = tf.placeholder(tf.float32, [None, self.episode_length, 1])
+        self.predicted_q_value = tf.placeholder(tf.float32, [None, None, 1])
 
         # Define loss and optimization Op
-        self.loss = tf.losses.mean_squared_error(self.predicted_q_value, self.out)
+        # self.loss = tf.losses.mean_squared_error(self.predicted_q_value, self.out)
+        self.loss = tflearn.mean_square(self.out, self.predicted_q_value)
         self.optimize = tf.train.AdamOptimizer(
             self.learning_rate).minimize(self.loss)
 
@@ -99,20 +100,20 @@ class LSTMCriticNetwork(object):
         batch_action_x = Input(batch_shape=[None, None, self.a_dim])
 
         #  state branch
-        state_net = TimeDistributed(Dense(400, kernel_initializer=RandomUniform(minval=-0.05, maxval=0.05, seed=None)))(batch_state_x)
+        state_net = TimeDistributed(Dense(400))(batch_state_x)
         state_net = TimeDistributed(BatchNormalization())(state_net)
         state_net = TimeDistributed(Activation('relu'))(state_net)
 
         # action branch
-        action_net = TimeDistributed(Dense(400, kernel_initializer=RandomUniform(minval=-0.05, maxval=0.05, seed=None)))(batch_action_x)
-        action_net = TimeDistributed(BatchNormalization())(action_net)
-        action_net = TimeDistributed(Activation('relu'))(action_net)
+        # action_net = TimeDistributed(Dense(400, kernel_initializer=RandomUniform(minval=-0.05, maxval=0.05, seed=None)))(batch_action_x)
+        # action_net = TimeDistributed(BatchNormalization())(action_net)
+        # action_net = TimeDistributed(Activation('relu'))(action_net)
 
         # merge branches
-        t1_layer = TimeDistributed(Dense(400, kernel_initializer=RandomUniform(minval=-0.05, maxval=0.05, seed=None)))
+        t1_layer = TimeDistributed(Dense(300))
         t1_layer_out = t1_layer(state_net)
-        t2_layer = TimeDistributed(Dense(400, kernel_initializer=RandomUniform(minval=-0.05, maxval=0.05, seed=None)))
-        t2_layer_out = t2_layer(action_net)
+        t2_layer = TimeDistributed(Dense(300))
+        t2_layer_out = t2_layer(batch_action_x)
 
         # state_net_reshaped = tf.reshape(state_net, shape=[-1, 400])
         # action_net_reshaped = tf.reshape(action_net, shape=[-1, 400])
@@ -133,7 +134,7 @@ class LSTMCriticNetwork(object):
 
         # final dense layer
         w_init = RandomUniform(minval=-0.003, maxval=0.003)
-        last_layer = TimeDistributed(Dense(1))
+        last_layer = TimeDistributed(Dense(1, kernel_initializer=w_init))
         batch_y = last_layer(lstm_outputs)
         return batch_state_x, batch_action_x, sequence_length, batch_y
 
@@ -269,7 +270,7 @@ class LSTMActorNetwork(object):
         # final dense layer
         # w_init = RandomUniform(minval=-0.005, maxval=0.005)
         # last_layer = TimeDistributed(Dense(self.a_dim, activation='tanh'))
-        batch_action_y = TimeDistributed(Dense(self.a_dim, activation='tanh', kernel_initializer=RandomUniform(minval=-0.05, maxval=0.05, seed=None)))(lstm_outputs)
+        batch_action_y = TimeDistributed(Dense(self.a_dim, activation='tanh', kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003)))(lstm_outputs)
         batch_action_y_scaled_out = tf.multiply(batch_action_y, self.action_bound)
         return batch_state_x, sequence_length, init_state, state, batch_action_y, batch_action_y_scaled_out
 
@@ -356,7 +357,7 @@ def get_default_actor_settings():
     settings = {
         'actor_learning_rate': 0.0001,
         'actor_tau': 0.01,
-        'actor_lstm_num_cells': 200,
+        'actor_lstm_num_cells': 100,
         'actor_batch_size': 64
     }
     return settings
@@ -366,7 +367,7 @@ def get_default_critic_settings():
     settings = {
         'critic_learning_rate': 0.001,
         'critic_tau': 0.01,
-        'critic_lstm_num_cells': 200,
+        'critic_lstm_num_cells': 100,
         'critic_gamma': 0.99
     }
     return settings
@@ -510,6 +511,7 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
 
             s2, r, terminal, info = env.step(a[0])
 
+
             history.popleft()
             history.append((np.reshape(s, (actor.s_dim,)), np.reshape(a[:, -1, :], (actor.a_dim,)), np.array(r),
                             np.array(terminal), np.reshape(s2, (actor.s_dim,))))
@@ -517,7 +519,6 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
                 replay_buffer.add(np.array(history))
             s = s2
             ep_reward += r[0]
-
             # there are at least minibatch size samples
             # Keep adding experience to the memory until
             if replay_buffer.size() > minibatch_size:
@@ -528,12 +529,12 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
                 timer['world_modeler_train_time'] += time.time() - tic
 
                 tic = time.time()
-                target_actions, _ = actor.predict_target(s_batch, [episode_length] * minibatch_size, minibatch_size)
+                target_actions, _ = actor.predict_target(s2_batch, [episode_length] * minibatch_size, minibatch_size)
                 timer['actor_predict_time'] += time.time() - tic
 
                 tic = time.time()
                 # Calculate targets
-                target_q = critic.predict_target(s_batch, target_actions, [episode_length] * minibatch_size)
+                target_q = critic.predict_target(s2_batch, target_actions, [episode_length] * minibatch_size)
                 timer['target_q_predict_time'] += time.time() - tic
 
                 # Bellman equation for target calculation
@@ -550,10 +551,10 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
                 # Update the critic given the targets
                 y_i = np.reshape(y_i, (minibatch_size, episode_length, 1))
                 predicted_q_value, _, critic_loss = critic.train(
-                    s_batch, target_actions, y_i, [episode_length] * minibatch_size)
+                    s_batch, a_batch, y_i, [episode_length] * minibatch_size)
                 timer['critic_train_time'] += time.time() - tic
 
-                ep_ave_max_q += np.amax(np.sum(predicted_q_value, axis=1))
+                ep_ave_max_q += np.amax(predicted_q_value)
 
                 tic = time.time()
                 # Update the actor policy using the sampled gradient
@@ -586,10 +587,10 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
                 writer.flush()
 
                 print('| Reward: {:d} | Episode: {:d} | Qmax: {:.4f} | Critic Loss: {:.4f}| Avg action: {:.2f}'.format(int(ep_reward),
-                                                                                            i,
-                                                                                            (ep_ave_max_q / float(j)),
-                                                                                            critic_loss,
-                                                                                            action_avg / j))
+                                                                                                                       i,
+                                                                                                                       (ep_ave_max_q / float(j)),
+                                                                                                                       critic_loss,
+                                                                                                                       action_avg / j))
 
                 # for k, v in timer.items():
                 #     print("{:<15} {:0.3f}".format(k, v))
@@ -654,7 +655,7 @@ if __name__ == '__main__':
     parser.add_argument('--minibatch-size', help='size of minibatch for minibatch-SGD', default=64)
 
     # run parameters
-    parser.add_argument('--env', help='choose the gym env- tested on {Pendulum-v0}', default='Pendulum-v0')
+    parser.add_argument('--env', help='choose the gym env- tested on {Pendulum-v0}', default='MountainCarContinuous-v0')
     parser.add_argument('--random-seed', help='random seed for repeatability', default=12345)
     parser.add_argument('--max-episodes', help='max num of episodes to do while training', default=50000)
     parser.add_argument('--max-episode-len', help='max length of 1 episode', default=1000)
