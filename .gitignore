@@ -1,5 +1,7 @@
 
 logs/
+videos/
+ddpg/results/
 **.png
 **.mp4
 **.W8421444

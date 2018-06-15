@@ -305,6 +305,11 @@ def train(sess, env, args, actor, critic, actor_noise):
         ep_reward = 0
         ep_ave_max_q = 0
         action_avg = 0
+        critic_loss = 0
+        action_grads = 0
+        actor_grads = [0, 0]
+        grads = [0]
+        a_outs = 0
         for j in range(int(args['max_episode_len'])):
 
             if args['render_env']:
@@ -358,20 +363,21 @@ def train(sess, env, args, actor, critic, actor_noise):
             ep_reward += r
 
             if terminal:
-                summary_str = sess.run(summary_ops, feed_dict={
-                    summary_vars[0]: ep_reward,
-                    summary_vars[1]: ep_ave_max_q / float(j),
-                    summary_vars[2]: 0.,
-                    summary_vars[3]: critic_loss,
-                    summary_vars[4]: action_avg / j,
-                    summary_vars[5]: grads[0],
-                    summary_vars[6]: actor_grads[0],
-                    summary_vars[7]: a_outs
+                if replay_buffer.size() > int(args['minibatch_size']):
+                    summary_str = sess.run(summary_ops, feed_dict={
+                        summary_vars[0]: ep_reward,
+                        summary_vars[1]: ep_ave_max_q / float(j),
+                        summary_vars[2]: 0.,
+                        summary_vars[3]: critic_loss,
+                        summary_vars[4]: np.mean(action_avg )/ j,
+                        summary_vars[5]: grads[0],
+                        summary_vars[6]: actor_grads[0],
+                        summary_vars[7]: a_outs
 
-                })
+                    })
 
-                writer.add_summary(summary_str, i)
-                writer.flush()
+                    writer.add_summary(summary_str, i)
+                    writer.flush()
 
                 print('| Reward: {:d} | Episode: {:d} | Qmax: {:.4f}| Critic_loss: {:.4f}'.format(int(ep_reward), \
                         i, (ep_ave_max_q / float(j)), critic_loss))
@@ -390,7 +396,7 @@ def main(args):
         action_dim = env.action_space.shape[0]
         action_bound = env.action_space.high
         # Ensure action bound is symmetric
-        assert (env.action_space.high == -env.action_space.low)
+        # assert (env.action_space.high == -env.action_space.low)
 
         actor = ActorNetwork(sess, state_dim, action_dim, action_bound,
                              float(args['actor_lr']), float(args['tau']),
@@ -427,7 +433,7 @@ if __name__ == '__main__':
     parser.add_argument('--minibatch-size', help='size of minibatch for minibatch-SGD', default=64)
 
     # run parameters
-    parser.add_argument('--env', help='choose the gym env- tested on {Pendulum-v0}', default='Pendulum-v0')
+    parser.add_argument('--env', help='choose the gym env- tested on {Pendulum-v0}', default='Reacher-v2')
     parser.add_argument('--random-seed', help='random seed for repeatability', default=1234)
     parser.add_argument('--max-episodes', help='max num of episodes to do while training', default=50000)
     parser.add_argument('--max-episode-len', help='max length of 1 episode', default=1000)

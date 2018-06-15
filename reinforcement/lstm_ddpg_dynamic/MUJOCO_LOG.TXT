@@ -1,0 +1,6 @@
+Tue May 29 21:29:41 2018
+ERROR: Could not open activation key file C:\Users\s3628075\.mujoco\mjkey.txt
+
+Tue May 29 21:34:34 2018
+ERROR: Could not open activation key file C:\Users\s3628075\.mujoco\mjkey.txt
+

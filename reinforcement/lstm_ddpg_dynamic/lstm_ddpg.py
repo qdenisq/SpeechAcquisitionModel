@@ -95,7 +95,6 @@ class LSTMCriticNetwork(object):
 
     def create_critic_network(self):
         sequence_length = tf.placeholder(tf.int32, shape=[None])
-        ep_length = self.episode_length
         batch_state_x = Input(batch_shape=[None, None, self.s_dim])
         batch_action_x = Input(batch_shape=[None, None, self.a_dim])
 
@@ -105,25 +104,18 @@ class LSTMCriticNetwork(object):
         state_net = TimeDistributed(Activation('relu'))(state_net)
 
         # action branch
-        # action_net = TimeDistributed(Dense(400, kernel_initializer=RandomUniform(minval=-0.05, maxval=0.05, seed=None)))(batch_action_x)
-        # action_net = TimeDistributed(BatchNormalization())(action_net)
-        # action_net = TimeDistributed(Activation('relu'))(action_net)
+        action_net = TimeDistributed(Dense(400))(batch_action_x)
+        action_net = TimeDistributed(BatchNormalization())(action_net)
+        action_net = TimeDistributed(Activation('relu'))(action_net)
 
         # merge branches
         t1_layer = TimeDistributed(Dense(300))
         t1_layer_out = t1_layer(state_net)
         t2_layer = TimeDistributed(Dense(300))
-        t2_layer_out = t2_layer(batch_action_x)
-
-        # state_net_reshaped = tf.reshape(state_net, shape=[-1, 400])
-        # action_net_reshaped = tf.reshape(action_net, shape=[-1, 400])
-        # merged_net = tf.matmul(state_net_reshaped, t1_layer.get_weights()[0]) + tf.matmul(action_net_reshaped,
-        #                                                                                   t2_layer.get_weights()[0]) \
-        #              + t1_layer.get_weights()[1] + t2_layer.get_weights()[1]
+        t2_layer_out = t2_layer(action_net)
 
         merged_net = Add()([t1_layer_out, t2_layer_out])
         merged_net = TimeDistributed(Activation('relu'))(merged_net)
-        # merged_net = tf.reshape(merged_net, shape=[-1, ep_length, 400])
 
         # lstm cell
         rnn_cell = tf.nn.rnn_cell.LSTMCell(num_units=self.lstm_num_cells, state_is_tuple=True)
@@ -260,7 +252,6 @@ class LSTMActorNetwork(object):
         state_net = TimeDistributed(Activation('relu'))(state_net)
         # lstm cell
         init_state = tf.placeholder(dtype=tf.float32, shape=[2, None, self.lstm_num_cells])
-        state = init_state
         rnn_cell = tf.nn.rnn_cell.LSTMCell(num_units=self.lstm_num_cells, state_is_tuple=True)
         initial_state = tf.nn.rnn_cell.LSTMStateTuple(init_state[0], init_state[1])
         val, state = tf.nn.dynamic_rnn(rnn_cell, state_net, initial_state=initial_state, sequence_length=sequence_length,
@@ -268,8 +259,6 @@ class LSTMActorNetwork(object):
         lstm_outputs = val
 
         # final dense layer
-        # w_init = RandomUniform(minval=-0.005, maxval=0.005)
-        # last_layer = TimeDistributed(Dense(self.a_dim, activation='tanh'))
         batch_action_y = TimeDistributed(Dense(self.a_dim, activation='tanh', kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003)))(lstm_outputs)
         batch_action_y_scaled_out = tf.multiply(batch_action_y, self.action_bound)
         return batch_state_x, sequence_length, init_state, state, batch_action_y, batch_action_y_scaled_out
@@ -347,8 +336,8 @@ def get_default_env_settings(env_name):
         'action_dim': action_dim,
         'state_bound': state_bound,
         'action_bound': action_bound,
-        'episode_length': 10,
-        'minibatch_size': 64
+        'episode_length': 40,
+        'minibatch_size': 256
     }
     return settings
 
@@ -357,8 +346,8 @@ def get_default_actor_settings():
     settings = {
         'actor_learning_rate': 0.0001,
         'actor_tau': 0.01,
-        'actor_lstm_num_cells': 100,
-        'actor_batch_size': 64
+        'actor_lstm_num_cells': 50,
+        'actor_batch_size': 256
     }
     return settings
 
@@ -503,69 +492,41 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
             action_avg += np.squeeze(a)
             a = a + noise
 
-
-            timer['actor_predict_time'] += time.time() - tic
             # # Added exploration noise
-            # #a = actor.predict(np.reshape(s, (1, 3))) + (1. / (1. + i))
-            # a = actor.predict(np.reshape(s, (1, actor.s_dim))) + actor_noise()
 
             s2, r, terminal, info = env.step(a[0])
-
 
             history.popleft()
             history.append((np.reshape(s, (actor.s_dim,)), np.reshape(a[:, -1, :], (actor.a_dim,)), np.array(r),
                             np.array(terminal), np.reshape(s2, (actor.s_dim,))))
             if j >= episode_length:
                 replay_buffer.add(np.array(history))
+
             s = s2
-            ep_reward += r[0]
+            ep_reward += r
+
             # there are at least minibatch size samples
             # Keep adding experience to the memory until
-            if replay_buffer.size() > minibatch_size:
+            if terminal and replay_buffer.size() > minibatch_size:
                 s_batch, a_batch, r_batch, t_batch, s2_batch = \
                     replay_buffer.sample_batch(minibatch_size)
 
-                tic = time.time()
-                timer['world_modeler_train_time'] += time.time() - tic
-
-                tic = time.time()
                 target_actions, _ = actor.predict_target(s2_batch, [episode_length] * minibatch_size, minibatch_size)
-                timer['actor_predict_time'] += time.time() - tic
-
-                tic = time.time()
                 # Calculate targets
                 target_q = critic.predict_target(s2_batch, target_actions, [episode_length] * minibatch_size)
-                timer['target_q_predict_time'] += time.time() - tic
-
                 # Bellman equation for target calculation
                 gamma = settings['critic_gamma']
                 t_q = np.multiply(-1 * np.array(t_batch).astype(int) + 1., np.squeeze(target_q))
                 y_i = np.squeeze(r_batch) + gamma * t_q
-                # for k in range(minibatch_size):
-                #     if t_batch[k]:
-                #         y_i.append(r_batch[k])
-                #     else:
-                #         y_i.append(r_batch[k] + critic.gamma * target_q[k])
-
-                tic = time.time()
                 # Update the critic given the targets
                 y_i = np.reshape(y_i, (minibatch_size, episode_length, 1))
                 predicted_q_value, _, critic_loss = critic.train(
                     s_batch, a_batch, y_i, [episode_length] * minibatch_size)
-                timer['critic_train_time'] += time.time() - tic
-
                 ep_ave_max_q += np.amax(predicted_q_value)
-
-                tic = time.time()
                 # Update the actor policy using the sampled gradient
                 a_outs, _ = actor.predict(s_batch, [episode_length] * minibatch_size, minibatch_size)
                 action_grads = critic.action_gradients(s_batch, a_outs, [episode_length] * minibatch_size)
-
-                timer['actor_gradients'] += time.time() - tic
-                tic = time.time()
                 _, actor_grads = actor.train(s_batch, action_grads[0], [episode_length] * minibatch_size, minibatch_size)
-
-                timer['actor_train_time'] += time.time() - tic
                 # Update target networks
                 actor.update_target_network()
                 critic.update_target_network()
@@ -576,10 +537,10 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
                     summary_vars[1]: ep_ave_max_q / float(j),
                     summary_vars[2]: loss,
                     summary_vars[3]: critic_loss,
-                    summary_vars[4]: action_avg / j,
+                    summary_vars[4]: np.sum(action_avg) / j,
                     summary_vars[5]: action_grads,
                     summary_vars[6]: actor_grads[0],
-                    summary_vars[7]: a_outs
+                    summary_vars[7]: np.sum(a_outs)
 
                 })
 
@@ -590,7 +551,7 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
                                                                                                                        i,
                                                                                                                        (ep_ave_max_q / float(j)),
                                                                                                                        critic_loss,
-                                                                                                                       action_avg / j))
+                                                                                                                       np.sum(action_avg) / j))
 
                 # for k, v in timer.items():
                 #     print("{:<15} {:0.3f}".format(k, v))
@@ -613,8 +574,10 @@ def main(args):
         state_bound = env.observation_space.high
 
         # Ensure action bound is symmetric
-        assert (env.action_space.high == -env.action_space.low)
-        assert (sum(abs(env.observation_space.high + env.observation_space.low)) == 0)
+        # print((sum(abs(env.action_space.high + env.action_space.low)) == 0))
+        # print(sum(abs(env.observation_space.high + env.observation_space.low)))
+        # assert (sum(abs(env.action_space.high + env.action_space.low)) == 0)
+        # assert (sum(abs(env.observation_space.high + env.observation_space.low)) == 0)
 
         actor_settings = get_default_actor_settings()
         critic_settings = get_default_critic_settings()
@@ -628,7 +591,7 @@ def main(args):
 
         actor = LSTMActorNetwork('a_0', settings)
 
-        actor_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(action_dim))
+        actor_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(action_dim), sigma=action_bound / 20.)
 
         if args['use_gym_monitor']:
             if not args['render_env']:
@@ -655,7 +618,7 @@ if __name__ == '__main__':
     parser.add_argument('--minibatch-size', help='size of minibatch for minibatch-SGD', default=64)
 
     # run parameters
-    parser.add_argument('--env', help='choose the gym env- tested on {Pendulum-v0}', default='MountainCarContinuous-v0')
+    parser.add_argument('--env', help='choose the gym env- tested on {Pendulum-v0}', default='Reacher-v2')
     parser.add_argument('--random-seed', help='random seed for repeatability', default=12345)
     parser.add_argument('--max-episodes', help='max num of episodes to do while training', default=50000)
     parser.add_argument('--max-episode-len', help='max length of 1 episode', default=1000)
