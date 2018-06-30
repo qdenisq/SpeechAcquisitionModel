@@ -6,3 +6,5 @@ ddpg/results/
 **.mp4
 **.W8421444
 **.json
+**.wav
+**.pkl

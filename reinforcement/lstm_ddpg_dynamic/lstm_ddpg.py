@@ -503,7 +503,7 @@ def train(sess, env, settings, args, actor, critic, actor_noise):
                 replay_buffer.add(np.array(history))
 
             s = s2
-            ep_reward += r
+            ep_reward += r[0]
 
             # there are at least minibatch size samples
             # Keep adding experience to the memory until
@@ -618,7 +618,7 @@ if __name__ == '__main__':
     parser.add_argument('--minibatch-size', help='size of minibatch for minibatch-SGD', default=64)
 
     # run parameters
-    parser.add_argument('--env', help='choose the gym env- tested on {Pendulum-v0}', default='Reacher-v2')
+    parser.add_argument('--env', help='choose the gym env- tested on {Pendulum-v0}', default='Pendulum-v0')
     parser.add_argument('--random-seed', help='random seed for repeatability', default=12345)
     parser.add_argument('--max-episodes', help='max num of episodes to do while training', default=50000)
     parser.add_argument('--max-episode-len', help='max length of 1 episode', default=1000)

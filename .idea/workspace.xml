@@ -1,77 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/VTL/__init__.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/VTL/vtl_environment.py" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000001.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000001.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000008.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000008.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000027.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000027.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000064.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000064.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000125.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/ddpg/results/gym_ddpg/openaigym.video.0.17164.video000125.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_24_2018_03_28_PM/events.out.tfevents.1527139721.W8421444" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_24_2018_03_29_PM/events.out.tfevents.1527139774.W8421444" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_24_2018_03_33_PM/events.out.tfevents.1527139999.W8421444" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_24_2018_03_44_PM/events.out.tfevents.1527140693.W8421444" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/results/tf_ddpg_05_24_2018_04_39_PM/events.out.tfevents.1527143988.W8421444" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000001.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000001.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000008.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000008.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000027.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000027.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000064.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000064.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000125.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000125.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000216.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000216.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000343.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000343.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000512.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000512.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000729.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video000729.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video001000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video001000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video002000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video002000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video003000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video003000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video004000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video004000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video005000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video005000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video006000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video006000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video007000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video007000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video008000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video008000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video009000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video009000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video010000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video010000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video011000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video011000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video012000.meta.json" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/gym_ddpg/openaigym.video.0.20708.video012000.mp4" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/tf_ddpg/events.out.tfevents.1526120352.W8421444" afterPath="" />
-      <change type="DELETED" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/results/tf_ddpg_1/events.out.tfevents.1526039546.W8421444" afterPath="" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/ddpg/ddpg.py" afterPath="$PROJECT_DIR$/reinforcement/ddpg/ddpg.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" afterPath="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/reinforcement/model_based_ddpg/mbddpg.py" afterPath="$PROJECT_DIR$/reinforcement/model_based_ddpg/mbddpg.py" />
-    </list>
+    <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -79,26 +9,28 @@
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
   </component>
+  <component name="CreatePatchCommitExecutor">
+    <option name="PATCH_PATH" value="" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file leaf-file-name="lstm_ddpg.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="483">
-              <caret line="430" column="67" lean-forward="false" selection-start-line="430" selection-start-column="4" selection-end-line="430" selection-end-column="67" />
+            <state relative-caret-position="339">
+              <caret line="510" column="64" lean-forward="false" selection-start-line="510" selection-start-column="64" selection-end-line="510" selection-end-column="64" />
               <folding />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="main.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/ddpg/main.py">
+      <file leaf-file-name="run_mujoco.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/ppo1/run_mujoco.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1140">
-              <caret line="117" column="0" lean-forward="false" selection-start-line="117" selection-start-column="0" selection-end-line="123" selection-end-column="0" />
-              <folding>
-                <element signature="e#0#15#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="308">
+              <caret line="16" column="41" lean-forward="false" selection-start-line="16" selection-start-column="41" selection-end-line="16" selection-end-column="41" />
+              <folding />
             </state>
           </provider>
         </entry>
@@ -106,20 +38,10 @@
       <file leaf-file-name="pyvtl_v2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/VTL/pyvtl_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="200">
-              <caret line="210" column="83" lean-forward="false" selection-start-line="210" selection-start-column="83" selection-end-line="210" selection-end-column="83" />
-              <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="convRNN.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Speech_command_classification/convRNN.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
-              <caret line="380" column="79" lean-forward="false" selection-start-line="380" selection-start-column="79" selection-end-line="380" selection-end-column="79" />
+            <state relative-caret-position="22">
+              <caret line="178" column="0" lean-forward="true" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
               <folding>
-                <element signature="e#0#38#0" expanded="true" />
+                <element signature="e#743#752#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -128,8 +50,32 @@
       <file leaf-file-name="vtl_environment.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/VTL/vtl_environment.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="340">
-              <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
+            <state relative-caret-position="225">
+              <caret line="28" column="29" lean-forward="false" selection-start-line="28" selection-start-column="29" selection-end-line="28" selection-end-column="29" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../AAM/utils.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="352">
+              <caret line="22" column="39" lean-forward="false" selection-start-line="21" selection-start-column="4" selection-end-line="22" selection-end-column="39" />
+              <folding>
+                <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file leaf-file-name="pyvtl_v1.py" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/../AAM/VTL_API/pyvtl_v1.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="269">
+              <caret line="248" column="72" lean-forward="false" selection-start-line="248" selection-start-column="8" selection-end-line="248" selection-end-column="72" />
               <folding />
             </state>
           </provider>
@@ -138,7 +84,7 @@
       <file leaf-file-name="convRNN.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/speech_classification/convRNN.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-4440">
+            <state relative-caret-position="0">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
                 <element signature="e#0#38#0" expanded="true" />
@@ -150,7 +96,7 @@
       <file leaf-file-name="test.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/test.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-163">
+            <state relative-caret-position="0">
               <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
               <folding>
                 <element signature="e#0#37#0" expanded="true" />
@@ -174,18 +120,9 @@
       <file leaf-file-name="utils.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/speech_classification/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="437">
+            <state relative-caret-position="550">
               <caret line="25" column="51" lean-forward="false" selection-start-line="25" selection-start-column="51" selection-end-line="25" selection-end-column="51" />
               <folding />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="Conv_reccurent_network.ipynb" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../Speech_command_classification/Conv_reccurent_network.ipynb">
-          <provider selected="true" editor-type-id="ipnb-editor">
-            <state>
-              <selected id="4" />
             </state>
           </provider>
         </entry>
@@ -232,27 +169,25 @@
         <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg_1/lstm_ddpg.py" />
         <option value="$PROJECT_DIR$/reinforcement/ddpg_1/replay_buffer.py" />
         <option value="$PROJECT_DIR$/reinforcement/ddpg_1/ddpg.py" />
-        <option value="$PROJECT_DIR$/VTL/vtl_environment.py" />
         <option value="$PROJECT_DIR$/reinforcement/model_based_ddpg/mbddpg.py" />
         <option value="$PROJECT_DIR$/reinforcement/MUJOCO_LOG.TXT" />
         <option value="$PROJECT_DIR$/reinforcement/mujoco_test.py" />
         <option value="$PROJECT_DIR$/../openai/baselines/baselines/ppo2/run_mujoco.py" />
         <option value="$PROJECT_DIR$/reinforcement/ddpg/ddpg.py" />
-        <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
         <option value="$PROJECT_DIR$/../openai/baselines/baselines/logger.py" />
         <option value="$PROJECT_DIR$/../VTL/api/pyvtl_v1.py" />
         <option value="$PROJECT_DIR$/../openai/baselines/baselines/ddpg/main.py" />
         <option value="$PROJECT_DIR$/../openai/baselines/baselines/common/cmd_util.py" />
         <option value="$PROJECT_DIR$/../openai/baselines/baselines/ppo2/ppo2.py" />
+        <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
+        <option value="$PROJECT_DIR$/VTL/vtl_environment.py" />
         <option value="$PROJECT_DIR$/VTL/pyvtl_v2.py" />
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
-    <option name="x" value="-100" />
-    <option name="y" value="-12" />
-    <option name="width" value="1918" />
-    <option name="height" value="1078" />
+  <component name="ProjectFrameBounds">
+    <option name="width" value="1920" />
+    <option name="height" value="1032" />
   </component>
   <component name="ProjectView">
     <navigator currentView="ProjectPane" proportions="" version="1">
@@ -270,55 +205,72 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
-          <expand>
-            <path>
-              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
-              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
-              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
-              <item name="ddpg" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
-              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
-              <item name="ddpg_1" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
-              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
-              <item name="lstm_ddpg_dynamic" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
-              <item name="speech_classification" type="462c0819:PsiDirectoryNode" />
-            </path>
-            <path>
-              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
-              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
-              <item name="VTL" type="462c0819:PsiDirectoryNode" />
-            </path>
-          </expand>
-          <select />
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SpeechAcquisitionModel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SpeechAcquisitionModel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SpeechAcquisitionModel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SpeechAcquisitionModel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reinforcement" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SpeechAcquisitionModel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SpeechAcquisitionModel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="reinforcement" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="lstm_ddpg_dynamic" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
+          <PATH>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SpeechAcquisitionModel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.ProjectViewProjectNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="SpeechAcquisitionModel" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+            <PATH_ELEMENT>
+              <option name="myItemId" value="VTL" />
+              <option name="myItemType" value="com.intellij.ide.projectView.impl.nodes.PsiDirectoryNode" />
+            </PATH_ELEMENT>
+          </PATH>
         </subPane>
       </pane>
-      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
-    <property name="settings.editor.selected.configurable" value="editor.preferences.fonts.default" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
   </component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
@@ -339,6 +291,225 @@
     </option>
   </component>
   <component name="RunManager" selected="Python.pyvtl_v2">
+    <configuration default="false" name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../openai/baselines/baselines/ddpg" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../openai/baselines/baselines/ddpg/main.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="run_mujoco" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../openai/baselines/baselines/ppo2" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../openai/baselines/baselines/ppo2/run_mujoco.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="pyvtl_v2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/VTL" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/VTL/pyvtl_v2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="win_add2path" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$USER_HOME$/AppData/Local/Continuum/anaconda3/Tools/scripts" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="$USER_HOME$/AppData/Local/Continuum/anaconda3/Tools/scripts/win_add2path.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="false" name="lstm_ddpg" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Attests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Nosetests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Unittests">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="PUREUNITTEST" value="true" />
+      <option name="PARAMS" value="" />
+      <option name="USE_PARAM" value="false" />
+      <method />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <module name="SpeechAcquisitionModel" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <option name="testToRun" value="" />
+      <option name="keywords" value="" />
+      <option name="params" value="" />
+      <option name="USE_PARAM" value="false" />
+      <option name="USE_KEYWORD" value="false" />
+      <method />
+    </configuration>
     <configuration name="SpeechAcquisitionModel" type="Python.Ipnb" factoryName="Jupyter Notebook">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -355,106 +526,20 @@
       <option name="ipnbHost" value="127.0.0.1" />
       <option name="ipnbPort" value="8888" />
     </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../openai/baselines/baselines/ddpg" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="SpeechAcquisitionModel" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../openai/baselines/baselines/ddpg/main.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
-    <configuration name="pyvtl_v1 (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../AAM/VTL_API" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="SpeechAcquisitionModel" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../AAM/VTL_API/pyvtl_v1.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
-    <configuration name="pyvtl_v1" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../VTL/api" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="SpeechAcquisitionModel" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../VTL/api/pyvtl_v1.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
-    <configuration name="pyvtl_v2" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/VTL" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="SpeechAcquisitionModel" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/VTL/pyvtl_v2.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
-    <configuration name="run_mujoco" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../openai/baselines/baselines/ppo2" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <module name="SpeechAcquisitionModel" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../openai/baselines/baselines/ppo2/run_mujoco.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-    </configuration>
-    <list size="6">
-      <item index="0" class="java.lang.String" itemvalue="Jupyter Notebook.SpeechAcquisitionModel" />
-      <item index="1" class="java.lang.String" itemvalue="Python.main" />
-      <item index="2" class="java.lang.String" itemvalue="Python.pyvtl_v1" />
-      <item index="3" class="java.lang.String" itemvalue="Python.pyvtl_v1 (1)" />
-      <item index="4" class="java.lang.String" itemvalue="Python.run_mujoco" />
-      <item index="5" class="java.lang.String" itemvalue="Python.pyvtl_v2" />
+    <list size="5">
+      <item index="0" class="java.lang.String" itemvalue="Python.main" />
+      <item index="1" class="java.lang.String" itemvalue="Python.run_mujoco" />
+      <item index="2" class="java.lang.String" itemvalue="Python.pyvtl_v2" />
+      <item index="3" class="java.lang.String" itemvalue="Python.win_add2path" />
+      <item index="4" class="java.lang.String" itemvalue="Python.lstm_ddpg" />
     </list>
     <recent_temporary>
       <list size="5">
         <item index="0" class="java.lang.String" itemvalue="Python.pyvtl_v2" />
-        <item index="1" class="java.lang.String" itemvalue="Python.run_mujoco" />
-        <item index="2" class="java.lang.String" itemvalue="Python.main" />
-        <item index="3" class="java.lang.String" itemvalue="Python.pyvtl_v1" />
-        <item index="4" class="java.lang.String" itemvalue="Python.pyvtl_v1 (1)" />
+        <item index="1" class="java.lang.String" itemvalue="Python.lstm_ddpg" />
+        <item index="2" class="java.lang.String" itemvalue="Python.win_add2path" />
+        <item index="3" class="java.lang.String" itemvalue="Python.run_mujoco" />
+        <item index="4" class="java.lang.String" itemvalue="Python.main" />
       </list>
     </recent_temporary>
   </component>
@@ -477,19 +562,19 @@
     </history-entry>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
+    <frame x="0" y="0" width="1920" height="1032" extended-state="0" />
+    <editor active="true" />
     <layout>
-      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.2228145" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
+      <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.22263747" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
       <window_info id="Event Log" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="true" content_ui="tabs" />
       <window_info id="Version Control" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32949087" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
-      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32276657" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
+      <window_info id="Python Console" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32911393" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Run" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32220945" sideWeight="0.5" order="2" side_tool="false" content_ui="tabs" />
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
-      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32853025" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
+      <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32796317" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.25264168" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
-      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.44994247" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -497,6 +582,7 @@
       <window_info id="Hierarchy" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="2" side_tool="false" content_ui="combo" />
       <window_info id="Find" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Ant Build" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
+      <window_info id="Data View" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32995737" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
     </layout>
   </component>
   <component name="VcsContentAnnotationSettings">
@@ -538,39 +624,13 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="80" />
+      <option name="time" value="87" />
     </breakpoint-manager>
     <watches-manager />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/client/session.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="21820">
-          <caret line="1112" column="0" lean-forward="false" selection-start-line="1112" selection-start-column="0" selection-end-line="1112" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/losses/losses_impl.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="11120">
-          <caret line="570" column="4" lean-forward="false" selection-start-line="570" selection-start-column="4" selection-end-line="570" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/math_ops.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="21560">
-          <caret line="1108" column="0" lean-forward="false" selection-start-line="1108" selection-start-column="0" selection-end-line="1108" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/variable_scope.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="14400">
-          <caret line="746" column="0" lean-forward="false" selection-start-line="746" selection-start-column="0" selection-end-line="746" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/math_ops.py" />
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tensorflow/python/ops/variable_scope.py" />
     <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/sequence_replay_buffer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="760">
@@ -578,48 +638,11 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tflearn/objectives.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2980">
-          <caret line="154" column="4" lean-forward="false" selection-start-line="154" selection-start-column="4" selection-end-line="154" selection-end-column="4" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../AAM/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3420">
-          <caret line="185" column="41" lean-forward="false" selection-start-line="185" selection-start-column="41" selection-end-line="185" selection-end-column="41" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/VTL/VTL_API/example1.m">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/VTL/VTL_API/pyvtl_v1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3540">
-          <caret line="179" column="23" lean-forward="false" selection-start-line="179" selection-start-column="23" selection-end-line="179" selection-end-column="23" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/VTL/VTL_API/VocalTractLabApi.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/VTL/VTL_API/VocalTractLabApi64.h">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="21" column="18" lean-forward="false" selection-start-line="21" selection-start-column="18" selection-end-line="21" selection-end-column="18" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/tflearn/objectives.py" />
+    <entry file="file://$PROJECT_DIR$/VTL/VTL_API/example1.m" />
+    <entry file="file://$PROJECT_DIR$/VTL/VTL_API/pyvtl_v1.py" />
+    <entry file="file://$PROJECT_DIR$/VTL/VTL_API/VocalTractLabApi.h" />
+    <entry file="file://$PROJECT_DIR$/VTL/VTL_API/VocalTractLabApi64.h" />
     <entry file="file://$PROJECT_DIR$/reinforcement/model_based_ddpg/mbddpg.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="15660">
@@ -632,71 +655,17 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/reinforcement/MUJOCO_LOG.TXT" />
     <entry file="file://$PROJECT_DIR$/reinforcement/mujoco_test.py" />
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/gym/envs/robotics/hand/reach.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="219">
-          <caret line="81" column="0" lean-forward="false" selection-start-line="81" selection-start-column="0" selection-end-line="81" selection-end-column="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/mujoco_py/generated/wrappers.pxi">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="217">
-          <caret line="1035" column="27" lean-forward="false" selection-start-line="1035" selection-start-column="8" selection-end-line="1035" selection-end-column="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/common/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="40">
-          <caret line="5" column="0" lean-forward="false" selection-start-line="5" selection-start-column="0" selection-end-line="5" selection-end-column="0" />
-          <folding>
-            <element signature="e#20#63#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/common/atari_wrappers.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="80">
-          <caret line="4" column="10" lean-forward="false" selection-start-line="4" selection-start-column="10" selection-end-line="4" selection-end-column="10" />
-          <folding>
-            <element signature="e#0#18#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/mpi4py/run.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="19" column="7" lean-forward="false" selection-start-line="19" selection-start-column="7" selection-end-line="19" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/ppo2/policies.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2260">
-          <caret line="117" column="29" lean-forward="false" selection-start-line="117" selection-start-column="29" selection-end-line="117" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#18#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/common/distributions.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="5820">
-          <caret line="295" column="0" lean-forward="false" selection-start-line="295" selection-start-column="0" selection-end-line="295" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/gym/envs/robotics/hand/reach.py" />
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/mujoco_py/generated/wrappers.pxi" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/common/__init__.py" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/common/atari_wrappers.py" />
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/mpi4py/run.py" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/ppo2/policies.py" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/common/distributions.py" />
     <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_1/lstm_ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-3657">
           <caret line="26" column="7" lean-forward="false" selection-start-line="26" selection-start-column="7" selection-end-line="26" selection-end-column="7" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -705,7 +674,7 @@
         <state relative-caret-position="640">
           <caret line="690" column="36" lean-forward="false" selection-start-line="690" selection-start-column="36" selection-end-line="690" selection-end-column="36" />
           <folding>
-            <element signature="e#293#316#0" expanded="true" />
+            <element signature="e#293#316#0" expanded="false" />
           </folding>
         </state>
       </provider>
@@ -714,7 +683,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-6260">
           <caret line="23" column="102" lean-forward="true" selection-start-line="11" selection-start-column="0" selection-end-line="23" selection-end-column="102" />
-          <folding />
         </state>
       </provider>
     </entry>
@@ -726,141 +694,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/ddpg/ddpg.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-523">
-          <caret line="223" column="14" lean-forward="false" selection-start-line="223" selection-start-column="14" selection-end-line="223" selection-end-column="14" />
-          <folding>
-            <element signature="e#0#21#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/logger.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
-          <caret line="374" column="18" lean-forward="false" selection-start-line="374" selection-start-column="18" selection-end-line="374" selection-end-column="18" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/ddpg/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="21" column="19" lean-forward="false" selection-start-line="21" selection-start-column="19" selection-end-line="21" selection-end-column="19" />
-          <folding>
-            <element signature="e#0#23#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/ntpath.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="111" column="0" lean-forward="false" selection-start-line="111" selection-start-column="0" selection-end-line="111" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/ctypes/__init__.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="243">
-          <caret line="347" column="0" lean-forward="false" selection-start-line="347" selection-start-column="0" selection-end-line="347" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../AAM/VTL_API/pyvtl_v1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="480">
-          <caret line="56" column="105" lean-forward="false" selection-start-line="56" selection-start-column="94" selection-end-line="56" selection-end-column="105" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/codecs.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="811">
-          <caret line="324" column="0" lean-forward="false" selection-start-line="324" selection-start-column="0" selection-end-line="324" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/common/cmd_util.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="386">
-          <caret line="76" column="42" lean-forward="false" selection-start-line="76" selection-start-column="42" selection-end-line="76" selection-end-column="42" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/ppo1/run_mujoco.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="220">
-          <caret line="13" column="22" lean-forward="false" selection-start-line="13" selection-start-column="22" selection-end-line="13" selection-end-column="22" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/ppo1/pposgd_simple.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="360">
-          <caret line="50" column="19" lean-forward="false" selection-start-line="50" selection-start-column="19" selection-end-line="50" selection-end-column="19" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/ppo2/ppo2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="439">
-          <caret line="106" column="29" lean-forward="false" selection-start-line="106" selection-start-column="29" selection-end-line="106" selection-end-column="29" />
-          <folding>
-            <element signature="e#0#9#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/ppo2/run_mujoco.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="420">
-          <caret line="30" column="18" lean-forward="false" selection-start-line="30" selection-start-column="18" selection-end-line="30" selection-end-column="18" />
-          <folding>
-            <element signature="e#23#41#0" expanded="false" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/ddpg/training.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="523">
-          <caret line="77" column="24" lean-forward="false" selection-start-line="77" selection-start-column="24" selection-end-line="77" selection-end-column="36" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../VTL/api/pyvtl_v1.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1480">
-          <caret line="76" column="84" lean-forward="false" selection-start-line="76" selection-start-column="84" selection-end-line="76" selection-end-column="84" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/gym/core.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1034">
-          <caret line="242" column="39" lean-forward="false" selection-start-line="242" selection-start-column="39" selection-end-line="242" selection-end-column="39" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../Speech_command_classification/Conv_reccurent_network.ipynb">
-      <provider selected="true" editor-type-id="ipnb-editor">
-        <state>
-          <selected id="4" />
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/ddpg/ddpg.py" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/logger.py" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/ddpg/models.py" />
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/ntpath.py" />
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/ctypes/__init__.py" />
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/codecs.py" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/common/cmd_util.py" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/ppo1/pposgd_simple.py" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/ppo2/ppo2.py" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/ppo2/run_mujoco.py" />
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/ddpg/training.py" />
+    <entry file="file://$PROJECT_DIR$/../VTL/api/pyvtl_v1.py" />
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/gym/core.py" />
+    <entry file="file://$PROJECT_DIR$/../Speech_command_classification/Conv_reccurent_network.ipynb" />
     <entry file="file://$PROJECT_DIR$/speech_classification/test_conv_rnn.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
@@ -873,41 +720,23 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/speech_classification/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="437">
+        <state relative-caret-position="550">
           <caret line="25" column="51" lean-forward="false" selection-start-line="25" selection-start-column="51" selection-end-line="25" selection-end-column="51" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../Speech_command_classification/convRNN.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="380" column="79" lean-forward="false" selection-start-line="380" selection-start-column="79" selection-end-line="380" selection-end-column="79" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
+    <entry file="file://$PROJECT_DIR$/../Speech_command_classification/convRNN.py" />
     <entry file="file://$PROJECT_DIR$/VTL/__init__.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/VTL/vtl_environment.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="340">
-          <caret line="17" column="0" lean-forward="false" selection-start-line="17" selection-start-column="0" selection-end-line="17" selection-end-column="0" />
-          <folding />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/speech_classification/convRNN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4440">
+        <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#38#0" expanded="true" />
@@ -915,9 +744,10 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/ddpg/main.py" />
     <entry file="file://$PROJECT_DIR$/test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-163">
+        <state relative-caret-position="0">
           <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
           <folding>
             <element signature="e#0#37#0" expanded="true" />
@@ -925,29 +755,73 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
+    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Tools/scripts/win_add2path.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="483">
-          <caret line="430" column="67" lean-forward="false" selection-start-line="430" selection-start-column="4" selection-end-line="430" selection-end-column="67" />
+        <state relative-caret-position="198">
+          <caret line="12" column="13" lean-forward="false" selection-start-line="12" selection-start-column="13" selection-end-line="12" selection-end-column="13" />
           <folding />
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../openai/baselines/baselines/ddpg/main.py">
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1140">
-          <caret line="117" column="0" lean-forward="false" selection-start-line="117" selection-start-column="0" selection-end-line="123" selection-end-column="0" />
+        <state relative-caret-position="339">
+          <caret line="510" column="64" lean-forward="false" selection-start-line="510" selection-start-column="64" selection-end-line="510" selection-end-column="64" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../OpenAI/baselines/baselines/ppo1/run_mujoco.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="308">
+          <caret line="16" column="41" lean-forward="false" selection-start-line="16" selection-start-column="41" selection-end-line="16" selection-end-column="41" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../AAM/test_1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-30064">
+          <caret line="0" column="0" lean-forward="false" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../AAM/VTL_API/pyvtl_v1.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="269">
+          <caret line="248" column="72" lean-forward="false" selection-start-line="248" selection-start-column="8" selection-end-line="248" selection-end-column="72" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/VTL/vtl_environment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="225">
+          <caret line="28" column="29" lean-forward="false" selection-start-line="28" selection-start-column="29" selection-end-line="28" selection-end-column="29" />
           <folding>
-            <element signature="e#0#15#0" expanded="true" />
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../AAM/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="352">
+          <caret line="22" column="39" lean-forward="false" selection-start-line="21" selection-start-column="4" selection-end-line="22" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/VTL/pyvtl_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="200">
-          <caret line="210" column="83" lean-forward="false" selection-start-line="210" selection-start-column="83" selection-end-line="210" selection-end-column="83" />
-          <folding />
+        <state relative-caret-position="22">
+          <caret line="178" column="0" lean-forward="true" selection-start-line="178" selection-start-column="0" selection-end-line="178" selection-end-column="0" />
+          <folding>
+            <element signature="e#743#752#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
