@@ -100,8 +100,12 @@ class VTLEnv(object):
         self.video_stream = np.zeros(shape=(self.max_number_of_frames, int(self.img_width * self.img_height * 3)), dtype=np.uint8)
         self.audio_stream = np.zeros(int(self.max_episode_duration * audio_sampling_rate.value + 2000))
 
-        self.action_space = None
-        self.state_space = None
+        self.action_dim = len(self.glottis_param_neutral) + len(self.tract_param_neutral)
+        self.action_bound = list(zip(self.tract_param_min, self.tract_param_max))
+        self.action_bound.extend(zip(self.glottis_param_min, self.glottis_param_max))
+
+        self.state_dim = len(self.glottis_param_neutral) + len(self.tract_param_neutral)
+        self.state_bound = self.action_bound
 
         self.current_step = 0
         return
@@ -134,7 +138,7 @@ class VTLEnv(object):
         return state_out
 
     def reset(self, state_to_reset=None):
-        if state_to_reset:
+        if state_to_reset is None:
             tract_params_to_reset = (ctypes.c_double * (self.number_vocal_tract_parameters))()
             glottis_params_to_reset = (ctypes.c_double * (self.number_glottis_parameters))()
             for i in range(self.number_vocal_tract_parameters):

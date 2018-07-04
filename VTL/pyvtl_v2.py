@@ -1,24 +1,7 @@
 #!/usr/bin/env python3
 
 """
-This example generates the transition from /a/ to /i/ using the vocal tract
-model and the function vtlSynthBlock(...).
-
-.. note::
-
-    This example uses ``ctypes`` and is very close to the vocaltractlab API.
-    This comes with breaking with some standard assumptions one have in python.
-    If one wants a more pythonic experience use the ``pyvtl`` wrapper in order
-    to use vocaltractlab from python. (pyvtl does not exist yet)
-
-If you are not aware of ``ctypes`` read the following introduction
-https://docs.python.org/3/library/ctypes.html
-
-For an in-depth API description look at the `VocalTractLabApi64.h`.
-
-For plotting and saving results you need to install ``matplotlib``, ``numpy``,
-and ``scipy``.
-
+vtl api
 """
 import os
 import ctypes
@@ -59,8 +42,6 @@ else:
 # get version / compile date
 version = ctypes.c_char_p(b'                                ')
 VTL.vtlGetVersion(version)
-# print('Compile date of the library: "%s"' % version.value.decode())
-
 
 # initialize vtl
 speaker_file_name = ctypes.c_char_p(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker').encode())
@@ -81,12 +62,6 @@ VTL.vtlGetConstants(ctypes.byref(audio_sampling_rate),
                     ctypes.byref(number_vocal_tract_parameters),
                     ctypes.byref(number_glottis_parameters))
 
-# print('Audio sampling rate = %i' % audio_sampling_rate.value)
-# print('Num. of tube sections = %i' % number_tube_sections.value)
-# print('Num. of vocal tract parameters = %i' % number_vocal_tract_parameters.value)
-# print('Num. of glottis parameters = %i' % number_glottis_parameters.value)
-
-
 # get information about the parameters of the vocal tract model
 # Hint: Reserve 32 chars for each parameter.
 TRACT_PARAM_TYPE = ctypes.c_double * number_vocal_tract_parameters.value
@@ -103,11 +78,6 @@ VTL.vtlGetTractParamInfo(tract_param_names,
 tract_param_max = list(tract_param_max)
 tract_param_min = list(tract_param_min)
 tract_param_neutral = list(tract_param_neutral)
-
-# print('Vocal tract parameters: "%s"' % tract_param_names.value.decode())
-# print('Vocal tract parameter minima: ' + str(list(tract_param_min)))
-# print('Vocal tract parameter maxima: ' + str(list(tract_param_max)))
-# print('Vocal tract parameter neutral: ' + str(list(tract_param_neutral)))
 
 # get information about the parameters of glottis model
 # Hint: Reserve 32 chars for each parameter.
