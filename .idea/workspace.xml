@@ -18,7 +18,7 @@
       <file leaf-file-name="pyvtl_v2.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/VTL/pyvtl_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="418">
+            <state relative-caret-position="3850">
               <caret line="182" column="0" lean-forward="false" selection-start-line="182" selection-start-column="0" selection-end-line="183" selection-end-column="55" />
               <folding>
                 <element signature="e#40#49#0" expanded="true" />
@@ -30,8 +30,8 @@
       <file leaf-file-name="train.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/reinforcement/vtl_reference_guided/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1672">
-              <caret line="76" column="23" lean-forward="true" selection-start-line="76" selection-start-column="23" selection-end-line="76" selection-end-column="23" />
+            <state relative-caret-position="210">
+              <caret line="454" column="85" lean-forward="true" selection-start-line="454" selection-start-column="85" selection-end-line="454" selection-end-column="85" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -42,7 +42,7 @@
       <file leaf-file-name="lstm_ddpg.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="114">
+            <state relative-caret-position="9064">
               <caret line="427" column="0" lean-forward="false" selection-start-line="427" selection-start-column="0" selection-end-line="428" selection-end-column="47" />
               <folding>
                 <element signature="e#293#316#0" expanded="true" />
@@ -54,8 +54,8 @@
       <file leaf-file-name="ddpg.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reinforcement/ddpg/ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-152">
-              <caret line="315" column="28" lean-forward="true" selection-start-line="315" selection-start-column="28" selection-end-line="315" selection-end-column="28" />
+            <state relative-caret-position="264">
+              <caret line="152" column="73" lean-forward="true" selection-start-line="152" selection-start-column="73" selection-end-line="152" selection-end-column="73" />
               <folding>
                 <element signature="e#293#316#0" expanded="true" />
               </folding>
@@ -78,7 +78,7 @@
       <file leaf-file-name="replay_buffer.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/reinforcement/vtl_reference_guided/replay_buffer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="88">
+            <state relative-caret-position="44">
               <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="44" selection-end-column="22" />
               <folding>
                 <element signature="e#0#29#0" expanded="true" />
@@ -100,8 +100,8 @@
       <file leaf-file-name="vtl_environment.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/VTL/vtl_environment.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="125">
-              <caret line="114" column="0" lean-forward="false" selection-start-line="114" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
+            <state relative-caret-position="188">
+              <caret line="103" column="150" lean-forward="false" selection-start-line="103" selection-start-column="150" selection-end-line="103" selection-end-column="150" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -176,8 +176,8 @@
         <option value="$PROJECT_DIR$/VTL/pyvtl_v2.py" />
         <option value="$PROJECT_DIR$/reinforcement/vtl_reference_guided/replay_buffer.py" />
         <option value="$PROJECT_DIR$/reinforcement/lstm_ddpg/lstm_ddpg.py" />
-        <option value="$PROJECT_DIR$/VTL/vtl_environment.py" />
         <option value="$PROJECT_DIR$/reinforcement/vtl_reference_guided/train.py" />
+        <option value="$PROJECT_DIR$/VTL/vtl_environment.py" />
       </list>
     </option>
   </component>
@@ -200,7 +200,6 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
-      <pane id="Scratches" />
       <pane id="ProjectPane">
         <subPane>
           <PATH>
@@ -352,6 +351,7 @@
         </subPane>
       </pane>
       <pane id="Scope" />
+      <pane id="Scratches" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -649,7 +649,7 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="0" y="0" width="1920" height="1032" extended-state="0" />
-    <editor active="true" />
+    <editor active="false" />
     <layout>
       <window_info id="Project" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.13507742" sideWeight="0.5" order="0" side_tool="false" content_ui="combo" />
       <window_info id="TODO" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="6" side_tool="false" content_ui="tabs" />
@@ -660,7 +660,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32796317" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5293441" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.5684695" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -710,7 +710,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="102" />
+      <option name="time" value="107" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -860,7 +860,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/VTL/pyvtl_v2.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
+        <state relative-caret-position="3850">
           <caret line="182" column="0" lean-forward="false" selection-start-line="182" selection-start-column="0" selection-end-line="183" selection-end-column="55" />
           <folding>
             <element signature="e#40#49#0" expanded="true" />
@@ -870,7 +870,7 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/reinforcement/vtl_reference_guided/replay_buffer.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="88">
+        <state relative-caret-position="44">
           <caret line="4" column="0" lean-forward="false" selection-start-line="4" selection-start-column="0" selection-end-line="44" selection-end-column="22" />
           <folding>
             <element signature="e#0#29#0" expanded="true" />
@@ -878,20 +878,20 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reinforcement/ddpg/ddpg.py">
+    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-152">
-          <caret line="315" column="28" lean-forward="true" selection-start-line="315" selection-start-column="28" selection-end-line="315" selection-end-column="28" />
+        <state relative-caret-position="9064">
+          <caret line="427" column="0" lean-forward="false" selection-start-line="427" selection-start-column="0" selection-end-line="428" selection-end-column="47" />
           <folding>
             <element signature="e#293#316#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
+    <entry file="file://$PROJECT_DIR$/reinforcement/ddpg/ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="114">
-          <caret line="427" column="0" lean-forward="false" selection-start-line="427" selection-start-column="0" selection-end-line="428" selection-end-column="47" />
+        <state relative-caret-position="264">
+          <caret line="152" column="73" lean-forward="true" selection-start-line="152" selection-start-column="73" selection-end-line="152" selection-end-column="73" />
           <folding>
             <element signature="e#293#316#0" expanded="true" />
           </folding>
@@ -900,8 +900,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/VTL/vtl_environment.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="125">
-          <caret line="114" column="0" lean-forward="false" selection-start-line="114" selection-start-column="0" selection-end-line="114" selection-end-column="0" />
+        <state relative-caret-position="188">
+          <caret line="103" column="150" lean-forward="false" selection-start-line="103" selection-start-column="150" selection-end-line="103" selection-end-column="150" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
@@ -910,8 +910,8 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/reinforcement/vtl_reference_guided/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1672">
-          <caret line="76" column="23" lean-forward="true" selection-start-line="76" selection-start-column="23" selection-end-line="76" selection-end-column="23" />
+        <state relative-caret-position="210">
+          <caret line="454" column="85" lean-forward="true" selection-start-line="454" selection-start-column="85" selection-end-line="454" selection-end-column="85" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>

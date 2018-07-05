@@ -173,13 +173,13 @@ class Policy(object):
         net = Dense(300, activation='relu')(net)
 
         net = Concatenate()([net, state_net])
-        net = Dense(300)(net)
+        net = Dense(30)(net)
         net = BatchNormalization()(net)
-        net = Activation('relu')(net)
+        net = Activation('tanh')(net)
 
         action_y = Dense(self.a_dim,
                         activation='tanh',
-                        kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003)
+                        kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003)
                         )(net)
         action_y_scaled_out = tf.subtract(action_y, self._b)
         action_y_scaled_out = tf.divide(action_y_scaled_out, self._k)
@@ -288,7 +288,7 @@ class ModelDynamics(object):
         self.ground_truth_goal_out = tf.placeholder(tf.float32, [None, self.g_dim])
         self.ground_truth_out = Concatenate()([self.ground_truth_state_out, self.ground_truth_goal_out])
 
-        self.scaled_out = Concatenate()([self.state_out, self.goal_out])
+        self.scaled_out = Concatenate()([self.scaled_state_out, self.scaled_goal_out])
 
         # Optimization Op
         self.loss = tf.losses.mean_squared_error(self.ground_truth_out, self.scaled_out)
@@ -404,12 +404,17 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
                                     np.reshape(g0, (1, g_dim)),
                                     np.reshape(target, (1, g_dim)))
             # add noise
-            action = target - s0 + action_noise()
+            # action = target - s0 + action_noise()
             # make a step
+            action += action_noise()
             action = np.reshape(action, (a_dim))
             s1 = env.step(action)
+            env.render()
             g1 = s1
             # calc reward
+            last_r = np.linalg.norm(target - g1)
+            if last_r > 10000:
+                break
             r.append(np.linalg.norm(target - g1))
             replay_buffer.add(s0, g0, action, s1, g1, target)
             s0 = s1
@@ -423,7 +428,10 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
 
             # train model_dynamics
             _, md_loss, md_goal_loss = model_dynamics.train(s0_batch, g0_batch, a_batch, s1_batch, g1_batch)
-
+            if i % 100 == 0:
+                s1_pred, g1_pred = model_dynamics.predict(s0_batch, g0_batch, a_batch)
+                print(s1_pred[0] - s1_batch[0])
+                print(g1_pred[0] - g1_batch[0])
             # train policy
             actions = policy.predict(s0_batch, g0_batch, target_batch)
             actions = np.squeeze(actions)
@@ -457,7 +465,7 @@ def main():
             'minibatch_size': 256,
 
             'actor_tau': 0.01,
-            'actor_learning_rate': 0.0001
+            'actor_learning_rate': 0.00001
         }
     with tf.Session() as sess:
 
