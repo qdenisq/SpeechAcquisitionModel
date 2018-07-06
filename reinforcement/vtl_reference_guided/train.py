@@ -1,7 +1,8 @@
 import os
-
+import datetime
 from random import randrange
 import random
+
 import numpy as np
 import tensorflow as tf
 from tensorflow.python.keras.layers import Dense, Input, TimeDistributed, LSTMCell, LSTM, BatchNormalization, Activation, Add, Concatenate
@@ -57,7 +58,7 @@ class ReplayBuffer(object):
 # Taken from https://github.com/openai/baselines/blob/master/baselines/ddpg/noise.py, which is
 # based on http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
 class OrnsteinUhlenbeckActionNoise:
-    def __init__(self, mu, sigma=0.03, theta=.15, dt=1e-2, x0=None):
+    def __init__(self, mu, sigma=0.003, theta=.15, dt=1e-2, x0=None):
         self.theta = theta
         self.mu = mu
         self.sigma = sigma
@@ -157,23 +158,23 @@ class Policy(object):
         goal_x = Input(batch_shape=[None, self.g_dim])
         target_x = Input(batch_shape=[None, self.g_dim])
 
-        state_net = Dense(400)(state_x)
+        state_net = Dense(256)(state_x)
         state_net = BatchNormalization()(state_net)
         state_net = Activation('relu')(state_net)
 
-        goal_net = Dense(400)(goal_x)
+        goal_net = Dense(256)(goal_x)
         goal_net = BatchNormalization()(goal_net)
         goal_net = Activation('relu')(goal_net)
 
-        target_net = Dense(400)(target_x)
+        target_net = Dense(256)(target_x)
         target_net = BatchNormalization()(target_net)
         target_net = Activation('relu')(target_net)
 
         net = Concatenate()([target_net, goal_net])
-        net = Dense(300, activation='relu')(net)
+        net = Dense(128, activation='relu')(net)
 
         net = Concatenate()([net, state_net])
-        net = Dense(30)(net)
+        net = Dense(64)(net)
         net = BatchNormalization()(net)
         net = Activation('tanh')(net)
 
@@ -298,7 +299,7 @@ class ModelDynamics(object):
         # Acion gradients extraction
         self.goal_loss = tf.losses.mean_squared_error(self.ground_truth_goal_out, self.scaled_goal_out)
 
-        self.action_grads = tf.gradients(self.goal_loss, self.inputs_action)
+        self.action_grads = tf.gradients(tf.abs(tf.subtract(self.ground_truth_goal_out, self.scaled_goal_out)), self.inputs_action)
 
         self.num_trainable_vars = len(
             self.network_params) + len(self.target_network_params)
@@ -308,21 +309,21 @@ class ModelDynamics(object):
         goal_x = Input(batch_shape=[None, self.g_dim])
         action_x = Input(batch_shape=[None, self.a_dim])
 
-        state_net = Dense(400)(state_x)
+        state_net = Dense(256)(state_x)
         state_net = BatchNormalization()(state_net)
         state_net = Activation('relu')(state_net)
 
-        goal_net = Dense(400)(goal_x)
+        goal_net = Dense(256)(goal_x)
         goal_net = BatchNormalization()(goal_net)
         goal_net = Activation('relu')(goal_net)
 
         net = Concatenate()([state_net, goal_net])
-        net = Dense(300, activation='relu')(net)
+        net = Dense(64, activation='relu')(net)
 
-        action_net = Dense(300, activation='relu')(action_x)
+        action_net = Dense(64, activation='relu')(action_x)
 
         net = Concatenate()([net, action_net])
-        net = Dense(300)(net)
+        net = Dense(64)(net)
         net = BatchNormalization()(net)
         net = Activation('relu')(net)
 
@@ -384,7 +385,57 @@ class ModelDynamics(object):
         return self.num_trainable_vars
 
 
+def build_summaries():
+    step_loss = tf.Variable(0.)
+    tf.summary.scalar("Per step actor loss", step_loss)
+
+    # episode_ave_max_q = tf.Variable(0.)
+    # tf.summary.scalar("Qmax Value", episode_ave_max_q)
+    #
+    # actor_ep_loss = tf.Variable(0.)
+    # tf.summary.scalar("Actor loss", actor_ep_loss)
+
+    model_dynamics_loss = tf.Variable(0.)
+    tf.summary.scalar("Model dynamics loss", model_dynamics_loss)
+
+
+    model_dynamics_goal_loss = tf.Variable(0.)
+    tf.summary.scalar("Model dynamics goal loss", model_dynamics_goal_loss)
+
+
+    # act_grads = tf.placeholder(dtype=tf.float32, shape=None)
+    # tf.summary.histogram('action_gradients', act_grads)
+    #
+    # actor_grads = tf.placeholder(dtype=tf.float32, shape=None)
+    # tf.summary.histogram('actor_gradients', actor_grads)
+    #
+    # actor_activations = tf.placeholder(dtype=tf.float32, shape=None)
+    # tf.summary.histogram('actor_activations', actor_activations)
+
+
+    variables = [v for v in tf.trainable_variables()]
+    [tf.summary.histogram(v.name, v) for v in variables]
+
+    summary_vars = [step_loss, model_dynamics_loss, model_dynamics_goal_loss]
+    # episode_reward, episode_ave_max_q, actor_ep_loss, critic_loss, avg_action, act_grads, actor_grads, actor_activations]
+
+    summary_vars.extend(variables)
+    summary_ops = tf.summary.merge_all()
+
+    return summary_ops, summary_vars
+
+
+
 def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajectory):
+    sess = tf.get_default_session()
+    summary_ops, summary_vars = build_summaries()
+
+    sess.run(tf.global_variables_initializer())
+    saver = tf.train.Saver(tf.global_variables())
+    dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
+    writer = tf.summary.FileWriter(settings['summary_dir'] + '_' + dt, sess.graph)
+
+
     num_episodes = 10000
     action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim))
     s_dim = settings['state_dim']
@@ -396,6 +447,7 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
         s0 = reference_trajectory[s0_index]
         g0 = s0
         env.reset(s0)
+
         r = []
         # rollout episode
         for j in range(s0_index, len(reference_trajectory) - 1):
@@ -404,7 +456,7 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
                                     np.reshape(g0, (1, g_dim)),
                                     np.reshape(target, (1, g_dim)))
             # add noise
-            # action = target - s0 + action_noise()
+            action = action_noise()
             # make a step
             action += action_noise()
             action = np.reshape(action, (a_dim))
@@ -412,10 +464,10 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             env.render()
             g1 = s1
             # calc reward
-            last_r = np.linalg.norm(target - g1)
-            if last_r > 10000:
+            last_loss = np.linalg.norm(target - g1)
+            if last_loss > 100:
                 break
-            r.append(np.linalg.norm(target - g1))
+            r.append( -1. * np.linalg.norm(target - g1))
             replay_buffer.add(s0, g0, action, s1, g1, target)
             s0 = s1
             g0 = g1
@@ -439,10 +491,19 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
 
             policy.train(s0_batch, g0_batch, target_batch, action_gradients)
 
+            summary_str = sess.run(summary_ops, feed_dict={
+                summary_vars[0]: np.mean(r),
+                summary_vars[1]: md_loss,
+                summary_vars[2]: md_goal_loss,
+            })
+
+            writer.add_summary(summary_str, i)
+            writer.flush()
+
             print('| Reward: {:.4f} |'
                   ' Episode: {:d} |'
                   ' Model dynamics loss: {:.4f}|'
-                  ' MD goal loss: {:.4f}'.format(np.mean(r),
+                  ' MD goal loss: {:.4f}'.format(np.sum(r),
                                                   i,
                                                   md_loss,
                                                   md_goal_loss))
@@ -462,10 +523,12 @@ def main():
             'goal_dim': env.state_dim,
             'goal_bound': env.state_bound,
             'episode_length': 40,
-            'minibatch_size': 256,
+            'minibatch_size': 204,
 
             'actor_tau': 0.01,
-            'actor_learning_rate': 0.00001
+            'actor_learning_rate': 0.00001,
+
+            'summary_dir': './results/summaries'
         }
     with tf.Session() as sess:
 
