@@ -179,11 +179,12 @@ class Policy(object):
         net = Activation('tanh')(net)
 
         action_y = Dense(self.a_dim,
-                        activation='tanh',
+                        # activation='tanh',
                         kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003)
                         )(net)
-        action_y_scaled_out = tf.subtract(action_y, self._b)
-        action_y_scaled_out = tf.divide(action_y_scaled_out, self._k)
+        action_y_scaled_out = action_y
+        # action_y_scaled_out = tf.subtract(action_y, self._b)
+        # action_y_scaled_out = tf.divide(action_y_scaled_out, self._k)
         return state_x, goal_x, target_x, action_y, action_y_scaled_out
 
     def train(self, inputs_state, inputs_goal, inputs_target, a_gradient):
@@ -298,8 +299,8 @@ class ModelDynamics(object):
 
         # Acion gradients extraction
         self.goal_loss = tf.losses.mean_squared_error(self.ground_truth_goal_out, self.scaled_goal_out)
-
-        self.action_grads = tf.gradients(tf.abs(tf.subtract(self.ground_truth_goal_out, self.scaled_goal_out)), self.inputs_action)
+        # self.actor_obj = tf.abs(tf.subtract(self.ground_truth_goal_out, self.scaled_goal_out))
+        self.action_grads = tf.gradients(self.goal_loss, self.inputs_action)
 
         self.num_trainable_vars = len(
             self.network_params) + len(self.target_network_params)
@@ -425,8 +426,30 @@ def build_summaries():
     return summary_ops, summary_vars
 
 
+class real_dynamics(object):
+    def __init__(self, settings):
+        with tf.variable_scope('real_model_dynamics'):
+            self.action_x = Input(batch_shape=[None, settings['action_dim']])
+            self.state_x = Input(batch_shape=[None, settings['state_dim']])
+            self.ground_truth_goal_out = tf.placeholder(tf.float32, [None, settings['state_dim']])
+            self.next_state = tf.add(self.state_x, self.action_x)
+            self.goal_loss = tf.losses.mean_squared_error(self.ground_truth_goal_out, self.next_state)
+            # self.actor_obj = tf.abs(tf.subtract(self.ground_truth_goal_out, self.scaled_goal_out))
+            self.action_grads = tf.gradients(self.goal_loss, self.action_x)
+
+    def action_gradients(self, action, state, ground_truth):
+        sess = tf.get_default_session()
+        return sess.run(self.action_grads, feed_dict={
+            self.action_x: action,
+            self.state_x: state,
+            self.ground_truth_goal_out: ground_truth
+        })
 
 def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajectory):
+
+    # temp
+    dm = real_dynamics(settings)
+
     sess = tf.get_default_session()
     summary_ops, summary_vars = build_summaries()
 
@@ -444,6 +467,9 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
     for i in range(num_episodes):
         # pick random initial state from the reference trajectory
         s0_index = randrange(0, reference_trajectory.shape[0] - 1)
+        if i % 200 == 0:
+            s0_index = 0
+
         s0 = reference_trajectory[s0_index]
         g0 = s0
         env.reset(s0)
@@ -459,19 +485,25 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             action = action_noise()
             # make a step
             action += action_noise()
+            # fix glottis temporary
+            action[24:] = 0.
             action = np.reshape(action, (a_dim))
             s1 = env.step(action)
             env.render()
             g1 = s1
             # calc reward
-            last_loss = np.linalg.norm(target - g1)
-            if last_loss > 100:
-                break
-            r.append( -1. * np.linalg.norm(target - g1))
+            last_loss = np.linalg.norm(target[:24] - g1[:24])
+
+            r.append( -1. * np.linalg.norm(target[:24] - g1[:24]))
             replay_buffer.add(s0, g0, action, s1, g1, target)
             s0 = s1
             g0 = g1
 
+            if last_loss > 5 and i % 200 != 0:
+                break
+        if i % 200 == 0:
+            fname = 'videos/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+            env.dump_episode(fname)
         # train model_dynamics and policy
         minibatch_size = settings['minibatch_size']
         if replay_buffer.size() > minibatch_size:
@@ -488,6 +520,9 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             actions = policy.predict(s0_batch, g0_batch, target_batch)
             actions = np.squeeze(actions)
             action_gradients = model_dynamics.action_gradients(s0_batch, g0_batch, actions, target_batch)[0]
+
+            # temp
+            action_gradients = dm.action_gradients(actions, s0_batch, target_batch)[0]
 
             policy.train(s0_batch, g0_batch, target_batch, action_gradients)
 
@@ -523,7 +558,7 @@ def main():
             'goal_dim': env.state_dim,
             'goal_bound': env.state_bound,
             'episode_length': 40,
-            'minibatch_size': 204,
+            'minibatch_size': 20,
 
             'actor_tau': 0.01,
             'actor_learning_rate': 0.00001,
