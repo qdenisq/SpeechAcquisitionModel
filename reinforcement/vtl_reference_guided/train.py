@@ -107,6 +107,11 @@ class Policy(object):
         self._k = 2. / (np.subtract(y_max, y_min))
         self._b = -0.5 * np.add(y_max, y_min) * self._k
 
+        y_max = [y[1] for y in self.state_bound]
+        y_min = [y[0] for y in self.state_bound]
+        self._k_s = 2. / (np.subtract(y_max, y_min))
+        self._b_s = -0.5 * np.add(y_max, y_min) * self._k_s
+
         # Actor Network
         with tf.variable_scope(self.name + '_policy'):
             self.inputs_state,\
@@ -147,8 +152,12 @@ class Policy(object):
             map(lambda x: tf.div(x, self.batch_size), self.unnormalized_actor_gradients))
 
         # Optimization Op
-        self.optimize = tf.train.AdamOptimizer(self.learning_rate). \
+        self.optimize = tf.train.GradientDescentOptimizer(self.learning_rate*0.01). \
             apply_gradients(zip(self.actor_gradients, self.network_params))
+
+        self.ground_truth_actions = tf.placeholder(tf.float32, [None, self.a_dim])
+        self.loss_1 = tf.losses.mean_squared_error(self.ground_truth_actions, self.scaled_out)
+        self.optimize_1 = tf.train.GradientDescentOptimizer(0.001).minimize(self.loss_1)
 
         self.num_trainable_vars = len(
             self.network_params) + len(self.target_network_params)
@@ -158,25 +167,35 @@ class Policy(object):
         goal_x = Input(batch_shape=[None, self.g_dim])
         target_x = Input(batch_shape=[None, self.g_dim])
 
-        state_net = Dense(256)(state_x)
-        state_net = BatchNormalization()(state_net)
-        state_net = Activation('relu')(state_net)
+        state_x = tf.add(tf.multiply(state_x, self._k_s), self._b_s)
+        goal_x = tf.add(tf.multiply(goal_x, self._k_s), self._b_s)
+        target_x = tf.add(tf.multiply(target_x, self._k_s), self._b_s)
 
-        goal_net = Dense(256)(goal_x)
-        goal_net = BatchNormalization()(goal_net)
-        goal_net = Activation('relu')(goal_net)
+        # temp
+        net = Concatenate()([state_x, goal_x, target_x])
+        net = Dense(256, activation='relu', kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003))(net)
+        net = Dense(128, activation='relu', kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003))(net)
+        net = Dense(64, activation='relu', kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003))(net)
 
-        target_net = Dense(256)(target_x)
-        target_net = BatchNormalization()(target_net)
-        target_net = Activation('relu')(target_net)
-
-        net = Concatenate()([target_net, goal_net])
-        net = Dense(128, activation='relu')(net)
-
-        net = Concatenate()([net, state_net])
-        net = Dense(64)(net)
-        net = BatchNormalization()(net)
-        net = Activation('tanh')(net)
+        # state_net = Dense(256)(state_x)
+        # # state_net = BatchNormalization()(state_net)
+        # state_net = Activation('relu')(state_net)
+        #
+        # goal_net = Dense(256)(goal_x)
+        # # goal_net = BatchNormalization()(goal_net)
+        # goal_net = Activation('relu')(goal_net)
+        #
+        # target_net = Dense(256)(target_x)
+        # # target_net = BatchNormalization()(target_net)
+        # target_net = Activation('relu')(target_net)
+        #
+        # net = Concatenate()([target_net, goal_net])
+        # net = Dense(128, activation='relu')(net)
+        #
+        # net = Concatenate()([net, state_net])
+        # net = Dense(64)(net)
+        # # net = BatchNormalization()(net)
+        # net = Activation('tanh')(net)
 
         action_y = Dense(self.a_dim,
                         # activation='tanh',
@@ -194,6 +213,14 @@ class Policy(object):
                 self.inputs_target: inputs_target,
                 self.action_gradient: a_gradient,
             })
+
+    def train_1(self, inputs_state, inputs_goal, inputs_target, ground_truth_actions):
+        return self.sess.run([self.optimize_1, self.loss_1], feed_dict={
+            self.inputs_state: inputs_state,
+            self.inputs_goal: inputs_goal,
+            self.inputs_target: inputs_target,
+            self.ground_truth_actions: ground_truth_actions,
+        })
 
     def predict(self, inputs_state, inputs_goal, inputs_target):
         return self.sess.run([self.scaled_out], feed_dict={
@@ -407,8 +434,8 @@ def build_summaries():
     # act_grads = tf.placeholder(dtype=tf.float32, shape=None)
     # tf.summary.histogram('action_gradients', act_grads)
     #
-    # actor_grads = tf.placeholder(dtype=tf.float32, shape=None)
-    # tf.summary.histogram('actor_gradients', actor_grads)
+    actor_grads = tf.placeholder(dtype=tf.float32, shape=None)
+    tf.summary.histogram('actor_gradients', actor_grads)
     #
     # actor_activations = tf.placeholder(dtype=tf.float32, shape=None)
     # tf.summary.histogram('actor_activations', actor_activations)
@@ -417,7 +444,7 @@ def build_summaries():
     variables = [v for v in tf.trainable_variables()]
     [tf.summary.histogram(v.name, v) for v in variables]
 
-    summary_vars = [step_loss, model_dynamics_loss, model_dynamics_goal_loss]
+    summary_vars = [step_loss, model_dynamics_loss, model_dynamics_goal_loss ,actor_grads]
     # episode_reward, episode_ave_max_q, actor_ep_loss, critic_loss, avg_action, act_grads, actor_grads, actor_activations]
 
     summary_vars.extend(variables)
@@ -444,6 +471,7 @@ class real_dynamics(object):
             self.state_x: state,
             self.ground_truth_goal_out: ground_truth
         })
+
 
 def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajectory):
 
@@ -482,7 +510,7 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
                                     np.reshape(g0, (1, g_dim)),
                                     np.reshape(target, (1, g_dim)))
             # add noise
-            action = action_noise()
+            # action = action_noise()
             # make a step
             action += action_noise()
             # fix glottis temporary
@@ -499,7 +527,7 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             s0 = s1
             g0 = g1
 
-            if last_loss > 5 and i % 200 != 0:
+            if last_loss > 5. and i % 200 != 0:
                 break
         if i % 200 == 0:
             fname = 'videos/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
@@ -522,14 +550,22 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             action_gradients = model_dynamics.action_gradients(s0_batch, g0_batch, actions, target_batch)[0]
 
             # temp
-            action_gradients = dm.action_gradients(actions, s0_batch, target_batch)[0]
+            action_gradients_1 = dm.action_gradients(actions, s0_batch, target_batch)[0]
+            #
+            # a_temp = np.reshape(np.append([0.]*10, [1.]*20), (1, 30))
+            # s0_temp = np.reshape([1.]*30, (1, 30))
+            # target_temp = np.reshape([3.]*30, (1, 30))
+            # action_gradients = dm.action_gradients(a_temp, s0_temp, target_temp)
 
-            policy.train(s0_batch, g0_batch, target_batch, action_gradients)
+            _, loss = policy.train_1(s0_batch, g0_batch, target_batch, target_batch-g0_batch)
+
+            # policy.train(s0_batch, g0_batch, target_batch, action_gradients_1)
 
             summary_str = sess.run(summary_ops, feed_dict={
                 summary_vars[0]: np.mean(r),
                 summary_vars[1]: md_loss,
                 summary_vars[2]: md_goal_loss,
+                summary_vars[3]: action_gradients_1
             })
 
             writer.add_summary(summary_str, i)
@@ -538,7 +574,7 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             print('| Reward: {:.4f} |'
                   ' Episode: {:d} |'
                   ' Model dynamics loss: {:.4f}|'
-                  ' MD goal loss: {:.4f}'.format(np.sum(r),
+                  ' MD goal loss: {:.4f}'.format(loss,
                                                   i,
                                                   md_loss,
                                                   md_goal_loss))
@@ -558,7 +594,7 @@ def main():
             'goal_dim': env.state_dim,
             'goal_bound': env.state_bound,
             'episode_length': 40,
-            'minibatch_size': 20,
+            'minibatch_size': 200,
 
             'actor_tau': 0.01,
             'actor_learning_rate': 0.00001,
