@@ -138,7 +138,7 @@ class VTLEnv(object):
         return state_out
 
     def reset(self, state_to_reset=None):
-        if state_to_reset is None:
+        if state_to_reset is not None:
             tract_params_to_reset = (ctypes.c_double * (self.number_vocal_tract_parameters))()
             glottis_params_to_reset = (ctypes.c_double * (self.number_glottis_parameters))()
             for i in range(self.number_vocal_tract_parameters):

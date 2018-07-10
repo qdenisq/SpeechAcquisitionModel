@@ -157,7 +157,7 @@ class Policy(object):
 
         self.ground_truth_actions = tf.placeholder(tf.float32, [None, self.a_dim])
         self.loss_1 = tf.losses.mean_squared_error(self.ground_truth_actions, self.scaled_out)
-        self.optimize_1 = tf.train.GradientDescentOptimizer(0.001).minimize(self.loss_1)
+        self.optimize_1 = tf.train.GradientDescentOptimizer(0.0001).minimize(self.loss_1)
 
         self.num_trainable_vars = len(
             self.network_params) + len(self.target_network_params)
@@ -167,15 +167,14 @@ class Policy(object):
         goal_x = Input(batch_shape=[None, self.g_dim])
         target_x = Input(batch_shape=[None, self.g_dim])
 
-        state_x = tf.add(tf.multiply(state_x, self._k_s), self._b_s)
-        goal_x = tf.add(tf.multiply(goal_x, self._k_s), self._b_s)
-        target_x = tf.add(tf.multiply(target_x, self._k_s), self._b_s)
+        # state_x = tf.add(tf.multiply(state_x, self._k_s), self._b_s)
+        # goal_x = tf.add(tf.multiply(goal_x, self._k_s), self._b_s)
+        # target_x = tf.add(tf.multiply(target_x, self._k_s), self._b_s)
 
         # temp
-        net = Concatenate()([state_x, goal_x, target_x])
-        net = Dense(256, activation='relu', kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003))(net)
-        net = Dense(128, activation='relu', kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003))(net)
-        net = Dense(64, activation='relu', kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003))(net)
+        net = Concatenate()([goal_x, target_x])
+        net = Dense(128, activation='relu', kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003))(net)
+        net = Dense(64, activation='tanh', kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003))(net)
 
         # state_net = Dense(256)(state_x)
         # # state_net = BatchNormalization()(state_net)
@@ -579,6 +578,108 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
                                                   md_loss,
                                                   md_goal_loss))
 
+
+def test_policy(settings, policy, model_dynamics, env, replay_buffer, reference_trajectory, render=True):
+
+    # temp
+    dm = real_dynamics(settings)
+
+    sess = tf.get_default_session()
+    summary_ops, summary_vars = build_summaries()
+
+    sess.run(tf.global_variables_initializer())
+    saver = tf.train.Saver(tf.global_variables())
+    dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
+    writer = tf.summary.FileWriter(settings['summary_dir'] + '_' + dt, sess.graph)
+
+
+    num_episodes = 10000
+    action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim))
+    s_dim = settings['state_dim']
+    g_dim = settings['goal_dim']
+    a_dim = settings['action_dim']
+    for i in range(num_episodes):
+        # pick random initial state from the reference trajectory
+        s0_index = randrange(0, reference_trajectory.shape[0] - 1)
+        if i % 200 == 0:
+            s0_index = 0
+        s0 = reference_trajectory[s0_index]
+        g0 = s0
+        s_out = env.reset(s0)
+        if render:
+            env.render()
+        r = []
+        # rollout episode
+        for j in range(s0_index, len(reference_trajectory) - 1):
+            target = reference_trajectory[j + 1]
+            action = policy.predict(np.reshape(s0, (1, s_dim)),
+                                    np.reshape(g0, (1, g_dim)),
+                                    np.reshape(target, (1, g_dim)))
+            # add noise
+            # action = action_noise()
+            # make a step
+            action += action_noise()
+            # fix glottis temporary
+            action = np.reshape(action, (a_dim))
+            s1 = env.step(action)
+            if render:
+                env.render()
+            g1 = s1
+            # calc reward
+            last_loss = np.linalg.norm(target[:24] - g1[:24])
+
+            r.append( -1. * np.linalg.norm(target[:24] - g1[:24]))
+            replay_buffer.add(s0, g0, action, s1, g1, target)
+            s0 = s1
+            g0 = g1
+
+            if last_loss > 4. and i % 200 != 0:
+                break
+        if i % 200 == 0:
+            fname = 'videos/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+            env.dump_episode(fname)
+        # train model_dynamics and policy
+        minibatch_size = settings['minibatch_size']
+        if replay_buffer.size() > minibatch_size:
+            s0_batch, g0_batch, a_batch, s1_batch, g1_batch, target_batch = \
+                replay_buffer.sample_batch(minibatch_size)
+
+            # # # train policy
+            # actions = policy.predict(s0_batch, g0_batch, target_batch)
+            # actions = np.squeeze(actions)
+            # action_gradients = model_dynamics.action_gradients(s0_batch, g0_batch, actions, target_batch)[0]
+            #
+            # # temp
+            # action_gradients_1 = dm.action_gradients(actions, s0_batch, target_batch)[0]
+            # #
+            # # a_temp = np.reshape(np.append([0.]*10, [1.]*20), (1, 30))
+            # # s0_temp = np.reshape([1.]*30, (1, 30))
+            # # target_temp = np.reshape([3.]*30, (1, 30))
+            # # action_gradients = dm.action_gradients(a_temp, s0_temp, target_temp)
+
+            _, loss = policy.train_1(s0_batch, g0_batch, target_batch, target_batch-g0_batch)
+
+            # policy.train(s0_batch, g0_batch, target_batch, action_gradients_1)
+
+            summary_str = sess.run(summary_ops, feed_dict={
+                summary_vars[0]: np.mean(r),
+                summary_vars[1]: loss,
+                summary_vars[2]: 0,
+                summary_vars[3]: 0
+            })
+
+            writer.add_summary(summary_str, i)
+            writer.flush()
+
+            print('| Reward: {:.4f} |'
+                  ' Episode: {:d} |'
+                  ' Model dynamics loss: {:.4f}|'
+                  ' MD goal loss: {:.4f}'.format(loss,
+                                                  i,
+                                                  0,
+                                                  0))
+
+
 def main():
     speaker_fname = os.path.join(r'C:\Study\SpeechAcquisitionModel\VTL', 'JD2.speaker')
     lib_path = os.path.join(r'C:\Study\SpeechAcquisitionModel\VTL', 'VocalTractLab2.dll')
@@ -594,7 +695,7 @@ def main():
             'goal_dim': env.state_dim,
             'goal_bound': env.state_bound,
             'episode_length': 40,
-            'minibatch_size': 200,
+            'minibatch_size': 512,
 
             'actor_tau': 0.01,
             'actor_learning_rate': 0.00001,
@@ -612,7 +713,7 @@ def main():
         with open(reference_fname, 'rb') as f:
             (tract_params, glottis_params) = pickle.load(f)
             target_trajectory = np.hstack((np.array(tract_params), np.array(glottis_params)))
-        train(settings, policy, md, env, replay_buffer, target_trajectory)
+        test_policy(settings, policy, md, env, replay_buffer, target_trajectory, True)
     return
 
 
