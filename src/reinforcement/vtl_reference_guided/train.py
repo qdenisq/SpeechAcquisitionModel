@@ -185,35 +185,36 @@ class Policy(object):
         goal_x = tf.add(tf.multiply(goal_x, self._k_s), self._b_s)
         target_x = tf.add(tf.multiply(target_x, self._k_s), self._b_s)
 
-        # # temp
-        # net = Concatenate()([goal_x, target_x])
-        # net = Dense(128, activation='relu', kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003))(net)
-        # net = Dense(64, activation='tanh', kernel_initializer=RandomUniform(minval=-0.003, maxval=0.003))(net)
+        # temp
+        net = Concatenate()([state_x, goal_x, target_x])
+        net = Dense(128, activation='relu', kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003))(net)
+        net = Dense(128, activation='relu', kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003))(net)
+        net = Dense(64, activation='tanh', kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003))(net)
 
-        state_net = Dense(256)(state_x)
-        state_net = BatchNormalization()(state_net)
-        state_net = Activation('relu')(state_net)
-
-        goal_net = Dense(256)(goal_x)
-        goal_net = BatchNormalization()(goal_net)
-        goal_net = Activation('relu')(goal_net)
-
-        target_net = Dense(256)(target_x)
-        target_net = BatchNormalization()(target_net)
-        target_net = Activation('relu')(target_net)
-
-        net = Concatenate()([target_net, goal_net])
-        net = Dense(128, activation='relu')(net)
-
-        net = Concatenate()([net, state_net])
-        net = Dense(64)(net)
-        # net = BatchNormalization()(net)
-        net = Activation('tanh')(net)
-
-        net = Dense(self.a_dim,
-                        activation='tanh',
-                        kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003)
-                        )(net)
+        # state_net = Dense(256)(state_x)
+        # state_net = BatchNormalization()(state_net)
+        # state_net = Activation('relu')(state_net)
+        #
+        # goal_net = Dense(256)(goal_x)
+        # goal_net = BatchNormalization()(goal_net)
+        # goal_net = Activation('relu')(goal_net)
+        #
+        # target_net = Dense(256)(target_x)
+        # target_net = BatchNormalization()(target_net)
+        # target_net = Activation('relu')(target_net)
+        #
+        # net = Concatenate()([target_net, goal_net])
+        # net = Dense(128, activation='relu')(net)
+        #
+        # net = Concatenate()([net, state_net])
+        # net = Dense(64)(net)
+        # # net = BatchNormalization()(net)
+        # net = Activation('tanh')(net)
+        #
+        # net = Dense(self.a_dim,
+        #                 activation='tanh',
+        #                 kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003)
+        #                 )(net)
         action_y = Dense(self.a_dim)(net)
         action_y_scaled_out = action_y
         # action_y_scaled_out = tf.subtract(action_y, self._b)
@@ -287,7 +288,7 @@ class ModelDynamics(object):
         self.goal_bound = model_settings['goal_bound']
         self.a_dim = model_settings['action_dim']
         self.action_bound = model_settings['action_bound']
-        self.learning_rate = model_settings['actor_learning_rate']
+        self.learning_rate = model_settings['model_dynamics_learning_rate']
         self.tau = model_settings['actor_tau']
         self.batch_size = model_settings['minibatch_size']
         self.state_goal_gamma = 0.5
@@ -578,8 +579,6 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             env.render()
             g1 = s1
 
-            s1_expexted = s0 + action
-            err = np.mean(s1_expexted - s1)
             # calc reward
             last_loss = np.linalg.norm(target - g1)
 
@@ -600,7 +599,8 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
                 replay_buffer.sample_batch(minibatch_size)
 
             # train model_dynamics
-            _, md_loss, md_goal_loss, md_abs_loss, md_cos_loss, s1_pred1 = model_dynamics.train(s0_batch, g0_batch, a_batch, s1_batch, g1_batch)
+            md_loss, md_goal_loss, md_abs_loss, md_cos_loss, s1_pred1 = (0, 0, 0, 0, 0)
+            # _, md_loss, md_goal_loss, md_abs_loss, md_cos_loss, s1_pred1 = model_dynamics.train(s0_batch, g0_batch, a_batch, s1_batch, g1_batch)
             if i % 200 == 0:
                 s1_pred, g1_pred = model_dynamics.predict(s0_batch, g0_batch, a_batch)
                 ds_pred = s1_pred - s0_batch
@@ -610,9 +610,8 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             # train policy
             actions = policy.predict(s0_batch, g0_batch, target_batch)
             actions = np.squeeze(actions)
-            action_gradients = model_dynamics.action_gradients(s0_batch, g0_batch, actions, target_batch)[0]
+            # action_gradients = model_dynamics.action_gradients(s0_batch, g0_batch, actions, target_batch)[0]
 
-            loss = np.mean(np.linalg.norm(actions - (target_batch - g0_batch), axis=1))
             # temp
             # action_gradients_1, loss = dm.action_gradients(actions, s0_batch, target_batch)
             # action_gradients_1 = action_gradients_1[0]
@@ -624,13 +623,15 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
 
             # loss_0, _ = policy.train_2(s0_batch, g0_batch, target_batch)
             desired_actions = target_batch - g0_batch
+            action_loss = ((actions - desired_actions) ** 2).mean(axis=None)
+                # np.mean(np.linalg.norm(actions - desired_actions, axis=1))
             _ = policy.train_1(s0_batch, g0_batch, target_batch, desired_actions)
 
 
             # _ = policy.train(s0_batch, g0_batch, target_batch, action_gradients)
 
             summary_str = sess.run(summary_ops, feed_dict={
-                summary_vars[0]: loss,
+                summary_vars[0]: action_loss,
                 summary_vars[1]: md_loss,
                 summary_vars[2]: md_goal_loss,
                 summary_vars[3]: 0
@@ -643,7 +644,7 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
                   ' Policy loss: {:.4f}'
                   ' Model dynamics loss: {:.4f}|'
                   ' MD goal loss: {:.4f}'.format(i,
-                                                 loss,
+                                                 action_loss,
                                                   md_loss,
                                                   md_goal_loss))
 
@@ -769,7 +770,9 @@ def main():
             'minibatch_size': 1024,
 
             'actor_tau': 0.01,
-            'actor_learning_rate': 0.00001,
+            'actor_learning_rate': 0.000001,
+
+            'model_dynamics_learning_rate': 0.00001,
 
             'summary_dir': r'C:\Study\SpeechAcquisitionModel\reports\summaries',
             'videos_dir': r'C:\Study\SpeechAcquisitionModel\reports\videos'
