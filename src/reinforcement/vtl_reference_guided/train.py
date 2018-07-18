@@ -6,6 +6,7 @@ from collections import deque
 from random import randrange
 
 import numpy as np
+from scipy import spatial
 import tensorflow as tf
 from tensorflow.python.keras.initializers import RandomUniform
 from tensorflow.python.keras.layers import Dense, Input, BatchNormalization, Activation, Concatenate
@@ -147,19 +148,21 @@ class Policy(object):
 
         # Combine the gradients here
         self.actor_gradients = \
-            tf.train.GradientDescentOptimizer(0.0001).compute_gradients(self.scaled_out, self.network_params, grad_loss = self.action_gradient)
-        self.unnormalized_actor_gradients = tf.gradients(
-            self.scaled_out, self.network_params, self.action_gradient)
+            tf.train.GradientDescentOptimizer(self.learning_rate).compute_gradients(self.scaled_out,
+                                                                                    self.network_params,
+                                                                                    grad_loss=self.action_gradient)
+        # self.unnormalized_actor_gradients = tf.gradients(
+        #     self.scaled_out, self.network_params, self.action_gradient)
         # self.actor_gradients = list(
         #     map(lambda x: tf.div(x, self.batch_size), self.unnormalized_actor_gradients))
 
         # Optimization Op
-        self.optimize = tf.train.GradientDescentOptimizer(0.0001). \
+        self.optimize = tf.train.GradientDescentOptimizer(self.learning_rate). \
             apply_gradients(self.actor_gradients)
 
         self.ground_truth_actions = tf.placeholder(tf.float32, [None, self.a_dim])
         self.loss_1 = tf.losses.mean_squared_error(self.ground_truth_actions, self.scaled_out)
-        self.optimize_1 = tf.train.GradientDescentOptimizer(0.0001).minimize(self.loss_1)
+        self.optimize_1 = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss_1)
 
         self.ground_truth_goal_out = tf.placeholder(tf.float32, [None, self.s_dim])
         self.next_state = tf.add(self.inputs_state, self.scaled_out)
@@ -207,10 +210,11 @@ class Policy(object):
         # net = BatchNormalization()(net)
         net = Activation('tanh')(net)
 
-        action_y = Dense(self.a_dim,
-                        # activation='tanh',
+        net = Dense(self.a_dim,
+                        activation='tanh',
                         kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003)
                         )(net)
+        action_y = Dense(self.a_dim)(net)
         action_y_scaled_out = action_y
         # action_y_scaled_out = tf.subtract(action_y, self._b)
         # action_y_scaled_out = tf.divide(action_y_scaled_out, self._k)
@@ -286,6 +290,9 @@ class ModelDynamics(object):
         self.learning_rate = model_settings['actor_learning_rate']
         self.tau = model_settings['actor_tau']
         self.batch_size = model_settings['minibatch_size']
+        self.state_goal_gamma = 0.5
+        self.l2_cos_gamma = 0.5
+
 
         y_max = [y[1] for y in self.state_bound]
         y_min = [y[0] for y in self.state_bound]
@@ -338,13 +345,24 @@ class ModelDynamics(object):
         self.scaled_out = Concatenate()([self.scaled_state_out, self.scaled_goal_out])
 
         # Optimization Op
-        self.loss = tf.losses.absolute_difference(self.ground_truth_state_out, self.scaled_state_out)
+        self.state_abs_loss = tf.losses.absolute_difference(self.ground_truth_state_out, self.scaled_state_out)
+        self.state_cos_loss = tf.losses.cosine_distance(tf.nn.l2_normalize(self.ground_truth_state_out - self.inputs_state, axis=1),
+                                                  tf.nn.l2_normalize(self.scaled_state_out - self.inputs_state, axis=1),
+                                                  axis=1)
+        self.state_loss = tf.add(self.state_abs_loss * self.l2_cos_gamma, self.state_cos_loss * (1. - self.l2_cos_gamma))
+
+        self.goal_abs_loss = tf.losses.absolute_difference(self.ground_truth_goal_out, self.scaled_goal_out)
+        self.goal_cos_loss = tf.losses.cosine_distance(
+            tf.nn.l2_normalize(self.ground_truth_goal_out - self.inputs_goal, axis=1),
+            tf.nn.l2_normalize(self.scaled_goal_out - self.inputs_goal, axis=1),
+            axis=1)
+        self.goal_loss = tf.add(self.goal_abs_loss * self.l2_cos_gamma, self.goal_cos_loss * (1. - self.l2_cos_gamma))
+
+        self.loss = tf.add(self.state_loss * self.state_goal_gamma, self.goal_loss * (1. - self.state_goal_gamma))
         self.optimize = tf.train.AdamOptimizer(
             self.learning_rate * 0.1).minimize(self.loss)
 
         # Acion gradients extraction
-        self.goal_loss = tf.losses.mean_squared_error(self.ground_truth_goal_out, self.scaled_goal_out)
-        # self.actor_obj = tf.abs(tf.subtract(self.ground_truth_goal_out, self.scaled_goal_out))
         self.action_grads = tf.gradients(self.goal_loss, self.inputs_action)
 
         self.num_trainable_vars = len(
@@ -363,8 +381,7 @@ class ModelDynamics(object):
         goal_net = BatchNormalization()(goal_net)
         goal_net = Activation('relu')(goal_net)
 
-        # net = Concatenate()([state_net, goal_net])
-        net = state_net
+        net = Concatenate()([state_net, goal_net])
         net = Dense(64, activation='relu')(net)
 
         action_net = Dense(64, activation='relu')(action_x)
@@ -376,8 +393,8 @@ class ModelDynamics(object):
 
         # state output branch
         state_y = Dense(self.s_dim,
-                        activation='tanh'
-                        # kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003)
+                        activation='tanh',
+                        kernel_initializer=RandomUniform(minval=-0.0003, maxval=0.0003)
                         )(net)
         state_y = Dense(self.s_dim)(state_y)
         state_y = tf.add(state_y, state_x)
@@ -398,8 +415,17 @@ class ModelDynamics(object):
         # goal_y_scaled = tf.divide(goal_y_scaled, self._k_goal)
         return state_x, goal_x, action_x, state_y, state_y_scaled, goal_y, goal_y_scaled
 
+    def calc_loss(self, inputs_state, inputs_goal, inputs_action, ground_truth_state_out, ground_truth_goal_out):
+        return self.sess.run([self.loss, self.goal_loss, self.state_abs_loss, self.state_cos_loss, self.scaled_state_out], feed_dict={
+                self.inputs_state: inputs_state,
+                self.inputs_action: inputs_action,
+                self.inputs_goal: inputs_goal,
+                self.ground_truth_state_out: ground_truth_state_out,
+                self.ground_truth_goal_out: ground_truth_goal_out,
+        })
+
     def train(self, inputs_state, inputs_goal, inputs_action, ground_truth_state_out, ground_truth_goal_out):
-        return self.sess.run([self.optimize, self.loss, self.goal_loss], feed_dict={
+        return self.sess.run([self.optimize, self.loss, self.goal_loss, self.state_abs_loss, self.state_cos_loss, self.scaled_state_out], feed_dict={
                 self.inputs_state: inputs_state,
                 self.inputs_action: inputs_action,
                 self.inputs_goal: inputs_goal,
@@ -574,17 +600,19 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
                 replay_buffer.sample_batch(minibatch_size)
 
             # train model_dynamics
-            s1_batch_test = s0_batch + a_batch
-            _, md_loss, md_goal_loss = model_dynamics.train(s0_batch, g0_batch, a_batch, s1_batch_test, g1_batch)
+            _, md_loss, md_goal_loss, md_abs_loss, md_cos_loss, s1_pred1 = model_dynamics.train(s0_batch, g0_batch, a_batch, s1_batch, g1_batch)
             if i % 200 == 0:
                 s1_pred, g1_pred = model_dynamics.predict(s0_batch, g0_batch, a_batch)
-                print(s1_pred[0] - s1_batch[0])
-                print(g1_pred[0] - g1_batch[0])
+                ds_pred = s1_pred - s0_batch
+                ds = s1_batch - s0_batch
+                cos_dist = np.mean([spatial.distance.cosine(ds_pred[e], ds[e]) for e in range(minibatch_size)])
+                print("cosine distance: ", cos_dist)
             # train policy
-            # actions = policy.predict(s0_batch, g0_batch, target_batch)
-            # actions = np.squeeze(actions)
-            # action_gradients = model_dynamics.action_gradients(s0_batch, g0_batch, actions, target_batch)[0]
+            actions = policy.predict(s0_batch, g0_batch, target_batch)
+            actions = np.squeeze(actions)
+            action_gradients = model_dynamics.action_gradients(s0_batch, g0_batch, actions, target_batch)[0]
 
+            loss = np.mean(np.linalg.norm(actions - (target_batch - g0_batch), axis=1))
             # temp
             # action_gradients_1, loss = dm.action_gradients(actions, s0_batch, target_batch)
             # action_gradients_1 = action_gradients_1[0]
@@ -596,7 +624,8 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
 
             # loss_0, _ = policy.train_2(s0_batch, g0_batch, target_batch)
             desired_actions = target_batch - g0_batch
-            loss, _ = policy.train_1(s0_batch, g0_batch, target_batch, desired_actions)
+            _ = policy.train_1(s0_batch, g0_batch, target_batch, desired_actions)
+
 
             # _ = policy.train(s0_batch, g0_batch, target_batch, action_gradients)
 
@@ -740,7 +769,7 @@ def main():
             'minibatch_size': 1024,
 
             'actor_tau': 0.01,
-            'actor_learning_rate': 0.0001,
+            'actor_learning_rate': 0.00001,
 
             'summary_dir': r'C:\Study\SpeechAcquisitionModel\reports\summaries',
             'videos_dir': r'C:\Study\SpeechAcquisitionModel\reports\videos'
