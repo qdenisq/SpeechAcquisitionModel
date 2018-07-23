@@ -377,52 +377,94 @@ class ModelDynamics(object):
             self.network_params) + len(self.target_network_params)
 
     def create_model_dynamics_network(self):
-        state_x = Input(batch_shape=[None, self.s_dim])
-        goal_x = Input(batch_shape=[None, self.g_dim])
-        action_x = Input(batch_shape=[None, self.a_dim])
+        state_x = tf.placeholder(tf.float32, [None, self.s_dim])
+        action_x = tf.placeholder(tf.float32, [None, self.a_dim])
+        goal_x = tf.placeholder(tf.float32, [None, self.g_dim])
 
-        state_net = Dense(64)(state_x)
-        state_net = Activation('tanh')(state_net)
+        net = tf.concat([state_x, action_x, goal_x], axis=1)
+        self.conc = net
 
-        goal_net = Dense(64)(goal_x)
-        goal_net = Activation('tanh')(goal_net)
+        n_hidden_0 = 128
+        w0 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_0]))
+        b0 = tf.Variable(tf.random_normal([n_hidden_0]))
+        net = tf.add(tf.matmul(net, w0), b0)
+        net = tf.nn.tanh(net)
 
-        action_net = Dense(64, activation='tanh')(action_x)
+        n_hidden_1 = 64
+        w1 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_1]))
+        b1 = tf.Variable(tf.random_normal([n_hidden_1]))
+        s_net = tf.add(tf.matmul(net, w1), b1)
+        s_net = tf.nn.tanh(s_net)
 
+        n_out = self.s_dim
+        w2 = tf.Variable(tf.random_normal([s_net.get_shape().as_list()[1], n_out]))
+        b2 = tf.Variable(tf.random_normal([n_out]))
+        s_net = tf.add(tf.matmul(s_net, w2), b2)
 
-        # temp
+        state_y = s_net
+        state_y_scaled = state_y
 
-        net = Concatenate()([state_net, goal_net, action_net])
+        n_hidden_1 = 64
+        w3 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_1]))
+        b3 = tf.Variable(tf.random_normal([n_hidden_1]))
+        g_net = tf.add(tf.matmul(net, w3), b3)
+        g_net = tf.nn.tanh(g_net)
 
-        # net = Concatenate()([state_net, goal_net])
-        # net = Dense(64, activation='relu')(net)
+        n_out = self.s_dim
+        w4 = tf.Variable(tf.random_normal([g_net.get_shape().as_list()[1], n_out]))
+        b4 = tf.Variable(tf.random_normal([n_out]))
+        g_net = tf.add(tf.matmul(g_net, w4), b4)
+
+        goal_y = g_net
+        goal_y_scaled = goal_y
+
+        #
+        # state_x = Input(batch_shape=[None, self.s_dim])
+        # goal_x = Input(batch_shape=[None, self.g_dim])
+        # action_x = Input(batch_shape=[None, self.a_dim])
+        #
+        # state_net = Dense(64)(state_x)
+        # state_net = Activation('tanh')(state_net)
+        #
+        # goal_net = Dense(64)(goal_x)
+        # goal_net = Activation('tanh')(goal_net)
+        #
+        # action_net = Dense(64, activation='tanh')(action_x)
         #
         #
-        # net = Concatenate()([net, action_net])
-        # net = Dense(64)(net)
-        # net = BatchNormalization()(net)
-        # net = Activation('tanh')(net)
-
-        # state output branch
-        state_y = Dense(self.s_dim,
-                        activation='tanh'
-                        )(net)
-        # state_y = Dense(self.s_dim)(state_y)
-
-        state_y_scaled = tf.subtract(state_y, self._b_state)
-        state_y_scaled = tf.divide(state_y_scaled, self._k_state)
-        state_y_scaled = tf.add(state_x, state_y_scaled)
-
-
-        # goal output branch
-        goal_y = Dense(self.g_dim,
-                        activation='tanh'
-                        )(net)
-        # goal_y = Dense(self.g_dim)(goal_y)
-
-        goal_y_scaled = tf.subtract(goal_y, self._b_goal)
-        goal_y_scaled = tf.divide(goal_y_scaled, self._k_goal)
-        goal_y_scaled = tf.add(goal_y_scaled, goal_x)
+        # # temp
+        #
+        # net = Concatenate()([state_net, goal_net, action_net])
+        #
+        # # net = Concatenate()([state_net, goal_net])
+        # # net = Dense(64, activation='relu')(net)
+        # #
+        # #
+        # # net = Concatenate()([net, action_net])
+        # # net = Dense(64)(net)
+        # # net = BatchNormalization()(net)
+        # # net = Activation('tanh')(net)
+        #
+        # # state output branch
+        # state_y = Dense(self.s_dim,
+        #                 activation='tanh'
+        #                 )(net)
+        # # state_y = Dense(self.s_dim)(state_y)
+        #
+        # state_y_scaled = tf.subtract(state_y, self._b_state)
+        # state_y_scaled = tf.divide(state_y_scaled, self._k_state)
+        # state_y_scaled = tf.add(state_x, state_y_scaled)
+        #
+        #
+        # # goal output branch
+        # goal_y = Dense(self.g_dim,
+        #                 activation='tanh'
+        #                 )(net)
+        # # goal_y = Dense(self.g_dim)(goal_y)
+        #
+        # goal_y_scaled = tf.subtract(goal_y, self._b_goal)
+        # goal_y_scaled = tf.divide(goal_y_scaled, self._k_goal)
+        # goal_y_scaled = tf.add(goal_y_scaled, goal_x)
 
         return state_x, goal_x, action_x, state_y, state_y_scaled, goal_y, goal_y_scaled
 
@@ -541,6 +583,23 @@ class real_dynamics(object):
             self.ground_truth_goal_out: ground_truth
         })
 
+def normalize(data, bound):
+    y_max = [y[1] for y in bound]
+    y_min = [y[0] for y in bound]
+    k = np.subtract(y_max, y_min) / 2.
+    b = np.add(y_max, y_min) / 2.
+    normed_data = (data - b) / k
+    return normed_data
+
+
+def denormalize(normed_data, bound):
+    y_max = [y[1] for y in bound]
+    y_min = [y[0] for y in bound]
+    k = np.subtract(y_max, y_min) / 2.
+    b = np.add(y_max, y_min) / 2.
+    data = normed_data * k + b
+    return data
+
 
 def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajectory):
 
@@ -559,6 +618,10 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
     s_dim = settings['state_dim']
     g_dim = settings['goal_dim']
     a_dim = settings['action_dim']
+    s_bound = settings['state_bound']
+    a_bound = settings['action_bound']
+    g_bound = settings['goal_bound']
+
     for i in range(num_episodes):
         # pick random initial state from the reference trajectory
         s0_index = randrange(0, reference_trajectory.shape[0] - 1)
@@ -578,9 +641,7 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
                                     np.reshape(target, (1, g_dim)))
             # add noise
             a_noise = action_noise()
-            state_max = np.array([y[1] for y in settings['state_bound']])
-            state_min = np.array([y[0] for y in settings['state_bound']])
-            a_noise = a_noise * (state_max - state_min)
+            a_noise = denormalize(a_noise, settings['action_bound'])
             action = a_noise
             action = np.reshape(action, (a_dim))
             # make a step
@@ -588,10 +649,6 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
 
             # temp. just check of md net
             # s1 = s0 + action
-
-            if any([s1[l] > state_max[l] or s1[l] < state_min[l] for l in range(settings['state_dim'])]):
-                asd = [s1[l] > state_max[l] or s1[l] < state_min[l] for l in range(settings['state_dim'])]
-                k = 0
 
             env.render()
             g1 = s1
@@ -602,9 +659,6 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             r.append( -1. * np.linalg.norm(target - g1))
 
             if i % 200 != 0:
-                if any([g0[l] > state_max[l] or g0[l] < state_min[l] for l in range(settings['state_dim'])]):
-                    asd = [g0[l] > state_max[l] or g0[l] < state_min[l] for l in range(settings['state_dim'])]
-                    k = 0
                 replay_buffer.add(s0, g0, action, s1, g1, target)
             s0 = s1
             g0 = g1
@@ -622,7 +676,17 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
 
             # train model_dynamics
             # md_loss, md_goal_loss, md_abs_loss, md_cos_loss, s1_pred1 = (0, 0, 0, 0, 0)
-            _, md_loss, md_goal_loss, md_abs_loss, md_cos_loss, s1_pred1 = model_dynamics.train(s0_batch, g0_batch, a_batch, s1_batch, g1_batch)
+
+            # normalize data before train
+            s0_batch_normed = normalize(s0_batch, s_bound)
+            g0_batch_normed = normalize(g0_batch, g_bound)
+            a_batch_normed = normalize(a_batch, a_bound)
+            s1_batch_normed = normalize(s1_batch, s_bound)
+            g1_batch_normed = normalize(g1_batch, g_bound)
+
+
+            _, md_loss, md_goal_loss, md_abs_loss, md_cos_loss, s1_pred1 = \
+                model_dynamics.train(s0_batch_normed, g0_batch_normed, a_batch_normed, s1_batch_normed, g1_batch_normed)
             if i % 200 == 0:
                 s1_pred, g1_pred = model_dynamics.predict(s0_batch, g0_batch, a_batch)
                 ds_pred = s1_pred - s0_batch

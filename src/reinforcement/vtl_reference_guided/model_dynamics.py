@@ -234,6 +234,10 @@ def train(settings, model_dynamics, replay_buffer, reference_trajectory):
     action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(settings['state_dim']), sigma=0.005)
     s_dim = settings['state_dim']
 
+    s_bound = settings['state_bound']
+    a_bound = settings['action_bound']
+
+
     while replay_buffer.size() < 50000:
         # pick random initial state from the reference trajectory
         s0_index = randrange(0, reference_trajectory.shape[0] - 1)
@@ -244,7 +248,8 @@ def train(settings, model_dynamics, replay_buffer, reference_trajectory):
         for j in range(s0_index, len(reference_trajectory) - 1):
             target = reference_trajectory[j + 1]
             # add noise
-            a_noise = action_noise()
+            normed_a_noise = action_noise()
+            a_noise = denormalize(normed_a_noise, a_bound)
             action = a_noise
             action = np.reshape(action, (s_dim))
             # make a step
@@ -264,7 +269,13 @@ def train(settings, model_dynamics, replay_buffer, reference_trajectory):
 
             # train model_dynamics
             # md_loss, md_goal_loss, md_abs_loss, md_cos_loss, s1_pred1 = (0, 0, 0, 0, 0)
-            _, md_loss, md_abs_loss, md_cos_loss, md_mse_loss, s1_pred1, conc, grads = model_dynamics.train(s0_batch, a_batch, s1_batch)
+
+            # norm data before train
+            s0_batch_normed = normalize(s0_batch, s_bound)
+            a_batch_normed = normalize(a_batch, a_bound)
+            s1_batch_normed = normalize(s1_batch, s_bound)
+
+            _, md_loss, md_abs_loss, md_cos_loss, md_mse_loss, s1_pred1, conc, grads = model_dynamics.train(s0_batch_normed, a_batch_normed, s1_batch_normed)
             if i % 200 == 0:
                 s1_pred = model_dynamics.predict(s0_batch, a_batch)
                 ds_pred = s1_pred - s0_batch
@@ -396,15 +407,35 @@ def test_policy(settings, policy, model_dynamics, env, replay_buffer, reference_
                                                   0))
 
 
+def normalize(data, bound):
+    y_max = [y[1] for y in bound]
+    y_min = [y[0] for y in bound]
+    k = np.subtract(y_max, y_min) / 2.
+    b = np.add(y_max, y_min) / 2.
+    normed_data = (data - b) / k
+    return normed_data
+
+
+def denormalize(normed_data, bound):
+    y_max = [y[1] for y in bound]
+    y_min = [y[0] for y in bound]
+    k = np.subtract(y_max, y_min) / 2.
+    b = np.add(y_max, y_min) / 2.
+    data = normed_data * k + b
+    return data
+
+
 def main():
     s_dim = 30
     state_bound = [(-1., 1)]*s_dim
-    # state_bound[0] = (0, 8000)
+    state_bound[0] = (0, 8000)
+
+    action_bound = [(-abs(y[1] - y[0]), abs(y[1] - y[0])) for y in state_bound]
     settings = {
             'state_dim': s_dim,
             'state_bound': state_bound,
             'action_dim': s_dim,
-            'action_bound': state_bound,
+            'action_bound': action_bound,
 
             'minibatch_size': 2048,
 
@@ -422,8 +453,9 @@ def main():
 
         action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(settings['state_dim']), sigma=0.01)
 
-        target_trajectory = [action_noise() for _ in range(50)]
-        target_trajectory = np.cumsum(target_trajectory, axis=0)
+        normed_target_trajectory = [action_noise() for _ in range(50)]
+        normed_target_trajectory = np.cumsum(normed_target_trajectory, axis=0)
+        target_trajectory = denormalize(normed_target_trajectory, state_bound)
         train(settings, md, replay_buffer, target_trajectory)
     return
 
