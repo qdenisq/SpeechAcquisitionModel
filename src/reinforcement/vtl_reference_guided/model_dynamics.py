@@ -138,17 +138,23 @@ class ModelDynamics(object):
         action_x = tf.placeholder(tf.float32, [None, self.s_dim])
         net = tf.concat([state_x, action_x], axis=1)
         self.conc = net
-        n_hidden_0 = 100
+
+        n_hidden_0 = 128
         w0 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_0]))
         b0 = tf.Variable(tf.random_normal([n_hidden_0]))
         net = tf.add(tf.matmul(net, w0), b0)
         net = tf.nn.tanh(net)
 
-        n_out = self.s_dim
-        w1 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_out]))
-        b1 = tf.Variable(tf.random_normal([n_out]))
+        n_hidden_1 = 64
+        w1 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_1]))
+        b1 = tf.Variable(tf.random_normal([n_hidden_1]))
         net = tf.add(tf.matmul(net, w1), b1)
         net = tf.nn.tanh(net)
+
+        n_out = self.s_dim
+        w2 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_out]))
+        b2 = tf.Variable(tf.random_normal([n_out]))
+        net = tf.add(tf.matmul(net, w2), b2)
 
         state_y = net
         state_y_scaled = state_y
