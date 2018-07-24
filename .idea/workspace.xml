@@ -28,11 +28,11 @@
       <file leaf-file-name="train.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-7893">
-              <caret line="402" column="0" lean-forward="true" selection-start-line="402" selection-start-column="0" selection-end-line="402" selection-end-column="0" />
+            <state relative-caret-position="301">
+              <caret line="748" column="49" lean-forward="false" selection-start-line="748" selection-start-column="49" selection-end-line="748" selection-end-column="49" />
               <folding>
                 <element signature="e#0#15#0" expanded="true" />
-                <element signature="e#32149#36105#0" expanded="false" />
+                <element signature="e#27385#31341#0" expanded="false" />
               </folding>
             </state>
           </provider>
@@ -106,8 +106,8 @@
       <file leaf-file-name="vtl_environment.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/VTL/vtl_environment.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="418">
-              <caret line="105" column="7" lean-forward="false" selection-start-line="105" selection-start-column="7" selection-end-line="105" selection-end-column="7" />
+            <state relative-caret-position="-645">
+              <caret line="167" column="0" lean-forward="false" selection-start-line="167" selection-start-column="0" selection-end-line="167" selection-end-column="0" />
               <folding />
             </state>
           </provider>
@@ -171,8 +171,8 @@
         <option value="$PROJECT_DIR$/VTL/vtl_environment.py" />
         <option value="$PROJECT_DIR$/reinforcement/vtl_reference_guided/model_dynamics_nb.ipynb" />
         <option value="$PROJECT_DIR$/reinforcement/vtl_reference_guided/train.py" />
-        <option value="$PROJECT_DIR$/src/VTL/vtl_environment.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/model_dynamics.py" />
+        <option value="$PROJECT_DIR$/src/VTL/vtl_environment.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/train.py" />
       </list>
     </option>
@@ -594,7 +594,7 @@
       <window_info id="Structure" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="1" side_tool="false" content_ui="tabs" />
       <window_info id="Terminal" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.32796317" sideWeight="0.5" order="7" side_tool="false" content_ui="tabs" />
       <window_info id="Favorites" active="false" anchor="left" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="2" side_tool="true" content_ui="tabs" />
-      <window_info id="Debug" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35062006" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
+      <window_info id="Debug" active="true" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="true" show_stripe_button="true" weight="0.35062006" sideWeight="0.5" order="3" side_tool="false" content_ui="tabs" />
       <window_info id="Cvs" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.25" sideWeight="0.5" order="4" side_tool="false" content_ui="tabs" />
       <window_info id="Message" active="false" anchor="bottom" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.33" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
       <window_info id="Commander" active="false" anchor="right" auto_hide="false" internal_type="DOCKED" type="DOCKED" visible="false" show_stripe_button="true" weight="0.4" sideWeight="0.5" order="0" side_tool="false" content_ui="tabs" />
@@ -644,7 +644,7 @@
           </properties>
         </breakpoint>
       </default-breakpoints>
-      <option name="time" value="194" />
+      <option name="time" value="201" />
     </breakpoint-manager>
     <watches-manager />
   </component>
@@ -841,14 +841,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/VTL/vtl_environment.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="418">
-          <caret line="105" column="7" lean-forward="false" selection-start-line="105" selection-start-column="7" selection-end-line="105" selection-end-column="7" />
-          <folding />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../Speech_command_classification/convRNN.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="499">
@@ -904,13 +896,21 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/VTL/vtl_environment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-645">
+          <caret line="167" column="0" lean-forward="false" selection-start-line="167" selection-start-column="0" selection-end-line="167" selection-end-column="0" />
+          <folding />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-7893">
-          <caret line="402" column="0" lean-forward="true" selection-start-line="402" selection-start-column="0" selection-end-line="402" selection-end-column="0" />
+        <state relative-caret-position="301">
+          <caret line="748" column="49" lean-forward="false" selection-start-line="748" selection-start-column="49" selection-end-line="748" selection-end-column="49" />
           <folding>
             <element signature="e#0#15#0" expanded="true" />
-            <element signature="e#32149#36105#0" expanded="false" />
+            <element signature="e#27385#31341#0" expanded="false" />
           </folding>
         </state>
       </provider>
