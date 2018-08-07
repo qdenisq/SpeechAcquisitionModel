@@ -11,6 +11,8 @@ from scipy import spatial
 import tensorflow as tf
 from tensorflow.python.keras.initializers import RandomUniform
 from tensorflow.python.keras.layers import Dense, Input, BatchNormalization, Activation, Concatenate
+import keras
+
 
 from src.VTL.vtl_environment import VTLEnv
 
@@ -127,33 +129,38 @@ class Policy(object):
         # This gradient will be provided by the critic network
         self.action_gradient = tf.placeholder(tf.float32, [None, self.a_dim])
 
-        # Combine the gradients here
-        self.actor_gradients = \
-            tf.train.GradientDescentOptimizer(self.learning_rate).compute_gradients(self.scaled_out,
-                                                                                    self.network_params,
-                                                                                    grad_loss=self.action_gradient)
-        # self.unnormalized_actor_gradients = tf.gradients(
-        #     self.scaled_out, self.network_params, self.action_gradient)
-        # self.actor_gradients = list(
-        #     map(lambda x: tf.div(x, self.batch_size), self.unnormalized_actor_gradients))
+        self.unnormalized_actor_gradients = tf.gradients(
+            self.scaled_out, self.network_params, self.action_gradient)
+        self.actor_gradients = list(
+            map(lambda x: tf.div(x, self.batch_size), self.unnormalized_actor_gradients))
+        self.optimize = tf.train.AdamOptimizer(self.learning_rate).\
+            apply_gradients(zip(self.actor_gradients, self.network_params))
+        #     # Combine the gradients here
+        # self.actor_gradients = \
+        #     tf.train.AdamOptimizer(self.learning_rate).compute_gradients(self.scaled_out,
+        #                                                                             self.network_params,
+        #                                                                             grad_loss=self.action_gradient)
+        #
+        # # Optimization Op
+        # self.optimize = tf.train.AdamOptimizer(self.learning_rate). \
+        #     apply_gradients(self.actor_gradients)
 
-        # Optimization Op
-        self.optimize = tf.train.GradientDescentOptimizer(self.learning_rate). \
-            apply_gradients(self.actor_gradients)
+
 
         self.ground_truth_actions = tf.placeholder(tf.float32, [None, self.a_dim])
         self.se_loss = tf.losses.mean_squared_error(self.ground_truth_actions, self.scaled_out)
         self.se_loss1 = tf.reduce_mean(tf.squared_difference(self.ground_truth_actions ,self.scaled_out))
         self.grads1 = tf.gradients(self.se_loss1, self.scaled_out)
         self.actor_gradients1 = \
-            tf.train.GradientDescentOptimizer(self.learning_rate).compute_gradients(self.scaled_out,
+            tf.train.AdamOptimizer(self.learning_rate).compute_gradients(self.scaled_out,
                                                                                     self.network_params,
                                                                                     grad_loss=self.grads1[0])
         # Optimization Op
-        self.optimize1 = tf.train.GradientDescentOptimizer(self.learning_rate). \
+
+        self.optimize1 = tf.train.AdamOptimizer(self.learning_rate). \
             apply_gradients(self.actor_gradients1)
 
-        self.optimize_1 = tf.train.AdamOptimizer(self.learning_rate).minimize(self.se_loss)
+        self.optimize_1 = tf.train.AdamOptimizer(self.learning_rate).minimize(self.se_loss1)
 
         self.ground_truth_goal_out = tf.placeholder(tf.float32, [None, self.s_dim])
         self.next_state = tf.add(self.inputs_state, self.scaled_out)
@@ -174,8 +181,18 @@ class Policy(object):
         net = tf.concat([state_x, target_x, goal_x], axis=1)
         self.conc = net
 
+
+        #
+        # net = Dense(4 * self.s_dim, input_dim=3 * self.s_dim)(net)
+        # net = tf.nn.relu(net)
+        # net = Dense(2 * self.s_dim)(net)
+        # net = tf.nn.relu(net)
+        # net = Dense(1 * self.s_dim, kernel_initializer=keras.initializers.RandomUniform(minval=-0.005, maxval=0.005))(net)
+        # net = tf.nn.relu(net)
+        # net = Dense(1 * self.s_dim, kernel_initializer=keras.initializers.RandomUniform(minval=-0.005, maxval=0.005))(net)
+
         n_hidden_0 = 128
-        w0 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_0]))
+        w0 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_0], stddev=0.001))
         b0 = tf.Variable(tf.random_normal([n_hidden_0]))
         net = tf.add(tf.matmul(net, w0), b0)
         net = tf.nn.tanh(net)
@@ -204,7 +221,7 @@ class Policy(object):
             })
 
     def train_1(self, inputs_state, inputs_goal, inputs_target, ground_truth_actions):
-        return self.sess.run([self.optimize_1, self.se_loss], feed_dict={
+        return self.sess.run([self.optimize1, self.se_loss1], feed_dict={
             self.inputs_state: inputs_state,
             self.inputs_goal: inputs_goal,
             self.inputs_target: inputs_target,
@@ -283,20 +300,21 @@ class ModelDynamics(object):
         self.scaled_out = Concatenate()([self.scaled_state_out, self.scaled_goal_out])
 
         # Loss Ops
-        self.state_mse_loss = tf.losses.mean_squared_error(self.ground_truth_state_out, self.scaled_state_out, reduction = tf.losses.Reduction.MEAN)
+        self.state_mse_loss = tf.losses.mean_squared_error(self.ground_truth_state_out, self.scaled_state_out)
         self.state_cos_loss = tf.losses.cosine_distance(tf.nn.l2_normalize(self.ground_truth_state_out - self.inputs_state, axis=1),
                                                   tf.nn.l2_normalize(self.scaled_state_out - self.inputs_state, axis=1),
-                                                  axis=1, reduction = tf.losses.Reduction.MEAN)
+                                                  axis=1)
         self.state_loss = tf.add(self.state_mse_loss * self.se_cos_gamma, self.state_cos_loss * (1. - self.se_cos_gamma))
 
-        self.goal_mse_loss = tf.losses.mean_squared_error(self.ground_truth_goal_out, self.scaled_goal_out, reduction=tf.losses.Reduction.MEAN)
+        self.goal_mse_loss = tf.losses.mean_squared_error(self.ground_truth_goal_out, self.scaled_goal_out)
         self.goal_cos_loss = tf.losses.cosine_distance(
             tf.nn.l2_normalize(self.ground_truth_goal_out - self.inputs_goal, axis=1),
             tf.nn.l2_normalize(self.scaled_goal_out - self.inputs_goal, axis=1),
-            axis=1, reduction=tf.losses.Reduction.MEAN)
+            axis=1)
         self.goal_loss = tf.add(self.goal_mse_loss * self.se_cos_gamma, self.goal_cos_loss * (1. - self.se_cos_gamma))
 
-        self.loss = tf.add(self.state_loss * self.state_goal_gamma, self.goal_loss * (1. - self.state_goal_gamma))
+        # self.loss = tf.add(self.state_loss * self.state_goal_gamma, self.goal_loss * (1. - self.state_goal_gamma))
+        self.loss = self.state_loss + self.goal_loss
 
         # Optimize op
         self.optimize = tf.train.GradientDescentOptimizer(
@@ -321,36 +339,47 @@ class ModelDynamics(object):
         net = tf.concat([state_x, action_x, goal_x], axis=1)
         self.conc = net
 
-        n_hidden_0 = 128
-        w0 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_0]))
-        b0 = tf.Variable(tf.random_normal([n_hidden_0]))
-        net = tf.add(tf.matmul(net, w0), b0)
-        net = tf.nn.tanh(net)
 
-        n_hidden_1 = 64
-        w1 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_1]))
-        b1 = tf.Variable(tf.random_normal([n_hidden_1]))
-        s_net = tf.add(tf.matmul(net, w1), b1)
-        s_net = tf.nn.tanh(s_net)
+        s_net = Dense(4 * self.s_dim, input_dim=3 * self.s_dim)(net)
+        s_net = Dense(2 * self.s_dim)(s_net)
+        s_net = Dense(1 * self.s_dim)(s_net)
 
-        n_out = self.s_dim
-        w2 = tf.Variable(tf.random_normal([s_net.get_shape().as_list()[1], n_out]))
-        b2 = tf.Variable(tf.random_normal([n_out]))
-        s_net = tf.add(tf.matmul(s_net, w2), b2)
+        #
+        # n_hidden_0 = 128
+        # w0 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_0]))
+        # b0 = tf.Variable(tf.random_normal([n_hidden_0]))
+        # net = tf.add(tf.matmul(net, w0), b0)
+        # net = tf.nn.tanh(net)
+        #
+        # n_hidden_1 = 64
+        # w1 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_1]))
+        # b1 = tf.Variable(tf.random_normal([n_hidden_1]))
+        # s_net = tf.add(tf.matmul(net, w1), b1)
+        # s_net = tf.nn.tanh(s_net)
+        #
+        # n_out = self.s_dim
+        # w2 = tf.Variable(tf.random_normal([s_net.get_shape().as_list()[1], n_out]))
+        # b2 = tf.Variable(tf.random_normal([n_out]))
+        # s_net = tf.add(tf.matmul(s_net, w2), b2)
 
         state_y = s_net
         state_y_scaled = state_y
 
-        n_hidden_1 = 64
-        w3 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_1]))
-        b3 = tf.Variable(tf.random_normal([n_hidden_1]))
-        g_net = tf.add(tf.matmul(net, w3), b3)
-        g_net = tf.nn.tanh(g_net)
+        # n_hidden_1 = 64
+        # w3 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_1]))
+        # b3 = tf.Variable(tf.random_normal([n_hidden_1]))
+        # g_net = tf.add(tf.matmul(net, w3), b3)
+        # g_net = tf.nn.tanh(g_net)
+        #
+        # n_out = self.s_dim
+        # w4 = tf.Variable(tf.random_normal([g_net.get_shape().as_list()[1], n_out]))
+        # b4 = tf.Variable(tf.random_normal([n_out]))
+        # g_net = tf.add(tf.matmul(g_net, w4), b4)
+        #
 
-        n_out = self.s_dim
-        w4 = tf.Variable(tf.random_normal([g_net.get_shape().as_list()[1], n_out]))
-        b4 = tf.Variable(tf.random_normal([n_out]))
-        g_net = tf.add(tf.matmul(g_net, w4), b4)
+        g_net = Dense(4 * self.s_dim, input_dim=3 * self.s_dim)(net)
+        g_net = Dense(2 * self.s_dim)(g_net)
+        g_net = Dense(1 * self.s_dim)(g_net)
 
         goal_y = g_net
         goal_y_scaled = goal_y
@@ -466,6 +495,7 @@ def normalize(data, bound):
     k = np.subtract(y_max, y_min) / 2.
     b = np.add(y_max, y_min) / 2.
     normed_data = (data - b) / k
+    normed_data = data / abs(np.subtract(y_max, y_min))
     return normed_data
 
 
@@ -475,6 +505,7 @@ def denormalize(normed_data, bound):
     k = np.subtract(y_max, y_min) / 2.
     b = np.add(y_max, y_min) / 2.
     data = normed_data * k + b
+    data = normed_data * abs(np.subtract(y_max, y_min))
     return data
 
 
@@ -537,7 +568,7 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             env.render()
 
             # calc reward
-            g1_normed = normalize(g0, g_bound)
+            g1_normed = normalize(g1, g_bound)
             tar_normed = normalize(target, g_bound)
             miss = abs(tar_normed - g1_normed)
 
@@ -596,9 +627,9 @@ def train(settings, policy, model_dynamics, env, replay_buffer, reference_trajec
             ground_truth_action_gradients = ground_truth_action_gradients[0]
             gradient_loss = np.mean(np.linalg.norm(action_gradients - ground_truth_action_gradients))
 
-            if md_loss < 1.04:
-                _ = policy.train_1(s0_batch_normed, g0_batch_normed, target_batch_normed, desired_actions)
-                # _ = policy.train(s0_batch_normed, g0_batch_normed, target_batch_normed, ground_truth_action_gradients)
+            if md_loss < 0.002:
+                # _ = policy.train_1(s0_batch_normed, g0_batch_normed, target_batch_normed, desired_actions)
+                _ = policy.train(s0_batch_normed, g0_batch_normed, target_batch_normed, action_gradients)
 
             summary_str = sess.run(summary_ops, feed_dict={
                 summary_vars[0]: policy_se_loss,
@@ -741,10 +772,10 @@ def main():
             'goal_dim': env.state_dim,
             'goal_bound': env.state_bound,
             'episode_length': 40,
-            'minibatch_size': 2048,
+            'minibatch_size': 512,
 
             'actor_tau': 0.01,
-            'actor_learning_rate': 0.0001,
+            'actor_learning_rate': 0.000001,
 
             'model_dynamics_learning_rate': 0.05,
 

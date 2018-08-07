@@ -11,6 +11,14 @@ import tensorflow as tf
 from tensorflow.python.keras.initializers import RandomUniform
 from tensorflow.python.keras.layers import Dense, Input, BatchNormalization, Activation, Concatenate
 
+from keras.models import Sequential
+from keras.layers import Dense
+from keras.layers import LSTM
+from math import sqrt
+from sklearn.metrics import mean_squared_error
+
+
+
 class ReplayBuffer(object):
 
     def __init__(self, buffer_size, random_seed=123):
@@ -119,7 +127,7 @@ class ModelDynamics(object):
         self.state_cos_loss = tf.losses.cosine_distance(tf.nn.l2_normalize(self.ground_truth_state_out - self.inputs_state, axis=1),
                                                   tf.nn.l2_normalize(self.scaled_state_out - self.inputs_state, axis=1),
                                                   axis=1)
-        self.state_mse_loss = tf.losses.mean_squared_error(self.ground_truth_state_out, self.scaled_state_out, reduction=tf.losses.Reduction.MEAN)
+        self.state_mse_loss = tf.losses.mean_squared_error(self.ground_truth_state_out, self.scaled_state_out)
 
         # self.state_loss = tf.add(self.state_abs_loss * self.se_cos_gamma, self.state_cos_loss * (1. - self.se_cos_gamma))
 
@@ -127,7 +135,7 @@ class ModelDynamics(object):
 
         self.grads = tf.train.GradientDescentOptimizer(self.learning_rate).compute_gradients(self.loss)
 
-        self.optimize = tf.train.GradientDescentOptimizer(
+        self.optimize = tf.train.AdamOptimizer(
             self.learning_rate).minimize(self.loss)
 
         self.num_trainable_vars = len(
@@ -139,22 +147,37 @@ class ModelDynamics(object):
         net = tf.concat([state_x, action_x], axis=1)
         self.conc = net
 
-        n_hidden_0 = 128
-        w0 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_0]))
-        b0 = tf.Variable(tf.random_normal([n_hidden_0]))
-        net = tf.add(tf.matmul(net, w0), b0)
-        net = tf.nn.tanh(net)
-
-        n_hidden_1 = 64
-        w1 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_1]))
-        b1 = tf.Variable(tf.random_normal([n_hidden_1]))
-        net = tf.add(tf.matmul(net, w1), b1)
-        net = tf.nn.tanh(net)
-
-        n_out = self.s_dim
-        w2 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_out]))
-        b2 = tf.Variable(tf.random_normal([n_out]))
-        net = tf.add(tf.matmul(net, w2), b2)
+        net = Dense(4 * self.s_dim, input_dim=2 * self.s_dim)(net)
+        net = Dense(2 * self.s_dim)(net)
+        net = Dense(1 * self.s_dim)(net)
+        #
+        # # n_hidden_0 = 128
+        # # w0 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_0]))
+        # # b0 = tf.Variable(tf.random_normal([n_hidden_0]))
+        # # net = tf.add(tf.matmul(net, w0), b0)
+        # # net = tf.nn.tanh(net)
+        # #
+        # n_hidden_1 = self.s_dim * 4
+        # w1 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_1]))
+        # b1 = tf.Variable(tf.random_normal([n_hidden_1]))
+        # net = tf.add(tf.matmul(net, w1), b1)
+        # # net = tf.nn.tanh(net)
+        #
+        # n_hidden_2 = self.s_dim * 2
+        # w2 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_2]))
+        # b2 = tf.Variable(tf.random_normal([n_hidden_2]))
+        # net = tf.add(tf.matmul(net, w2), b2)
+        #
+        # n_hidden_3 = self.s_dim * 1
+        # w3 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_hidden_3]))
+        # b3 = tf.Variable(tf.random_normal([n_hidden_3]))
+        # net = tf.add(tf.matmul(net, w3), b3)
+        #
+        # #
+        # # n_out = self.s_dim
+        # # w2 = tf.Variable(tf.random_normal([net.get_shape().as_list()[1], n_out]))
+        # # b2 = tf.Variable(tf.random_normal([n_out]))
+        # # net = tf.add(tf.matmul(net, w2), b2)
 
         state_y = net
         state_y_scaled = state_y
@@ -231,7 +254,7 @@ def train(settings, model_dynamics, replay_buffer, reference_trajectory):
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
     writer = tf.summary.FileWriter(settings['summary_dir'] + '/summary_md_' + dt, sess.graph)
 
-    action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(settings['state_dim']), sigma=0.005)
+    action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(settings['state_dim']), sigma=0.01)
     s_dim = settings['state_dim']
 
     s_bound = settings['state_bound']
@@ -302,6 +325,88 @@ def train(settings, model_dynamics, replay_buffer, reference_trajectory):
                                                          md_cos_loss,
                                                          md_mse_loss,
                                                          md_loss))
+
+
+
+def train1(settings, model_dynamics, replay_buffer, reference_trajectory):
+
+    sess = tf.get_default_session()
+    summary_ops, summary_vars = build_summaries()
+
+    sess.run(tf.global_variables_initializer())
+    saver = tf.train.Saver(tf.global_variables())
+    dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
+    writer = tf.summary.FileWriter(settings['summary_dir'] + '/summary_md_' + dt, sess.graph)
+
+    action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(settings['state_dim']), sigma=0.01)
+    s_dim = settings['state_dim']
+
+    s_bound = settings['state_bound']
+    a_bound = settings['action_bound']
+
+    # create LSTM
+    model = Sequential()
+    model.add(Dense(4 * s_dim, input_dim=2 * s_dim))
+    model.add(Dense(2 * s_dim))
+    model.add(Dense(1 * s_dim))
+    model.compile(loss='mean_squared_error', optimizer='adam')
+
+
+    while replay_buffer.size() < 50000:
+        # pick random initial state from the reference trajectory
+        s0_index = randrange(0, reference_trajectory.shape[0] - 1)
+        s0 = reference_trajectory[s0_index]
+
+        r = []
+        # rollout episode
+        for j in range(s0_index, len(reference_trajectory) - 1):
+            target = reference_trajectory[j + 1]
+            # add noise
+            normed_a_noise = action_noise()
+            a_noise = denormalize(normed_a_noise, a_bound)
+            action = a_noise
+            action = np.reshape(action, (s_dim))
+            # make a step
+            # temp. just check of md net
+            s1 = s0 + action
+            # s1 = np.clip(s1, -1., 1.)
+            replay_buffer.add(s0, action, s1)
+            s0 = s1
+
+    num_train_steps = 50000
+    for i in range(num_train_steps):
+        # train model_dynamics and policy
+        minibatch_size = settings['minibatch_size']
+        if replay_buffer.size() > minibatch_size:
+            s0_batch, a_batch, s1_batch = \
+                replay_buffer.sample_batch(minibatch_size)
+
+            # train model_dynamics
+            # md_loss, md_goal_loss, md_abs_loss, md_cos_loss, s1_pred1 = (0, 0, 0, 0, 0)
+
+            # norm data before train
+            s0_batch_normed = normalize(s0_batch, s_bound)
+            a_batch_normed = normalize(a_batch, a_bound)
+            s1_batch_normed = normalize(s1_batch, s_bound)
+
+            # train LSTM
+            X_flat = np.stack([s0_batch_normed, a_batch_normed], axis=-1)
+            X_flat = np.reshape(X_flat, [minibatch_size, s_dim * 2])
+            y = s1_batch_normed
+            if (i % 10 != 0):
+                model.fit(X_flat, y, epochs=1, batch_size=minibatch_size, verbose=2)
+            else:
+                result = model.predict(X_flat, batch_size=minibatch_size, verbose=0)
+                # calculate error
+                expected = denormalize(y, s_bound)
+                predicted = denormalize(result, s_bound)
+                rmse = sqrt(mean_squared_error(expected, predicted))
+                print('RMSE: %f' % rmse)
+                # show some examples
+                for j in range(5):
+                    error = expected[j] - predicted[j]
+                    print('Expected={}, Predicted={} (err={})'.format(expected[j], predicted[j], error))
+
 
 
 def test_policy(settings, policy, model_dynamics, env, replay_buffer, reference_trajectory, render=True):
@@ -410,25 +515,27 @@ def test_policy(settings, policy, model_dynamics, env, replay_buffer, reference_
 def normalize(data, bound):
     y_max = [y[1] for y in bound]
     y_min = [y[0] for y in bound]
-    k = np.subtract(y_max, y_min) / 2.
-    b = np.add(y_max, y_min) / 2.
+    k = 1. / np.subtract(y_max, y_min)
+    b = 1. - np.array(y_max)*k
     normed_data = (data - b) / k
+    normed_data = data / abs(np.subtract(y_max, y_min))
     return normed_data
 
 
 def denormalize(normed_data, bound):
     y_max = [y[1] for y in bound]
     y_min = [y[0] for y in bound]
-    k = np.subtract(y_max, y_min) / 2.
-    b = np.add(y_max, y_min) / 2.
+    k = 1. / np.subtract(y_max, y_min)
+    b = 1. - np.array(y_max)*k
     data = normed_data * k + b
+    data = normed_data * abs(np.subtract(y_max, y_min))
     return data
 
 
 def main():
-    s_dim = 30
+    s_dim = 10
     state_bound = [(-1., 1)]*s_dim
-    state_bound[0] = (0, 8000)
+    # state_bound[0] = (0, 8000)
 
     action_bound = [(-abs(y[1] - y[0]), abs(y[1] - y[0])) for y in state_bound]
     settings = {
@@ -439,7 +546,7 @@ def main():
 
             'minibatch_size': 2048,
 
-            'model_dynamics_learning_rate': 0.1,
+            'model_dynamics_learning_rate': 0.01,
 
             'summary_dir': r'C:\Study\SpeechAcquisitionModel\reports\summaries',
             'videos_dir': r'C:\Study\SpeechAcquisitionModel\reports\videos'

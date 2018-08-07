@@ -101,10 +101,11 @@ class VTLEnv(object):
         self.audio_stream = np.zeros(int(self.max_episode_duration * audio_sampling_rate.value + 2000))
 
         self.action_dim = len(self.glottis_param_neutral) + len(self.tract_param_neutral)
-        self.action_bound = list(zip(-abs(np.subtract(self.tract_param_min, self.tract_param_max)),
-                                     abs(np.subtract(self.tract_param_max, self.tract_param_min))))
-        self.action_bound.extend(zip(-abs(np.subtract(self.glottis_param_min, self.glottis_param_max)),
-                                     abs(np.subtract(self.glottis_param_max, self.glottis_param_min))))
+        action_frac = 0.5
+        self.action_bound = list(zip(-abs(np.subtract(self.tract_param_min, self.tract_param_max)) * action_frac,
+                                     abs(np.subtract(self.tract_param_max, self.tract_param_min)) * action_frac))
+        self.action_bound.extend(zip(-abs(np.subtract(self.glottis_param_min, self.glottis_param_max)) * action_frac,
+                                     abs(np.subtract(self.glottis_param_max, self.glottis_param_min)) * action_frac))
 
         self.state_dim = len(self.glottis_param_neutral) + len(self.tract_param_neutral)
         self.state_bound = list(zip(self.tract_param_min, self.tract_param_max))
