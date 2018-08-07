@@ -7,6 +7,7 @@ from keras.layers import Dense
 import keras
 from keras import backend as K
 from keras.layers import LSTM
+from keras.utils import plot_model
 from math import sqrt
 from sklearn.metrics import mean_squared_error
 from sklearn import preprocessing
@@ -81,6 +82,12 @@ n_dim = 20
 # define LSTM configuration
 n_batch = 200
 n_epoch = 50
+
+
+################################################################
+# Model Dynamics
+################################################################
+
 # create model dynamics
 model_dynamics = Sequential()
 model_dynamics.add(Dense(4 * n_dim, input_dim=2 * n_dim))
@@ -89,22 +96,12 @@ model_dynamics.add(Dense(1 * n_dim))
 model_dynamics.compile(loss='mean_squared_error', optimizer='adadelta')
 
 
-# Create policy network
-policy_initializer = keras.initializers.RandomUniform(minval=-largest/ds_largest, maxval=largest/ds_largest)
-policy_initializer = keras.initializers.glorot_uniform()
-
-policy = Sequential()
-policy.add(Dense(4 * n_dim, input_dim=2 * n_dim, kernel_initializer=policy_initializer))
-policy.add(Dense(2 * n_dim, kernel_initializer=policy_initializer))
-policy.add(Dense(1 * n_dim, kernel_initializer=policy_initializer))
-policy.compile(loss='mean_squared_error', optimizer='adadelta')
-
-
 # action gradients
 target = tf.placeholder(tf.float32, [None, n_dim])
 a_grads = tf.gradients(tf.reduce_mean(tf.square(target - model_dynamics.output)), model_dynamics.input)
 # train model dynamics
 for _ in range(n_epoch):
+    policy = None
     X, y = generate_model_dynamics_training_data(n_examples, policy)
     X_flat = np.reshape(X, [n_examples, n_dim * 2])
     model_dynamics.fit(X_flat, y, epochs=1, batch_size=n_batch, verbose=2)
@@ -122,52 +119,86 @@ for i in range(20):
     error = expected[i] - predicted[i]
     print('Expected={}, Predicted={} (err={})'.format(expected[i], predicted[i], error))
 
+########################################################
+# Policy
+########################################################
 
+
+def policy_loss(y_true, y_pred):
+    y_t_reshaped = tf.reshape(y_true, [-1, 2 * n_dim])
+    s0 = y_t_reshaped[:, :n_dim]
+    target = y_t_reshaped[:, n_dim:]
+
+    # input_layer = model_dynamics.input
+    # tf.assign(input_layer, K.concatenate([s0, y_pred]))
+    md_new_input = K.concatenate([s0, y_pred])
+    md_output = model_dynamics(md_new_input)
+
+    # model_dynamics.input = K.concatenate([s0, y_pred])
+    # model_dynamics.layers[0] = K.concatenate([s0, y_pred])
+    loss = K.mean(K.square(md_output - target), axis=-1)
+    return loss
+
+# Create policy network
+policy_initializer = keras.initializers.RandomUniform(minval=-largest/ds_largest, maxval=largest/ds_largest)
+policy_initializer = keras.initializers.glorot_uniform()
+
+policy = Sequential()
+policy.add(Dense(4 * n_dim, input_dim=2 * n_dim, kernel_initializer=policy_initializer))
+policy.add(Dense(2 * n_dim, kernel_initializer=policy_initializer))
+policy.add(Dense(1 * n_dim, kernel_initializer=policy_initializer))
+policy.compile(loss=policy_loss, optimizer='adadelta')
+
+
+plot_model(policy,to_file='policy.png',show_shapes=True)
+plot_model(model_dynamics,to_file='model_dynamics.png',show_shapes=True)
 
 # train policy
+#
+# output_l = model_dynamics.output
+# target = tf.placeholder(tf.float32, [None, n_dim])
+#
+# loss = K.mean(K.square(output_l - target), axis=-1)
+# grads = K.gradients(loss, model_dynamics.input)
+# a_grads_op = grads[0][:, n_dim:]
+# opt = tf.train.AdadeltaOptimizer()
+# # opt = keras.optimizers.get('adadelta')
+# # policy_grads = tf.gradients(policy.output, policy.trainable_weights, grad_ys=a_grads_op)
+# policy_grads = opt.compute_gradients(policy.output, policy.trainable_weights, grad_loss=a_grads_op)
+# # grads_and_vars = zip(policy_grads, policy.trainable_weights)
+# grads_and_vars = policy_grads
+# optimize_op = opt.apply_gradients(grads_and_vars)
+#
+# # test loss and grads
+# test_expected_a = tf.placeholder(tf.float32, [None, n_dim])
+# policy_output = policy.output
+# test_loss = K.mean(K.square(policy_output - test_expected_a), axis=-1)
+# test_grads = K.gradients(test_loss, policy_output)
+# test_a_grads_op = test_grads[0][:, :]
+# test_policy_grads = opt.compute_gradients(policy_output, policy.trainable_weights, grad_loss=test_a_grads_op)
+# test_optimize_op = opt.apply_gradients(test_policy_grads)
 
-output_l = model_dynamics.output
-target = tf.placeholder(tf.float32, [None, n_dim])
 
-loss = K.mean(K.square(output_l - target), axis=-1)
-grads = K.gradients(loss, model_dynamics.input)
-a_grads_op = grads[0][:, n_dim:]
-opt = tf.train.AdadeltaOptimizer()
-# opt = keras.optimizers.get('adadelta')
-# policy_grads = tf.gradients(policy.output, policy.trainable_weights, grad_ys=a_grads_op)
-policy_grads = opt.compute_gradients(policy.output, policy.trainable_weights, grad_loss=a_grads_op)
-# grads_and_vars = zip(policy_grads, policy.trainable_weights)
-grads_and_vars = policy_grads
-optimize_op = opt.apply_gradients(grads_and_vars)
-
-# test loss and grads
-test_expected_a = tf.placeholder(tf.float32, [None, n_dim])
-policy_output = policy.output
-test_loss = K.mean(K.square(policy_output - test_expected_a), axis=-1)
-test_grads = K.gradients(test_loss, policy_output)
-test_a_grads_op = test_grads[0][:, :]
-test_policy_grads = opt.compute_gradients(policy_output, policy.trainable_weights, grad_loss=test_a_grads_op)
-test_optimize_op = opt.apply_gradients(test_policy_grads)
-
-
-for _ in range(n_epoch*100):
+for _ in range(n_epoch):
     X, s0, t, expected_a = generate_policy_training_data(n_examples)
 
+    X_md_1 = np.concatenate((s0, t), axis=1)
+    policy.fit(X, X_md_1, epochs=1, batch_size=n_batch, verbose=2)
     # policy.fit(X, expected_a, epochs=1, batch_size=n_batch, verbose=2)
     #
     # custom optimization of policy
-    y_pred = policy.predict(X)
-    X_md = np.concatenate((s0, y_pred), axis=1)
+    # y_pred = policy.predict(X)
+    # X_md = np.concatenate((s0, y_pred), axis=1)
 
 
-    sess = K.get_session()
-    for k in range(n_batch, n_examples, n_batch):
-        optimize, grads_out, test_grads_out, policy_grads_out, test_policy_grads_out \
-            = sess.run([optimize_op, a_grads_op, test_a_grads_op, policy_grads, test_policy_grads], feed_dict={model_dynamics.input: X_md[k - n_batch: k,:],
-                                                                             policy.input: X[k - n_batch: k,:],
-                                                                             target: t[k - n_batch: k,:],
-                                                                            test_expected_a: expected_a[k - n_batch: k,:]
-                                                    })
+    # sess = K.get_session()
+    # for k in range(n_batch, n_examples, n_batch):
+    #     optimize, grads_out, test_grads_out, policy_grads_out, test_policy_grads_out \
+    #         = sess.run([optimize_op, a_grads_op, test_a_grads_op, policy_grads, test_policy_grads], feed_dict={model_dynamics.input: X_md[k - n_batch: k,:],
+    #                                                                          policy.input: X[k - n_batch: k,:],
+    #                                                                          target: t[k - n_batch: k,:],
+    #                                                                         test_expected_a: expected_a[k - n_batch: k,:]
+    #                                                 })
 
         # test_optimize = sess.run([test_optimize_op, a_grads_op, test_a_grads_op, policy_grads, test_policy_grads], feed_dict={model_dynamics.input: X_md[k - n_batch: k,:],
         #                                                                      policy.input: X[k - n_batch: k,:],
@@ -175,12 +206,12 @@ for _ in range(n_epoch*100):
         #                                                                     test_expected_a: expected_a[k - n_batch: k,:]
         #                                             })
 
-    # policy loss
-    expected = denormalize(expected_a, ds_norm_largest)
-    predicted = denormalize(y_pred, ds_norm_largest)
-    policy_loss = sqrt(mean_squared_error(expected, predicted))
-    # policy_loss = np.mean(np.sum(np.square(true_actions - y_pred_unnormed), axis=1), axis=0)
-    print('|epoch : {}| policy loss: {}|'.format(_, policy_loss))
+    # # policy loss
+    # expected = denormalize(expected_a, ds_norm_largest)
+    # predicted = denormalize(y_pred, ds_norm_largest)
+    # policy_loss = sqrt(mean_squared_error(expected, predicted))
+    # # policy_loss = np.mean(np.sum(np.square(true_actions - y_pred_unnormed), axis=1), axis=0)
+    # print('|epoch : {}| policy loss: {}|'.format(_, policy_loss))
 
 # evaluate on some new patterns
 X, s0, t, a = generate_policy_training_data(n_examples)
