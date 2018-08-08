@@ -38,7 +38,7 @@ def generate_model_dynamics_training_data(n_examples, policy):
     # normalise staff
     s0 = normalize(s0, largest)
     t = normalize(t, largest)
-    a = normalize(a, ds_largest)
+    a = normalize(a, ds_norm_largest)
     s1 = normalize(s1, largest)
 
     X_md = np.concatenate((s0, a), axis=1)
@@ -104,7 +104,15 @@ for _ in range(n_epoch):
     policy = None
     X, y = generate_model_dynamics_training_data(n_examples, policy)
     X_flat = np.reshape(X, [n_examples, n_dim * 2])
-    model_dynamics.fit(X_flat, y, epochs=1, batch_size=n_batch, verbose=2)
+    model_dynamics.fit(X_flat, y, epochs=1, batch_size=n_batch, verbose=0)
+    # calculate loss on the whole dataset
+    y_pred = model_dynamics.predict(X)
+    loss = np.mean(np.sum(np.square(y - y_pred), axis=1), axis=0)
+    y_pred_unnormed = denormalize(y_pred, largest)
+    y_unnormed = denormalize(y, largest)
+    loss_unnormed = np.mean(np.sum(np.square(y_unnormed - y_pred_unnormed), axis=1), axis=0)
+
+    print('|epoch : {}| model dynamics loss: {:.10f}| unnormalized loss: {:.7f}'.format(_, loss, loss_unnormed))
 # evaluate on some new patterns
 X, y = generate_model_dynamics_training_data(n_examples, policy)
 X_flat = np.reshape(X, [n_examples, n_dim * 2])
@@ -183,7 +191,8 @@ for _ in range(n_epoch):
     X, s0, t, expected_a = generate_policy_training_data(n_examples)
 
     X_md_1 = np.concatenate((s0, t), axis=1)
-    policy.fit(X, X_md_1, epochs=1, batch_size=n_batch, verbose=2)
+
+    policy.fit(X, X_md_1, epochs=1, batch_size=n_batch, verbose=0)
     # policy.fit(X, expected_a, epochs=1, batch_size=n_batch, verbose=2)
     #
     # custom optimization of policy
@@ -210,8 +219,13 @@ for _ in range(n_epoch):
     # expected = denormalize(expected_a, ds_norm_largest)
     # predicted = denormalize(y_pred, ds_norm_largest)
     # policy_loss = sqrt(mean_squared_error(expected, predicted))
-    # # policy_loss = np.mean(np.sum(np.square(true_actions - y_pred_unnormed), axis=1), axis=0)
-    # print('|epoch : {}| policy loss: {}|'.format(_, policy_loss))
+    y_pred = policy.predict(X)
+    policy_loss = np.mean(np.sum(np.square(expected_a - y_pred), axis=1), axis=0)
+    y_pred_unnormed = denormalize(y_pred, ds_norm_largest)
+    y_unnormed = denormalize(expected_a, ds_norm_largest)
+    loss_unnormed = np.mean(np.sum(np.square(y_unnormed - y_pred_unnormed), axis=1), axis=0)
+
+    print('|epoch : {}| policy loss: {:.10f}| unnormalized loss: {:.7f}'.format(_, policy_loss, loss_unnormed))
 
 # evaluate on some new patterns
 X, s0, t, a = generate_policy_training_data(n_examples)
