@@ -92,18 +92,61 @@ md_dense2 = tf.layers.dense(inputs=md_dense1, units=2 * n_dim, kernel_initialize
 md_output = tf.layers.dense(inputs=md_dense2, units=1 * n_dim, kernel_initializer=md_initializer)
 
 # network target for training
-y = tf.placeholder(tf.float32, [None, n_dim * 1])
+md_target = tf.placeholder(tf.float32, [None, n_dim * 1])
 
 # loss
-loss = tf.losses.mean_squared_error(y, md_output)
+md_loss = tf.losses.mean_squared_error(md_target, md_output)
 
 # train step
-global_step = tf.train.create_global_step()
-train_step = tf.train.AdadeltaOptimizer(learning_rate=1.0).minimize(loss=loss, global_step=global_step)
+md_global_step = tf.train.create_global_step()
+md_train_step = tf.train.AdadeltaOptimizer(learning_rate=1.0).minimize(loss=md_loss, global_step=md_global_step)
+
+################################################################
+# Policy
+################################################################
+
+# create policy
+with tf.variable_scope('policy'):
+    # specify input placeholders
+    policy_input = tf.placeholder(tf.float32, [None, n_dim * 2])
+
+    # specify network structure
+    policy_initializer = tf.glorot_uniform_initializer()
+    policy_dense1 = tf.layers.dense(inputs=policy_input, units=4 * n_dim, kernel_initializer=policy_initializer)
+    policy_dense2 = tf.layers.dense(inputs=policy_dense1, units=2 * n_dim, kernel_initializer=policy_initializer)
+
+    # specify output
+    policy_output = tf.layers.dense(inputs=policy_dense2, units=1 * n_dim, kernel_initializer=policy_initializer)
+
+    # network target for training
+    policy_target = tf.placeholder(tf.float32, [None, n_dim * 1])
+
+    # trainable variables
+    trainable_vars = tf.trainable_variables('policy')
+
+    # train step
+    policy_global_step = tf.Variable(0., trainable=False)
+
+    ############################################
+    # Policy gradient based optimization routine
+    ############################################
+
+    policy_md_loss = md_loss
+    action_grads = tf.gradients(ys=policy_md_loss, xs=md_input)[0][:, n_dim:]
+    policy_opt = tf.train.AdadeltaOptimizer(learning_rate=1.0)
+    optimize_op = policy_opt.minimize(loss=policy_output, global_step=policy_global_step, var_list=trainable_vars,
+                                      grad_loss=action_grads)
+
+
 
 # Open the session
 sess = tf.InteractiveSession()
 sess.run(tf.global_variables_initializer())
+
+
+########################################################
+# Train Model Dynamics
+########################################################
 
 # train loop
 for _ in range(n_epoch):
@@ -116,8 +159,8 @@ for _ in range(n_epoch):
         y_batch = Y[i * n_batch: (i + 1) * n_batch]
 
         # train step
-        feed_dict = {md_input: x_batch, y: y_batch}
-        train_step.run(feed_dict=feed_dict)
+        feed_dict = {md_input: x_batch, md_target: y_batch}
+        md_train_step.run(feed_dict=feed_dict)
 
     # calculate loss on the whole dataset
     y_pred = sess.run(md_output, feed_dict={md_input:X})
@@ -133,6 +176,50 @@ y_pred = sess.run(md_output, feed_dict={md_input:X})
 # calculate error
 expected = denormalize(Y, largest)
 predicted = denormalize(y_pred, largest)
+rmse = sqrt(mean_squared_error(expected, predicted))
+print('RMSE: %f' % rmse)
+# show some examples
+for i in range(5):
+    error = expected[i] - predicted[i]
+    print('Expected={}, Predicted={} (err={})'.format(expected[i], predicted[i], error))
+
+
+########################################################
+# Train Policy
+########################################################
+
+# train loop
+for _ in range(n_epoch):
+    # generate new dataset for each epoch
+    X, s0, t, Y = generate_policy_training_data(n_examples)
+
+    for i in range(n_examples // n_batch):
+        # get next batch
+        x_batch = X[i * n_batch: (i + 1) * n_batch]
+        y_batch = Y[i * n_batch: (i + 1) * n_batch]
+        s0_batch = s0[i * n_batch: (i + 1) * n_batch]
+        t_batch = t[i * n_batch: (i + 1) * n_batch]
+
+        # train step
+        y_pred = sess.run(policy_output, feed_dict={policy_input: x_batch})
+        md_x_batch = np.concatenate((s0_batch, y_pred), axis=1)
+
+        feed_dict = {policy_input: x_batch, md_input: md_x_batch, md_target: t_batch}
+        optimize_op.run(feed_dict=feed_dict)
+    # calculate loss on the whole dataset
+    y_pred = sess.run(policy_output, feed_dict={policy_input: X})
+    total_loss = np.mean(np.sum(np.square(Y - y_pred), axis=1), axis=0)
+    y_pred_denormed = denormalize(y_pred, ds_norm_largest)
+    y_denormed = denormalize(Y, ds_norm_largest)
+    total_loss_denormed = np.mean(np.sum(np.square(y_denormed - y_pred_denormed), axis=1), axis=0)
+    print('|epoch : {}|policy loss: {:.10f}| unnormalized loss: {:.7f}'.format(_, total_loss, total_loss_denormed))
+
+# Final evaluation on some new patterns
+X, s0, t, Y = generate_policy_training_data(n_examples)
+y_pred = sess.run(policy_output, feed_dict={policy_input:X})
+# calculate error
+expected = denormalize(Y, ds_norm_largest)
+predicted = denormalize(y_pred, ds_norm_largest)
 rmse = sqrt(mean_squared_error(expected, predicted))
 print('RMSE: %f' % rmse)
 # show some examples
