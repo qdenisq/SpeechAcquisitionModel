@@ -3,7 +3,6 @@ from random import random as rnd
 from math import sqrt
 from sklearn.metrics import mean_squared_error
 import numpy as np
-import tensorflow as tf
 
 import torch
 import torch.nn as nn
