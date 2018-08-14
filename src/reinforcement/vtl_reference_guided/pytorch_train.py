@@ -155,29 +155,6 @@ def train(settings, env, replay_buffer, reference_trajectory):
     md_criterion = nn.MSELoss()
     md_optimizer = torch.optim.Adadelta(md_net.parameters())
 
-    # # create model dynamics
-    #
-    # # specify input placeholders
-    # md_input = tf.placeholder(tf.float32, [None, s_dim * 3])
-    #
-    # # specify network structure
-    # md_initializer = tf.glorot_uniform_initializer()
-    # md_dense1 = tf.layers.dense(inputs=md_input, units=6 * s_dim, kernel_initializer=md_initializer)
-    # md_dense2 = tf.layers.dense(inputs=md_dense1, units=4 * s_dim, kernel_initializer=md_initializer)
-    #
-    # # specify output
-    # md_output = tf.layers.dense(inputs=md_dense2, units=2 * s_dim, kernel_initializer=md_initializer)
-    #
-    # # network target for training
-    # md_target = tf.placeholder(tf.float32, [None, s_dim * 2])
-    #
-    # # loss
-    # md_loss = tf.losses.mean_squared_error(md_target, md_output)
-    #
-    # # train step
-    # md_global_step = tf.train.create_global_step()
-    # md_train_step = tf.train.AdadeltaOptimizer(learning_rate=1.0).minimize(loss=md_loss, global_step=md_global_step)
-
     ################################################################
     # Policy
     ################################################################
@@ -187,6 +164,7 @@ def train(settings, env, replay_buffer, reference_trajectory):
         def __init__(self, s_dim, g_dim, a_dim):
             super(PolicyNet, self).__init__()
             # an affine operation: y = Wx + b
+
             self.fc1 = nn.Linear(s_dim + 2 * g_dim, 2 * (s_dim + 2 * g_dim))
             torch.nn.init.xavier_uniform_(self.fc1.weight)
 
@@ -211,44 +189,7 @@ def train(settings, env, replay_buffer, reference_trajectory):
 
     policy_net = PolicyNet(s_dim, g_dim, a_dim)
     policy_optimizer = torch.optim.Adadelta(policy_net.parameters())
-    #
-    # # create policy
-    # with tf.variable_scope('policy'):
-    #     # specify input placeholders
-    #     policy_input = tf.placeholder(tf.float32, [None, s_dim * 3])
-    #
-    #     # specify network structure
-    #     policy_initializer = tf.glorot_uniform_initializer()
-    #     policy_dense1 = tf.layers.dense(inputs=policy_input, units=6 * s_dim, kernel_initializer=policy_initializer)
-    #     policy_dense2 = tf.layers.dense(inputs=policy_dense1, units=3 * s_dim, kernel_initializer=policy_initializer)
-    #
-    #     # specify output
-    #     policy_output = tf.layers.dense(inputs=policy_dense2, units=1 * s_dim, kernel_initializer=policy_initializer)
-    #
-    #     # network target for training
-    #     policy_target = tf.placeholder(tf.float32, [None, s_dim * 1])
-    #
-    #     # trainable variables
-    #     trainable_vars = tf.trainable_variables('policy')
-    #
-    #     # train step
-    #     policy_global_step = tf.Variable(0., trainable=False)
-    #
-    #     ############################################
-    #     # Policy gradient based optimization routine
-    #     ############################################
-    #
-    #     policy_md_loss = tf.losses.mean_squared_error(md_target[:, s_dim:], md_output[:, s_dim:])
-    #     action_grads = tf.gradients(ys=policy_md_loss, xs=md_input)[0][:, 2*s_dim:]
-    #     policy_opt = tf.train.AdadeltaOptimizer(learning_rate=1.0)
-    #     optimize_op = policy_opt.minimize(loss=policy_output, global_step=policy_global_step, var_list=trainable_vars,
-    #                                       grad_loss=action_grads)
-    #
-    # # Open the session
-    # sess = tf.InteractiveSession()
-    # sess.run(tf.global_variables_initializer())
-    #
-    # saver = tf.train.Saver(tf.global_variables())
+
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
     # writer = tf.summary.FileWriter(settings['summary_dir'] + '/summary_md_' + dt, sess.graph)
     video_dir = settings['videos_dir'] + '/video_md_' + dt
@@ -387,24 +328,18 @@ def train(settings, env, replay_buffer, reference_trajectory):
 
                 md_pred = md_net(md_input_X)
                 loss = md_criterion(md_pred[:, s_dim:], md_target_Y[:, s_dim:])
-                action_grads = torch.autograd.grad(loss, actions_normed, allow_unused=True)
-
-                torch.autograd.backward([actions_normed], [action_grads[0]])
+                #
+                # action_grads = torch.autograd.grad(loss, actions_normed, allow_unused=True)
+                #
+                # torch.autograd.backward([actions_normed], [action_grads[0]])
+                loss.backward()
                 policy_optimizer.step()
 
                 expected_actions_normed = target_batch_normed - g0_batch_normed
                 policy_loss_out = np.mean(np.sum(np.square(expected_actions_normed - actions_normed.detach().numpy()), axis=1), axis=0)
 
                 print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}".format(i, train_step_i, md_loss.detach().numpy(), policy_loss_out))
-                # summary_str = sess.run(summary_ops, feed_dict={
-                #     summary_vars[0]: policy_se_loss,
-                #     summary_vars[1]: md_loss,
-                #     summary_vars[2]: md_goal_loss,
-                #     summary_vars[3]: 0
-                # })
-                #
-                # writer.add_summary(summary_str, i)
-                # writer.flush()
+
 
 
 def main():

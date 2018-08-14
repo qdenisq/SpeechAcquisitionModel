@@ -21,6 +21,9 @@ from tensorflow.python.platform import gfile
 from tensorflow.python.util import compat
 from numpy.lib.stride_tricks import as_strided
 
+from scipy.io import wavfile as wav
+from python_speech_features import mfcc
+
 RANDOM_SEED = 0
 MAX_NUM_WAVS_PER_CLASS = 2**27 - 1  # ~134M
 SILENCE_LABEL = '_silence_'
@@ -312,3 +315,205 @@ class AudioProcessor(object):
             label_index = self.word_to_index[sample['label']]
             labels[i - offset] = label_index
         return data, labels
+
+
+class SpeechCommandsDataCollector(object):
+    def __init__(self,
+                 audio_processor,
+                 data_dir,
+                 wanted_words,
+                 validation_percentage,
+                 testing_percentage,
+                 silence_percentage=0.,
+                 unknown_percentage=0.):
+        random.seed(RANDOM_SEED)
+        self.__audio_preproc = audio_processor
+        self.data_dir = data_dir
+        self.data_index = {"train": [],
+                           "test": [],
+                           "validation": []}
+        self.prepare_data_index(silence_percentage=silence_percentage,
+                                unknown_percentage=unknown_percentage,
+                                wanted_words=wanted_words,
+                                validation_percentage=validation_percentage,
+                                testing_percentage=testing_percentage)
+        return
+
+    def prepare_data_index(self, silence_percentage, unknown_percentage,
+                           wanted_words, validation_percentage,
+                           testing_percentage):
+        """Prepares a list of the samples organized by set and label.
+
+        The training loop needs a list of all the available data, organized by
+        which partition it should belong to, and with ground truth labels attached.
+        This function analyzes the folders below the `data_dir`, figures out the
+        right
+        labels for each file based on the name of the subdirectory it belongs to,
+        and uses a stable hash to assign it to a data set partition.
+
+        Args:
+          silence_percentage: How much of the resulting data should be background.
+          unknown_percentage: How much should be audio outside the wanted classes.
+          wanted_words: Labels of the classes we want to be able to recognize.
+          validation_percentage: How much of the data set to use for validation.
+          testing_percentage: How much of the data set to use for testing.
+
+        Returns:
+          Dictionary containing a list of file information for each set partition,
+          and a lookup map for each class to determine its numeric index.
+
+        Raises:
+          Exception: If expected files are not found.
+        """
+        # Make sure the shuffling and picking of unknowns is deterministic.
+        random.seed(RANDOM_SEED)
+        wanted_words_index = {}
+        for index, wanted_word in enumerate(wanted_words):
+            wanted_words_index[wanted_word] = index + 2
+        self.data_index = {'validation': [], 'testing': [], 'training': []}
+        unknown_index = {'validation': [], 'testing': [], 'training': []}
+        all_words = {}
+        # Look through all the subfolders to find audio samples
+        search_path = os.path.join(self.data_dir, '*', '*.wav')
+        for wav_path in gfile.Glob(search_path):
+            _, word = os.path.split(os.path.dirname(wav_path))
+            word = word.lower()
+            # Treat the '_background_noise_' folder as a special case, since we expect
+            # it to contain long audio samples we mix in to improve training.
+            if word == BACKGROUND_NOISE_DIR_NAME:
+                continue
+            all_words[word] = True
+            set_index = which_set(wav_path, validation_percentage, testing_percentage)
+            # If it's a known class, store its detail, otherwise add it to the list
+            # we'll use to train the unknown label.
+            if word in wanted_words_index:
+                self.data_index[set_index].append({'label': word, 'file': wav_path})
+            else:
+                unknown_index[set_index].append({'label': word, 'file': wav_path})
+        if not all_words:
+            raise Exception('No .wavs found at ' + search_path)
+        for index, wanted_word in enumerate(wanted_words):
+            if wanted_word not in all_words:
+                raise Exception('Expected to find ' + wanted_word +
+                                ' in labels but only found ' +
+                                ', '.join(all_words.keys()))
+        # We need an arbitrary file to load as the input for the silence samples.
+        # It's multiplied by zero later, so the content doesn't matter.
+        silence_wav_path = self.data_index['training'][0]['file']
+        for set_index in ['validation', 'testing', 'training']:
+            set_size = len(self.data_index[set_index])
+            silence_size = int(math.ceil(set_size * silence_percentage / 100))
+            for _ in range(silence_size):
+                self.data_index[set_index].append({
+                    'label': SILENCE_LABEL,
+                    'file': silence_wav_path
+                })
+            # Pick some unknowns to add to each partition of the data set.
+            random.shuffle(unknown_index[set_index])
+            unknown_size = int(math.ceil(set_size * unknown_percentage / 100))
+            self.data_index[set_index].extend(unknown_index[set_index][:unknown_size])
+        # Make sure the ordering is random.
+        for set_index in ['validation', 'testing', 'training']:
+            random.shuffle(self.data_index[set_index])
+        # Prepare the rest of the result data structure.
+        self.words_list = prepare_words_list(wanted_words)
+        self.word_to_index = {}
+        for word in all_words:
+            if word in wanted_words_index:
+                self.word_to_index[word] = wanted_words_index[word]
+            else:
+                self.word_to_index[word] = UNKNOWN_WORD_INDEX
+        self.word_to_index[SILENCE_LABEL] = SILENCE_INDEX
+
+    def set_size(self, mode):
+        """Calculates the number of samples in the dataset partition.
+
+        Args:
+          mode: Which partition, must be 'training', 'validation', or 'testing'.
+
+        Returns:
+          Number of samples in the partition.
+        """
+        return len(self.data_index[mode])
+
+    def get_sequential_data_sample(self, fname):
+        return self.__audio_preproc(fname)
+
+    def get_data(self, how_many, offset, mode):
+        """Gather samples from the data set, applying transformations as needed.
+
+        When the mode is 'training', a random selection of samples will be returned,
+        otherwise the first N clips in the partition will be used. This ensures that
+        validation always uses the same samples, reducing noise in the metrics.
+
+        Args:
+          how_many: Desired number of samples to return. -1 means the entire
+            contents of this partition.
+          offset: Where to start when fetching deterministically.
+          mode: Which partition to use, must be 'training', 'validation', or
+            'testing'.
+
+        Returns:
+          List of sample data for the transformed samples, and list of label indexes
+        """
+        # Pick one of the partitions to choose samples from.
+        candidates = self.data_index[mode]
+        if how_many == -1:
+            sample_count = len(candidates)
+        else:
+            sample_count = max(0, min(how_many, len(candidates) - offset))
+        # Data and labels will be populated and returned.
+        data = []
+        seq_lens = []
+        labels = np.zeros(sample_count)
+        pick_deterministically = (mode != 'training')
+        # Use the processing graph we created earlier to repeatedly to generate the
+        # final output sample data we'll use in training.
+        for i in xrange(offset, offset + sample_count):
+            # Pick which audio sample to use.
+            if how_many == -1 or pick_deterministically:
+                sample_index = i
+            else:
+                sample_index = np.random.randint(len(candidates))
+            sample = candidates[sample_index]
+
+            sample_data = self.get_sequential_data_sample(sample['file'])
+            seq_len = sample_data.shape[0]
+            data.append(sample_data)
+            seq_lens.append(seq_len)
+            label_index = self.word_to_index[sample['label']]
+            labels[i - offset] = label_index
+        max_seq_len = max(seq_lens)
+        zero_padded_data = [np.append(s, np.zeros((max_seq_len - s.shape[0], s.shape[1])), axis=0) for s in data]
+        data = np.stack(zero_padded_data)
+        seq_lens = np.array(seq_lens)
+        labels = np.array(labels)
+        return {'x': data,
+                'y': labels,
+                'seq_len': seq_lens}
+
+
+class AudioPreprocessor(object):
+    def __init__(self, numcep=40):
+        self.__numcep = numcep
+        return
+
+    def __call__(self, *args, **kwargs):
+        if len(args) == 1 and isinstance(args[0], str):
+            return self.__from_file(args[0])
+        elif len(args) == 1 and isinstance(args[0], np.ndarray):
+            return self.__from_array(args[0], None)
+        elif len(args) == 2 and isinstance(args[0], np.ndarray) and isinstance(args[1], int):
+            return self.__from_array(args[0], args[1])
+        else:
+            raise TypeError("Expected either filename for audio file as an argument either raw audio")
+
+    def __from_array(self, input, sr):
+        out = mfcc(input, samplerate=sr, numcep=self.__numcep)
+        return out
+
+    def __from_file(self, fname):
+        rate, input = wav.read(fname)
+        out = self.__from_array(input, sr=rate)
+        return out
+
