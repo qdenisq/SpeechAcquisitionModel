@@ -138,8 +138,9 @@ class VTLEnv(object):
         self.audio_stream[idx:idx_1] = self.audio_buffer[:int(self.audio_sampling_rate * self.timestep / 1000)]
 
         state_out = list(self.tract_params_out) + list(self.glottis_params_out)
+        audio_out = self.audio_stream[idx:idx_1]
         self.current_step += 1
-        return state_out
+        return state_out, audio_out
 
     def reset(self, state_to_reset=None):
         if state_to_reset is not None:

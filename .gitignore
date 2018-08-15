@@ -10,3 +10,4 @@ ddpg/results/
 **.json
 **.wav
 **.pkl
+**.pt

@@ -226,7 +226,7 @@ def train(settings, env, replay_buffer, reference_trajectory):
             action = denormalize(action_normed, settings['action_bound'])
             action = np.reshape(action, (a_dim))
             # make a step
-            s1 = env.step(action)
+            s1, _ = env.step(action)
             g1 = s1
 
             env.render()

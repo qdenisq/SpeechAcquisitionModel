@@ -84,10 +84,6 @@ class OrnsteinUhlenbeckActionNoise:
     def __repr__(self):
         return 'OrnsteinUhlenbeckActionNoise(mu={}, sigma={})'.format(self.mu, self.sigma)
 
-ds_norm_largest = 1000.
-ds_largest = 1000.
-largest = 1000.
-
 
 def normalize(data, bound):
     largest = np.array([max(abs(y[0]), abs(y[1])) for y in bound])
@@ -237,7 +233,7 @@ def train(settings, env, replay_buffer, reference_trajectory):
             action = denormalize(action_normed, settings['action_bound'])
             action = np.reshape(action, (a_dim))
             # make a step
-            s1 = env.step(action)
+            s1, _ = env.step(action)
             g1 = s1
 
             env.render()

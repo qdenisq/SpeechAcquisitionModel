@@ -3,7 +3,7 @@ from src.speech_classification.audio_processing import AudioPreprocessor, Speech
 import torch as torch
 
 import os
-import glob
+import datetime
 
 import torch.nn as nn
 import torch.nn.functional as F
@@ -12,10 +12,6 @@ from python_speech_features import mfcc
 import scipy.io.wavfile as wav
 
 import numpy as np
-
-
-
-
 
 class ConvLstmNet(nn.Module):
     def __init__(self, model_settings):
@@ -126,6 +122,9 @@ model_settings = {
     'hidden_reccurent_cells_count': 100
 }
 
+save_dir = r'C:\Study\SpeechAcquisitionModel\reports\speech_classification\checkpoints'
+best_acc = 0.0
+
 preproc = AudioPreprocessor(model_settings['dct_coefficient_count'])
 data_iter = SpeechCommandsDataCollector(preproc,
                                         data_dir='C:\Study\Speech_command_classification\data\speech_dataset',
@@ -134,11 +133,11 @@ data_iter = SpeechCommandsDataCollector(preproc,
                                         validation_percentage=10
                                         )
 net = LstmNet(model_settings)
-optimizer = torch.optim.RMSprop(net.parameters())
+optimizer = torch.optim.RMSprop(net.parameters(), lr=0.001)
 
 # configure training procedure
 n_train_steps = 5000
-n_mini_batch_size = 128
+n_mini_batch_size = 256
 
 for i in range(n_train_steps):
     # collect data
@@ -178,11 +177,20 @@ for i in range(n_train_steps):
         acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
         print("Validation loss: {:.4f}| accuracy: {:.4f}|".format(validation_loss.detach(), acc))
 
+        if acc > best_acc:
+            best_acc = acc
+            dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
+            fname = os.path.join(save_dir, '{}_{}_acc_{:.4f}.pt'.format("simple_lstm", dt, acc))
+            torch.save(net.state_dict(), fname)
+
 # Final test accuracy
 d = data_iter.get_data(n_mini_batch_size, 0, 'testing')
 data = d['x']
 labels = d['y']
 seq_lengths = d['seq_len']
+
+# load best model
+net.load_state_dict(torch.load(fname))
 
 data = torch.from_numpy(data).float()
 labels = torch.from_numpy(labels).long()
