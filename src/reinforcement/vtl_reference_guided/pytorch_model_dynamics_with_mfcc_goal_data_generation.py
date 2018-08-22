@@ -14,6 +14,7 @@ import torch.nn.functional as F
 from src.VTL.vtl_environment import VTLEnv
 from src.speech_classification.audio_processing import AudioPreprocessor
 
+from src.VTL.pyvtl_v2 import get_cf
 
 class ReplayBuffer(object):
 
@@ -93,7 +94,8 @@ def denormalize(normed_data, bound):
     return data
 
 
-def generate_model_dynamics_training_data(env, preproc, replay_buffer, num_samples, episode_length, video_dir=None):
+def generate_model_dynamics_training_data_random_policy(env, preproc, replay_buffer, num_samples, episode_length,
+                                                        video_dir=None):
     num_episodes = num_samples // episode_length
     s_dim = env.state_dim
     a_dim = env.action_dim
@@ -119,7 +121,8 @@ def generate_model_dynamics_training_data(env, preproc, replay_buffer, num_sampl
             action[24:] = 0.
             # make a step
             s1, audio = env.step(action)
-            mfcc = preproc(audio, env.audio_sampling_rate)
+            wav_audio = np.int16(audio * (2 ** 15 - 1))
+            mfcc = preproc(wav_audio, env.audio_sampling_rate)
             g1 = np.reshape(mfcc, (g_dim))
             env.render()
 
@@ -132,23 +135,98 @@ def generate_model_dynamics_training_data(env, preproc, replay_buffer, num_sampl
         if video_dir is not None:
             fname = video_dir + '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
             env.dump_episode(fname)
+        print('|episode: {} out of {}|'.format(i, num_episodes))
+
+
+def generate_model_dynamics_training_data_simple_transition(env, preproc, replay_buffer, num_samples, episode_length,
+                                                            video_dir=None):
+    num_episodes = num_samples // episode_length
+    s_dim = env.state_dim
+    a_dim = env.action_dim
+    g_dim = preproc.get_dim()
+
+    s_bound = env.state_bound
+    a_bound = env.action_bound
+    g_bound = [(-100, 100) for _ in range(g_dim)]
+
+    action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.001)
+
+    sound_names = ['a', 'e', 'i', 'o', 'u', 'A', 'I', 'O', 'U', 'Y', '@',
+                   'tt-dental-fric(i)', 'll-labial-nas(a)', 'll-labial-nas(i)',
+                   'tt-alveolar-lat(a)', 'tt-postalveolar-fric(i)', 'tb-palatal-fric(a)']
+    sound_cfs = [get_cf(_) for _ in sound_names]
+
+    for i in range(num_episodes):
+        # pick 2 random sounds to make a transition
+        cf1 = random.choice(sound_cfs)
+        cf2 = random.choice(sound_cfs)
+
+        s0 = env.reset(cf1)
+        g0 = np.zeros(g_dim)
+        # rollout episode
+        for j in range(episode_length):
+
+            action = np.subtract(cf2, cf1) / episode_length
+
+            noise = action_noise()
+            action_noise_denormed = denormalize(noise, a_bound)
+
+            action += action_noise_denormed
+
+            action = np.reshape(action, (a_dim))
+            # make a step
+            s1, audio = env.step(action)
+            wav_audio = np.int16(audio * (2 ** 15 - 1))
+            mfcc = preproc(wav_audio, env.audio_sampling_rate)
+            isnans = np.isnan(mfcc)
+            if isnans.any():
+
+                print(mfcc)
+                print("NAN OCCURED")
+            g1 = np.reshape(mfcc, (g_dim))
+            env.render()
+
+            # add to replay buffer
+            # avoid nans from VTL(bug) and also skip first step because of dubious g0= 0
+            if not isnans.any() and j>0:
+                replay_buffer.add(s0, g0, action, s1, g1)
+
+            s0 = s1
+            g0 = g1
+
+        if video_dir is not None:
+            fname = video_dir + '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+            env.dump_episode(fname)
 
         print('|episode: {} out of {}|'.format(i, num_episodes))
 
-speaker_fname = os.path.join(r'C:\Study\SpeechAcquisitionModel\src\VTL', 'JD2.speaker')
-lib_path = os.path.join(r'C:\Study\SpeechAcquisitionModel\src\VTL', 'VocalTractLab2.dll')
-ep_duration = 5000
-timestep = 20
-episode_length = 40
-env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
-win_len = int(timestep * env.audio_sampling_rate)
-preproc = AudioPreprocessor(numcep=26, winlen=timestep/1000)
-replay_buffer = ReplayBuffer(1000000)
 
-num_samples = 50000
-video_dir = r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_0\Videos'
-generate_model_dynamics_training_data(env, preproc, replay_buffer, num_samples, episode_length, video_dir=video_dir)
+def generate(mode='random'):
+    speaker_fname = os.path.join(r'C:\Study\SpeechAcquisitionModel\src\VTL', 'JD2.speaker')
+    lib_path = os.path.join(r'C:\Study\SpeechAcquisitionModel\src\VTL', 'VocalTractLab2.dll')
+    ep_duration = 5000
+    timestep = 20
+    episode_length = 40
+    env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
+    win_len = int(timestep * env.audio_sampling_rate)
+    preproc = AudioPreprocessor(numcep=26, winlen=timestep/1000)
+    replay_buffer = ReplayBuffer(1000000)
 
-buffer_fname = r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_0\replay_buffer.pkl'
-with open(buffer_fname, mode='wb') as f:
-    pickle.dump(replay_buffer, f)
+    num_samples = 50000
+
+    dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+    video_dir = r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_' + mode + '_' + dt + r'\Videos'
+    buffer_fname = r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_' + mode + '_' + dt + r'\replay_buffer.pkl'
+    os.makedirs(video_dir, exist_ok=True)
+
+    if mode == 'random':
+        generate_model_dynamics_training_data_random_policy(env, preproc, replay_buffer, num_samples, episode_length,
+                                                            video_dir=video_dir)
+    elif mode == 'simple_transition':
+        generate_model_dynamics_training_data_simple_transition(env, preproc, replay_buffer, num_samples,
+                                                                episode_length, video_dir=video_dir)
+    with open(buffer_fname, mode='wb') as f:
+        pickle.dump(replay_buffer, f)
+
+if __name__ == '__main__':
+    generate(mode='simple_transition')

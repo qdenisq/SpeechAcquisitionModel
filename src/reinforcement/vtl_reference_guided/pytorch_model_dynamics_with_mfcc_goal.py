@@ -14,7 +14,6 @@ import torch.nn.functional as F
 from src.VTL.vtl_environment import VTLEnv
 from src.speech_classification.audio_processing import AudioPreprocessor
 
-
 class ReplayBuffer(object):
 
     def __init__(self, buffer_size, random_seed=0):
@@ -74,22 +73,24 @@ class ModelDynamicsWithAudioGoalNet(torch.nn.Module):
     def __init__(self, s_dim, g_dim, a_dim):
         super(ModelDynamicsWithAudioGoalNet, self).__init__()
         # an affine operation: y = Wx + b
-        self.fc1 = nn.Linear((s_dim + g_dim + a_dim), (s_dim + g_dim + a_dim) * 2)
-        torch.nn.init.xavier_uniform_(self.fc1.weight)
-
-        self.fc2 = nn.Linear((s_dim + g_dim + a_dim) * 2, s_dim * 4)
-        torch.nn.init.xavier_uniform_(self.fc2.weight)
-
-        self.fc3 = nn.Linear(s_dim * 4, g_dim)
-        torch.nn.init.xavier_uniform_(self.fc3.weight)
+        num_units = [s_dim + g_dim + a_dim, #input
+                     (s_dim + g_dim + a_dim) * 3,
+                     (s_dim + g_dim + a_dim) * 6,
+                     (s_dim + g_dim + a_dim) * 3,
+                     g_dim] #output
+        self.__fc_layers = nn.ModuleList([nn.Linear(num_units[i-1], num_units[i]) for i in range(1, len(num_units))])
+        [torch.nn.init.xavier_uniform_(layer.weight) for layer in self.__fc_layers]
+        self.__batch_norm_layers = nn.ModuleList([nn.BatchNorm1d(num_units[i]) for i in range(1, len(num_units))])
 
     def forward(self, x):
-        x = self.fc1(x)
-        x = torch.nn.ReLU()(x)
-        x = self.fc2(x)
-        x = torch.nn.ReLU()(x)
-        x = self.fc3(x)
-        # x = torch.nn.ReLU(x)
+        for i in range(len(self.__fc_layers)-2):
+            x = self.__fc_layers[i](x)
+            # x = self.__batch_norm_layers[i](x)
+            x = torch.nn.ReLU()(x)
+        x = self.__fc_layers[-2](x)
+        x = torch.nn.Tanh()(x)
+        x = self.__fc_layers[-1](x)
+
         return x
 
 
@@ -102,10 +103,9 @@ env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration
 win_len = int(timestep * env.audio_sampling_rate)
 preproc = AudioPreprocessor(numcep=26, winlen=timestep/1000)
 
-num_samples = 50000
-video_dir = r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_0\Videos'
-
-buffer_fname = r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_0\replay_buffer.pkl'
+dir_name = r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_simple_transition_08_16_2018_03_22_AM_48'
+video_dir = dir_name + r'\Videos'
+buffer_fname = dir_name + r'\replay_buffer.pkl'
 with open(buffer_fname, mode='rb') as f:
     replay_buffer = pickle.load(f)
 
@@ -116,21 +116,23 @@ g_dim = preproc.get_dim()
 
 s_bound = env.state_bound
 a_bound = env.action_bound
-g_bound = [(-100, 100) for _ in range(g_dim)]
+# a_bound = [(p[0] / 5, p[1] / 5) for p in env.action_bound ]
+g_bound = [(-20, 20) for _ in range(g_dim)]
 
 
 # setup training parameters
-num_train_steps = 10000
+num_train_steps = 50000
 n_minibatch_size = 512
 
 net = ModelDynamicsWithAudioGoalNet(s_dim, g_dim, a_dim)
-optimizer = torch.optim.RMSprop(net.parameters())
+optimizer = torch.optim.Adam(net.parameters()) #rms prop lr=0.001
 
 # train loop
 for i in range(num_train_steps):
+    adapt_minibatch = n_minibatch_size * 2 ** ((i * 5) // num_train_steps)
     # collect data
     s0_batch, g0_batch, a_batch, s1_batch, g1_batch = \
-        replay_buffer.sample_batch(n_minibatch_size)
+        replay_buffer.sample_batch(adapt_minibatch)
 
     # normalize data before train
     s0_batch_normed = normalize(s0_batch, s_bound)
@@ -145,7 +147,6 @@ for i in range(num_train_steps):
     y = torch.from_numpy(g1_batch_normed).float()
 
     pred = net(x)
-
     loss = torch.nn.MSELoss()(pred, y)
     loss.backward()
 
@@ -157,5 +158,18 @@ for i in range(num_train_steps):
     print("|train step: {}| loss: {:.4f}| denormalized loss: {:.4f}".format(i,
                                                                             loss.detach().numpy(),
                                                                             denormed_loss.detach().numpy()))
+    # show some examples
+    if i % 200 == 0:
+        for e in range(5):
+            print("|Example:{}|\n"
+                  "|Initial: {}|\n"
+                  "|Expected: {}|\n"
+                  "|Predicted: {}|\n"
+                  "|Error: {}|".format(e,
+                                       g0_batch[e],
+                                       g1_batch[e],
+                                       denormed_pred[e].detach().numpy(),
+                                       abs(np.subtract(g1_batch[e], denormed_pred[e].detach().numpy()))
+                                       ))
 
 

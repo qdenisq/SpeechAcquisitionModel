@@ -510,8 +510,8 @@ class AudioPreprocessor(object):
             raise TypeError("Expected either filename for audio file as an argument either raw audio")
 
     def __from_array(self, input, sr):
-        out = mfcc(input, samplerate=sr, numcep=self.__numcep, winlen=self.__winlen)
-        return out
+        out = mfcc(input, samplerate=sr, numcep=self.__numcep + 1, winlen=self.__winlen)
+        return out[:, 1:]
 
     def __from_file(self, fname):
         rate, input = wav.read(fname)
