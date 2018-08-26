@@ -349,6 +349,12 @@ def train(settings, env, replay_buffer, preproc, reference_trajectory):
                 md_loss.backward()
                 md_goal_optimizer.step()
 
+                # calc denormalize loss
+
+                denormed_pred = torch.from_numpy(denormalize(md_pred.detach().numpy(), g_bound))
+                denormed_y = torch.from_numpy(denormalize(md_target_Y.detach().numpy(), g_bound))
+                md_loss_denormed = torch.nn.MSELoss()(denormed_pred, denormed_y)
+
                 #############################################################
                 # train policy
                 ##############################################################
@@ -387,8 +393,8 @@ def train(settings, env, replay_buffer, preproc, reference_trajectory):
                 # note that policy loss here is calculated in accordance with the model dynamics
                 policy_loss_out = loss.detach().numpy()
 
-                print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}"
-                      .format(i, train_step_i, md_loss.detach().numpy(), policy_loss_out))
+                print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| model_dynamics denormed loss: {:.8f}| policy loss: {:.5f}"
+                      .format(i, train_step_i, md_loss.detach().numpy(), md_loss_denormed.detach().numpy(), policy_loss_out))
 
 
 
@@ -398,12 +404,12 @@ def main():
     ep_duration = 5000
     timestep = 20
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
-    preproc = AudioPreprocessor(numcep=24, winlen=timestep / 1000)
+    preproc = AudioPreprocessor(numcep=13, winlen=timestep / 1000)
     settings = {
             'state_dim': env.state_dim,
             'action_dim': env.action_dim,
             'state_bound': env.state_bound,
-            'action_bound': env.action_bound,
+            'action_bound': [(p[0] / 5, p[1] / 5) for p in env.action_bound ], #env.action_bound,
             'goal_dim': preproc.get_dim(),
             'goal_bound': [(-50, 50) for _ in range(preproc.get_dim())],
             'episode_length': 40,

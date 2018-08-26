@@ -74,9 +74,9 @@ class ModelDynamicsWithAudioGoalNet(torch.nn.Module):
         super(ModelDynamicsWithAudioGoalNet, self).__init__()
         # an affine operation: y = Wx + b
         num_units = [s_dim + g_dim + a_dim, #input
-                     (s_dim + g_dim + a_dim) * 3,
-                     (s_dim + g_dim + a_dim) * 6,
-                     (s_dim + g_dim + a_dim) * 3,
+                     (s_dim + 2*g_dim + a_dim) * 3,
+                     (s_dim + 2*g_dim + a_dim) * 6,
+                     (s_dim + 2*g_dim + a_dim) * 3,
                      g_dim] #output
         self.__fc_layers = nn.ModuleList([nn.Linear(num_units[i-1], num_units[i]) for i in range(1, len(num_units))])
         [torch.nn.init.xavier_uniform_(layer.weight) for layer in self.__fc_layers]
@@ -101,9 +101,9 @@ timestep = 20
 episode_length = 40
 env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
 win_len = int(timestep * env.audio_sampling_rate)
-preproc = AudioPreprocessor(numcep=26, winlen=timestep/1000)
+preproc = AudioPreprocessor(numcep=13, winlen=timestep/1000)
 
-dir_name = r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_simple_transition_08_16_2018_03_22_AM_48'
+dir_name = r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_simple_transition_08_23_2018_10_52_AM_54'
 video_dir = dir_name + r'\Videos'
 buffer_fname = dir_name + r'\replay_buffer.pkl'
 with open(buffer_fname, mode='rb') as f:
@@ -116,8 +116,8 @@ g_dim = preproc.get_dim()
 
 s_bound = env.state_bound
 a_bound = env.action_bound
-# a_bound = [(p[0] / 5, p[1] / 5) for p in env.action_bound ]
-g_bound = [(-20, 20) for _ in range(g_dim)]
+a_bound = [(p[0] / 5, p[1] / 5) for p in env.action_bound ]
+g_bound = [(-40, 40) for _ in range(g_dim)]
 
 
 # setup training parameters

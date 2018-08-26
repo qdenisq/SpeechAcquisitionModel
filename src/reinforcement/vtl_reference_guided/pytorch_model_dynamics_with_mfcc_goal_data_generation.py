@@ -147,7 +147,7 @@ def generate_model_dynamics_training_data_simple_transition(env, preproc, replay
 
     s_bound = env.state_bound
     a_bound = env.action_bound
-    g_bound = [(-100, 100) for _ in range(g_dim)]
+    g_bound = [(-50, 50) for _ in range(g_dim)]
 
     action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.001)
 
@@ -209,7 +209,7 @@ def generate(mode='random'):
     episode_length = 40
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
     win_len = int(timestep * env.audio_sampling_rate)
-    preproc = AudioPreprocessor(numcep=26, winlen=timestep/1000)
+    preproc = AudioPreprocessor(numcep=13, winlen=timestep/1000)
     replay_buffer = ReplayBuffer(1000000)
 
     num_samples = 50000
