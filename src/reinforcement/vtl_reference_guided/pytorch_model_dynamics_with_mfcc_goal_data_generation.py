@@ -103,7 +103,7 @@ def generate_model_dynamics_training_data_random_policy(env, preproc, replay_buf
 
     s_bound = env.state_bound
     a_bound = env.action_bound
-    g_bound = [(-100, 100) for _ in range(g_dim)]
+    g_bound = [(-50, 50) for _ in range(g_dim)]
 
     action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.01)
 
@@ -138,7 +138,7 @@ def generate_model_dynamics_training_data_random_policy(env, preproc, replay_buf
         print('|episode: {} out of {}|'.format(i, num_episodes))
 
 
-def generate_model_dynamics_training_data_simple_transition(env, preproc, replay_buffer, num_samples, episode_length,
+def generate_model_dynamics_training_data_linear_transition(env, preproc, replay_buffer, num_samples, episode_length,
                                                             video_dir=None):
     num_episodes = num_samples // episode_length
     s_dim = env.state_dim
@@ -149,17 +149,20 @@ def generate_model_dynamics_training_data_simple_transition(env, preproc, replay
     a_bound = env.action_bound
     g_bound = [(-50, 50) for _ in range(g_dim)]
 
-    action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.001)
+    action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.003)
 
-    sound_names = ['a', 'e', 'i', 'o', 'u', 'A', 'I', 'O', 'U', 'Y', '@',
-                   'tt-dental-fric(i)', 'll-labial-nas(a)', 'll-labial-nas(i)',
+    sound_names = ['a', 'e', 'i', 'o', 'u']
+    sound_names_cap_vowels = ['A', 'I', 'O', 'U', 'Y', '@']
+    sound_names_consonants = ['tt-dental-fric(i)', 'll-labial-nas(a)', 'll-labial-nas(i)',
                    'tt-alveolar-lat(a)', 'tt-postalveolar-fric(i)', 'tb-palatal-fric(a)']
     sound_cfs = [get_cf(_) for _ in sound_names]
 
     for i in range(num_episodes):
         # pick 2 random sounds to make a transition
-        cf1 = random.choice(sound_cfs)
-        cf2 = random.choice(sound_cfs)
+        sound1, cf1 = random.choice(list(zip(sound_names, sound_cfs)))
+        sound2, cf2 = random.choice(list(zip(sound_names, sound_cfs)))
+        # cf1 = random.choice(sound_cfs)
+        # cf2 = random.choice(sound_cfs)
 
         s0 = env.reset(cf1)
         g0 = np.zeros(g_dim)
@@ -169,6 +172,7 @@ def generate_model_dynamics_training_data_simple_transition(env, preproc, replay
             action = np.subtract(cf2, cf1) / episode_length
 
             noise = action_noise()
+            noise[24:] /= 10.
             action_noise_denormed = denormalize(noise, a_bound)
 
             action += action_noise_denormed
@@ -195,7 +199,87 @@ def generate_model_dynamics_training_data_simple_transition(env, preproc, replay
             g0 = g1
 
         if video_dir is not None:
-            fname = video_dir + '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+            subdir = sound1 + "_" + sound2
+            try:
+                os.makedirs(os.path.join(video_dir, subdir))
+            except:
+                pass
+
+            fname = os.path.join(video_dir, subdir) +  '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+            env.dump_episode(fname)
+
+        print('|episode: {} out of {}|'.format(i, num_episodes))
+
+
+def generate_model_dynamics_training_data_sigmoid_transition(env, preproc, replay_buffer, num_samples, episode_length,
+                                                            video_dir=None):
+    num_episodes = num_samples // episode_length
+    s_dim = env.state_dim
+    a_dim = env.action_dim
+    g_dim = preproc.get_dim()
+
+    s_bound = env.state_bound
+    a_bound = env.action_bound
+    g_bound = [(-50, 50) for _ in range(g_dim)]
+
+    action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.01)
+
+    sound_names = ['a', 'e', 'i', 'o', 'u']
+    sound_names_cap_vowels = ['A', 'I', 'O', 'U', 'Y', '@']
+    sound_names_consonants = ['tt-dental-fric(i)', 'll-labial-nas(a)', 'll-labial-nas(i)',
+                   'tt-alveolar-lat(a)', 'tt-postalveolar-fric(i)', 'tb-palatal-fric(a)']
+    sound_cfs = [get_cf(_) for _ in sound_names]
+
+    for i in range(num_episodes):
+        # pick 2 random sounds to make a transition
+        sound1, cf1 = random.choice(list(zip(sound_names, sound_cfs)))
+        sound2, cf2 = random.choice(list(zip(sound_names, sound_cfs)))
+        # cf1 = random.choice(sound_cfs)
+        # cf2 = random.choice(sound_cfs)
+
+        s0 = env.reset(cf1)
+        g0 = np.zeros(g_dim)
+        # rollout episode
+
+        for j in range(episode_length):
+            k = 1. + np.exp(30. * (-1. * float(j) / episode_length + 0.5))
+            action = np.subtract(cf2, cf1) / k - s0 + cf1
+
+            noise = action_noise()
+            noise[24:] = 0.
+            action_noise_denormed = denormalize(noise, a_bound)
+
+            action += action_noise_denormed
+
+            action = np.reshape(action, (a_dim))
+            # make a step
+            s1, audio = env.step(action)
+            wav_audio = np.int16(audio * (2 ** 15 - 1))
+            mfcc = preproc(wav_audio, env.audio_sampling_rate)
+            isnans = np.isnan(mfcc)
+            if isnans.any():
+
+                print(mfcc)
+                print("NAN OCCURED")
+            g1 = np.reshape(mfcc, (g_dim))
+            env.render()
+
+            # add to replay buffer
+            # avoid nans from VTL(bug) and also skip first step because of dubious g0= 0
+            if not isnans.any() and j>0:
+                replay_buffer.add(s0, g0, action, s1, g1)
+
+            s0 = s1
+            g0 = g1
+
+        if video_dir is not None:
+            subdir = sound1 + "_" + sound2
+            try:
+                os.makedirs(os.path.join(video_dir, subdir))
+            except:
+                pass
+
+            fname = os.path.join(video_dir, subdir) +  '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
             env.dump_episode(fname)
 
         print('|episode: {} out of {}|'.format(i, num_episodes))
@@ -204,15 +288,15 @@ def generate_model_dynamics_training_data_simple_transition(env, preproc, replay
 def generate(mode='random'):
     speaker_fname = os.path.join(r'C:\Study\SpeechAcquisitionModel\src\VTL', 'JD2.speaker')
     lib_path = os.path.join(r'C:\Study\SpeechAcquisitionModel\src\VTL', 'VocalTractLab2.dll')
-    ep_duration = 5000
+    max_ep_duration = 5000
     timestep = 20
-    episode_length = 40
-    env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
+    episode_length = 50
+    env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=max_ep_duration)
     win_len = int(timestep * env.audio_sampling_rate)
-    preproc = AudioPreprocessor(numcep=13, winlen=timestep/1000)
+    preproc = AudioPreprocessor(numcep=12, winlen=timestep/1000)
     replay_buffer = ReplayBuffer(1000000)
 
-    num_samples = 50000
+    num_samples = 500000
 
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
     video_dir = r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_' + mode + '_' + dt + r'\Videos'
@@ -222,11 +306,14 @@ def generate(mode='random'):
     if mode == 'random':
         generate_model_dynamics_training_data_random_policy(env, preproc, replay_buffer, num_samples, episode_length,
                                                             video_dir=video_dir)
-    elif mode == 'simple_transition':
-        generate_model_dynamics_training_data_simple_transition(env, preproc, replay_buffer, num_samples,
+    elif mode == 'linear_transition':
+        generate_model_dynamics_training_data_linear_transition(env, preproc, replay_buffer, num_samples,
+                                                                episode_length, video_dir=video_dir)
+    elif mode == 'sigmoid_transition':
+        generate_model_dynamics_training_data_sigmoid_transition(env, preproc, replay_buffer, num_samples,
                                                                 episode_length, video_dir=video_dir)
     with open(buffer_fname, mode='wb') as f:
         pickle.dump(replay_buffer, f)
 
 if __name__ == '__main__':
-    generate(mode='simple_transition')
+    generate(mode='sigmoid_transition')

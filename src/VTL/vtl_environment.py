@@ -189,7 +189,7 @@ class VTLEnv(object):
         width = self.img_width
         height = self.img_height
 
-        wav = np.array(self.audio_stream[:int(self.audio_sampling_rate * self.max_episode_duration / 1000)])
+        wav = np.array(self.audio_stream[:int(self.audio_sampling_rate * self.current_step * self.timestep / 1000)])
         wav_int = np.int16(wav * (2 ** 15 - 1))
         wavfile.write(fname + '.wav', self.audio_sampling_rate, wav_int)
 

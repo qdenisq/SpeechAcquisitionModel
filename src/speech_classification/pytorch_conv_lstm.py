@@ -116,19 +116,27 @@ def accuracy(out, labels):
 wanted_words = ['bed', 'bird', 'cat', 'dog', 'down', 'eight', 'five', 'four', 'go', 'happy', 'house', 'left', 'marvin',
                 'nine', 'no', 'off', 'on', 'one', 'right', 'seven', 'sheila', 'six', 'stop', 'three', 'tree', 'two',
                 'up', 'wow', 'yes', 'zero']
+wanted_words_tanh_transition = ['a_a', 'a_i', 'a_u', 'a_o', 'a_e',
+                                'i_a', 'i_i', 'i_u', 'i_o', 'i_e',
+                                'u_a', 'u_i', 'u_u', 'u_o', 'u_e',
+                                'o_a', 'o_i', 'o_u', 'o_o', 'o_e',
+                                'e_a', 'e_i', 'e_u', 'e_o', 'e_e']
 model_settings = {
-    'dct_coefficient_count': 26,
-    'label_count': len(wanted_words) + 2,
-    'hidden_reccurent_cells_count': 100
+    'dct_coefficient_count': 12,
+    'label_count': len(wanted_words_tanh_transition) + 2,
+    'hidden_reccurent_cells_count': 100,
+    'winlen': 0.02,
+    'winstep': 0.02
 }
 
-save_dir = r'C:\Study\SpeechAcquisitionModel\reports\speech_classification\checkpoints'
+save_dir = r'C:\Study\SpeechAcquisitionModel\reports\VTL_sigmoid_transition_classification\checkpoints'
 best_acc = 0.0
+lowest_loss = 100.0
 
-preproc = AudioPreprocessor(model_settings['dct_coefficient_count'])
+preproc = AudioPreprocessor(model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
 data_iter = SpeechCommandsDataCollector(preproc,
-                                        data_dir='C:\Study\Speech_command_classification\data\speech_dataset',
-                                        wanted_words=wanted_words,
+                                        data_dir=r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_sigmoid_transition_08_27_2018_04_42_PM_21\Videos',
+                                        wanted_words=wanted_words_tanh_transition,
                                         testing_percentage=10,
                                         validation_percentage=10
                                         )
@@ -177,8 +185,9 @@ for i in range(n_train_steps):
         acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
         print("Validation loss: {:.4f}| accuracy: {:.4f}|".format(validation_loss.detach(), acc))
 
-        if acc > best_acc:
+        if acc > best_acc or validation_loss < lowest_loss:
             best_acc = acc
+            lowest_loss = validation_loss
             dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
             fname = os.path.join(save_dir, '{}_{}_acc_{:.4f}.pt'.format("simple_lstm", dt, acc))
             torch.save(net.state_dict(), fname)

@@ -218,14 +218,14 @@ class PolicyNet(nn.Module):
         x = torch.nn.Tanh()(x)
         x = self.__fc_layers[-1](x)
 
-        # test truncate here
-        ds = (self.__state_min - inp[:, :self.__s_dim] * self.__state_scaling_factor) / self.__action_scaling_factor
-        x = torch.clamp(x - ds, min=0.)
-        x = x + ds
-
-        ds_1 = (self.__state_max - inp[:, :self.__s_dim] * self.__state_scaling_factor) / self.__action_scaling_factor
-        x = torch.clamp(x - ds_1, max=0.)
-        x = x + ds_1
+        # # test truncate here
+        # ds = (self.__state_min - inp[:, :self.__s_dim] * self.__state_scaling_factor) / self.__action_scaling_factor
+        # x = torch.clamp(x - ds, min=0.)
+        # x = x + ds
+        #
+        # ds_1 = (self.__state_max - inp[:, :self.__s_dim] * self.__state_scaling_factor) / self.__action_scaling_factor
+        # x = torch.clamp(x - ds_1, max=0.)
+        # x = x + ds_1
         x[:, 24:] = 0.
         return x
 
@@ -245,6 +245,7 @@ def train(settings, env, replay_buffer, preproc, reference_trajectory):
 
     md_loss_thresh = 0.0003
     miss_thresh = 0.08
+    num_first_steps_to_skip = 4
     ###########################################
     # Create model dynamics and policy
     ###########################################
@@ -258,7 +259,7 @@ def train(settings, env, replay_buffer, preproc, reference_trajectory):
     # md_state_optimizer = torch.optim.Adam(md_state_net.parameters())
 
     policy_net = PolicyNet(s_dim, g_dim, a_dim, s_bound, a_bound)
-    policy_optimizer = torch.optim.Adam(policy_net.parameters(), lr=0.001)
+    policy_optimizer = torch.optim.Adam(policy_net.parameters(), lr=0.0001)
 
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
     # writer = tf.summary.FileWriter(settings['summary_dir'] + '/summary_md_' + dt, sess.graph)
@@ -266,7 +267,7 @@ def train(settings, env, replay_buffer, preproc, reference_trajectory):
     try:
         os.makedirs(video_dir)
     except:
-        print("directory '{}' already exists")
+        print("directory '{}' already exists".format(video_dir))
     minibatch_size = settings['minibatch_size']
     save_step = settings['save_video_step']
     ###########################################
@@ -288,12 +289,13 @@ def train(settings, env, replay_buffer, preproc, reference_trajectory):
         env.reset(s0)
         env.render()
 
-        a = np.zeros(a_dim)
-        s0, audio = env.step(a)
-        wav_audio = np.int16(audio * (2 ** 15 - 1))
-        mfcc = preproc(wav_audio, env.audio_sampling_rate)
-        g0 = np.reshape(mfcc, (g_dim))
-        env.render()
+        for j in range(num_first_steps_to_skip):
+            a = np.zeros(a_dim)
+            s0, audio = env.step(a)
+            wav_audio = np.int16(audio * (2 ** 15 - 1))
+            mfcc = preproc(wav_audio, env.audio_sampling_rate)
+            g0 = np.reshape(mfcc, (g_dim))
+            env.render()
         # rollout episode
         for j in range(s0_index, len(goal_target_traj) - 1):
             target = goal_target_traj[j + 1]
@@ -344,7 +346,7 @@ def train(settings, env, replay_buffer, preproc, reference_trajectory):
 
             # some sort of early stopping
             # Need to change for sure in order to avoid going out of bounds at least
-            if (np.mean(miss) > miss_thresh or any(out_of_bound)) and (i % save_step != 0 or replay_buffer.size() < minibatch_size):
+            if (np.mean(miss) > miss_thresh or any(out_of_bound)) and (i % save_step != 0 or replay_buffer.size() < minibatch_size) and j > 1:
                 break
 
         # dump video
@@ -480,11 +482,12 @@ def main():
     target_goals = []
     target_states = []
     target_states = []
-
+    num_first_steps_to_skip = 4
     # make a fake first null action to avoid weird clicking in the beginning
-    a = np.zeros(env.action_dim)
-    s0, _ = env.step(a)
-    env.render()
+    for j in range(num_first_steps_to_skip):
+        a = np.zeros(env.action_dim)
+        s0, _ = env.step(a)
+        env.render()
     audios = []
     for i in range(0, len(target_trajectory) - 1):
         action = np.subtract(target_trajectory[i], s0)
@@ -503,8 +506,6 @@ def main():
         target_actions.append(action)
         target_goals.append(g1)
         target_states.append(s1)
-
-
 
         s0 = s1
         g0 = g1
