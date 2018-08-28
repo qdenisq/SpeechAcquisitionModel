@@ -2,7 +2,9 @@
 logs/
 videos/
 ddpg/results/
+.idea/
 
+**.iml
 **.png
 **.mp4
 **.W8421444
