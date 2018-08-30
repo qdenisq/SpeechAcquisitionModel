@@ -227,7 +227,7 @@ def generate_model_dynamics_training_data_sigmoid_transition(env, preproc, repla
     sound_names = ['a', 'e', 'i', 'o', 'u']
     sound_names_cap_vowels = ['A', 'I', 'O', 'U', 'Y', '@']
     sound_names_consonants = ['tt-dental-fric(i)', 'll-labial-nas(a)', 'll-labial-nas(i)',
-                   'tt-alveolar-lat(a)', 'tt-postalveolar-fric(i)', 'tb-palatal-fric(a)']
+                              'tt-alveolar-lat(a)', 'tt-postalveolar-fric(i)', 'tb-palatal-fric(a)']
     sound_cfs = [get_cf(_) for _ in sound_names]
 
     for i in range(num_episodes):
@@ -260,13 +260,13 @@ def generate_model_dynamics_training_data_sigmoid_transition(env, preproc, repla
             if isnans.any():
 
                 print(mfcc)
-                print("NAN OCCURED")
+                print("NAN OCCURRED")
             g1 = np.reshape(mfcc, (g_dim))
             env.render()
 
             # add to replay buffer
             # avoid nans from VTL(bug) and also skip first step because of dubious g0= 0
-            if not isnans.any() and j>0:
+            if not isnans.any() and j > 0:
                 replay_buffer.add(s0, g0, action, s1, g1)
 
             s0 = s1
@@ -279,7 +279,7 @@ def generate_model_dynamics_training_data_sigmoid_transition(env, preproc, repla
             except:
                 pass
 
-            fname = os.path.join(video_dir, subdir) +  '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+            fname = os.path.join(video_dir, subdir) + '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
             env.dump_episode(fname)
 
         print('|episode: {} out of {}|'.format(i, num_episodes))
@@ -292,7 +292,6 @@ def generate(mode='random'):
     timestep = 20
     episode_length = 50
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=max_ep_duration)
-    win_len = int(timestep * env.audio_sampling_rate)
     preproc = AudioPreprocessor(numcep=12, winlen=timestep/1000)
     replay_buffer = ReplayBuffer(1000000)
 
@@ -311,9 +310,10 @@ def generate(mode='random'):
                                                                 episode_length, video_dir=video_dir)
     elif mode == 'sigmoid_transition':
         generate_model_dynamics_training_data_sigmoid_transition(env, preproc, replay_buffer, num_samples,
-                                                                episode_length, video_dir=video_dir)
+                                                                 episode_length, video_dir=video_dir)
     with open(buffer_fname, mode='wb') as f:
         pickle.dump(replay_buffer, f)
+
 
 if __name__ == '__main__':
     generate(mode='sigmoid_transition')

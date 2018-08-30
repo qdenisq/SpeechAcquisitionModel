@@ -105,108 +105,116 @@ def accuracy(out, labels):
     outputs = np.argmax(out, axis=1)
     return np.sum(outputs == labels, axis=None) / float(labels.size)
 
-#############################################################
-# Simple Lstm train script
-#############################################################
+if __name__ == '__main__':
 
-# init model settings
 
-# instantiate preproc cand lstm net
+    #############################################################
+    # Simple Lstm train script
+    #############################################################
 
-wanted_words = ['bed', 'bird', 'cat', 'dog', 'down', 'eight', 'five', 'four', 'go', 'happy', 'house', 'left', 'marvin',
-                'nine', 'no', 'off', 'on', 'one', 'right', 'seven', 'sheila', 'six', 'stop', 'three', 'tree', 'two',
-                'up', 'wow', 'yes', 'zero']
-wanted_words_tanh_transition = ['a_a', 'a_i', 'a_u', 'a_o', 'a_e',
-                                'i_a', 'i_i', 'i_u', 'i_o', 'i_e',
-                                'u_a', 'u_i', 'u_u', 'u_o', 'u_e',
-                                'o_a', 'o_i', 'o_u', 'o_o', 'o_e',
-                                'e_a', 'e_i', 'e_u', 'e_o', 'e_e']
-model_settings = {
-    'dct_coefficient_count': 12,
-    'label_count': len(wanted_words_tanh_transition) + 2,
-    'hidden_reccurent_cells_count': 100,
-    'winlen': 0.02,
-    'winstep': 0.02
-}
+    # init model settings
 
-save_dir = r'C:\Study\SpeechAcquisitionModel\reports\VTL_sigmoid_transition_classification\checkpoints'
-best_acc = 0.0
-lowest_loss = 100.0
+    # instantiate preproc cand lstm net
 
-preproc = AudioPreprocessor(model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
-data_iter = SpeechCommandsDataCollector(preproc,
-                                        data_dir=r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_sigmoid_transition_08_27_2018_04_42_PM_21\Videos',
-                                        wanted_words=wanted_words_tanh_transition,
-                                        testing_percentage=10,
-                                        validation_percentage=10
-                                        )
-net = LstmNet(model_settings)
-optimizer = torch.optim.RMSprop(net.parameters(), lr=0.001)
+    wanted_words = ['bed', 'bird', 'cat', 'dog', 'down', 'eight', 'five', 'four', 'go', 'happy', 'house', 'left', 'marvin',
+                    'nine', 'no', 'off', 'on', 'one', 'right', 'seven', 'sheila', 'six', 'stop', 'three', 'tree', 'two',
+                    'up', 'wow', 'yes', 'zero']
+    wanted_words_tanh_transition = ['a_a', 'a_i', 'a_u', 'a_o', 'a_e',
+                                    'i_a', 'i_i', 'i_u', 'i_o', 'i_e',
+                                    'u_a', 'u_i', 'u_u', 'u_o', 'u_e',
+                                    'o_a', 'o_i', 'o_u', 'o_o', 'o_e',
+                                    'e_a', 'e_i', 'e_u', 'e_o', 'e_e']
+    model_settings = {
+        'dct_coefficient_count': 12,
+        'label_count': len(wanted_words_tanh_transition) + 2,
+        'hidden_reccurent_cells_count': 50,
+        'winlen': 0.02,
+        'winstep': 0.02
+    }
 
-# configure training procedure
-n_train_steps = 5000
-n_mini_batch_size = 256
+    save_dir = r'C:\Study\SpeechAcquisitionModel\reports\VTL_sigmoid_transition_classification\checkpoints'
+    if not os.path.exists(save_dir):
+        try:
+            os.makedirs(save_dir)
+        except:
+            pass
+    best_acc = 0.0
+    lowest_loss = 100.0
 
-for i in range(n_train_steps):
-    # collect data
-    d = data_iter.get_data(n_mini_batch_size,0,'training')
-    data = d['x']
-    labels = d['y']
-    seq_lengths = d['seq_len']
+    preproc = AudioPreprocessor(model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
+    data_iter = SpeechCommandsDataCollector(preproc,
+                                            data_dir=r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_sigmoid_transition_08_28_2018_03_57_PM_03\Videos',
+                                            wanted_words=wanted_words_tanh_transition,
+                                            testing_percentage=10,
+                                            validation_percentage=10
+                                            )
+    net = LstmNet(model_settings)
+    optimizer = torch.optim.RMSprop(net.parameters(), lr=0.001)
 
-    data = torch.from_numpy(data).float()
-    labels = torch.from_numpy(labels).long()
-    # seq_lengths = torch.from_numpy(seq_lengths)
+    # configure training procedure
+    n_train_steps = 1000
+    n_mini_batch_size = 256
 
-    # zero grad
-    optimizer.zero_grad()
-
-    pred, hidden = net(data, seq_lengths)
-    loss = torch.nn.CrossEntropyLoss()(pred, labels)
-    loss.backward()
-    optimizer.step()
-
-    acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
-    print("|train_step: {}| loss: {:.4f}| accuracy: {:.4f}|".format(i, loss.detach(), acc))
-    # validate each 100 train steps
-    if i % 100 == 0:
-        d = data_iter.get_data(n_mini_batch_size, 0, 'validation')
+    for i in range(n_train_steps):
+        # collect data
+        d = data_iter.get_data(n_mini_batch_size,0,'training')
         data = d['x']
         labels = d['y']
         seq_lengths = d['seq_len']
 
         data = torch.from_numpy(data).float()
         labels = torch.from_numpy(labels).long()
+        # seq_lengths = torch.from_numpy(seq_lengths)
+
         # zero grad
         optimizer.zero_grad()
 
         pred, hidden = net(data, seq_lengths)
-        validation_loss = torch.nn.CrossEntropyLoss()(pred.detach(), labels.detach())
+        loss = torch.nn.CrossEntropyLoss()(pred, labels)
+        loss.backward()
+        optimizer.step()
+
         acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
-        print("Validation loss: {:.4f}| accuracy: {:.4f}|".format(validation_loss.detach(), acc))
+        print("|train_step: {}| loss: {:.4f}| accuracy: {:.4f}|".format(i, loss.detach(), acc))
+        # validate each 100 train steps
+        if i % 100 == 0:
+            d = data_iter.get_data(n_mini_batch_size, 0, 'validation')
+            data = d['x']
+            labels = d['y']
+            seq_lengths = d['seq_len']
 
-        if acc > best_acc or validation_loss < lowest_loss:
-            best_acc = acc
-            lowest_loss = validation_loss
-            dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
-            fname = os.path.join(save_dir, '{}_{}_acc_{:.4f}.pt'.format("simple_lstm", dt, acc))
-            torch.save(net.state_dict(), fname)
+            data = torch.from_numpy(data).float()
+            labels = torch.from_numpy(labels).long()
+            # zero grad
+            optimizer.zero_grad()
 
-# Final test accuracy
-d = data_iter.get_data(n_mini_batch_size, 0, 'testing')
-data = d['x']
-labels = d['y']
-seq_lengths = d['seq_len']
+            pred, hidden = net(data, seq_lengths)
+            validation_loss = torch.nn.CrossEntropyLoss()(pred.detach(), labels.detach())
+            acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
+            print("Validation loss: {:.4f}| accuracy: {:.4f}|".format(validation_loss.detach(), acc))
 
-# load best model
-net.load_state_dict(torch.load(fname))
+            if acc > best_acc or validation_loss < lowest_loss:
+                best_acc = acc
+                lowest_loss = validation_loss
+                dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
+                fname = os.path.join(save_dir, '{}_{}_acc_{:.4f}.pt'.format("simple_lstm", dt, acc))
+                torch.save(net.state_dict(), fname)
 
-data = torch.from_numpy(data).float()
-labels = torch.from_numpy(labels).long()
-# zero grad
-optimizer.zero_grad()
+    # Final test accuracy
+    d = data_iter.get_data(n_mini_batch_size, 0, 'testing')
+    data = d['x']
+    labels = d['y']
+    seq_lengths = d['seq_len']
 
-pred, hidden = net(data, seq_lengths)
-test_loss = torch.nn.CrossEntropyLoss()(pred, labels)
-acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
-print("Test loss: {:.4f}| accuracy: {:.4f}|".format(test_loss.detach(), acc))
+    # load best model
+    net.load_state_dict(torch.load(fname))
+
+    data = torch.from_numpy(data).float()
+    labels = torch.from_numpy(labels).long()
+    # zero grad
+    optimizer.zero_grad()
+
+    pred, hidden = net(data, seq_lengths)
+    test_loss = torch.nn.CrossEntropyLoss()(pred, labels)
+    acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
+    print("Test loss: {:.4f}| accuracy: {:.4f}|".format(test_loss.detach(), acc))
