@@ -218,6 +218,16 @@ class VTLEnv(object):
             subprocess.call(cmd, shell=False, stdout=devnull, stderr=devnull)  # "Muxing Done
         return
 
+    def get_cf(self, sound_name):
+        shape_name = ctypes.c_char_p(sound_name.encode())
+        cf =(ctypes.c_double * (self.number_vocal_tract_parameters))()
+        failure = self.VTL.vtlGetTractParams(shape_name, ctypes.byref(cf))
+        if failure != 0:
+            raise ValueError('Error in vtlGetTractParams! Errorcode: %i' % failure)
+        cf = list(cf)
+        cf.extend(self.glottis_param_neutral)
+        return cf
+
 def run_test():
     speaker_fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker')
     lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VocalTractLab2.dll')

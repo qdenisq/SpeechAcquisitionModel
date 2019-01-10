@@ -84,11 +84,8 @@ class OrnsteinUhlenbeckActionNoise:
 
 class ModelDynamics(object):
     """
-    Input to the network is the current state and the goal state, output is the action
-    under a deterministic policy.
+    Input to the network is the current state and the action, output is the next state.
 
-    The output layer activation is a tanh to keep the action
-    between -action_bound and action_bound
     """
 
     def __init__(self, name, model_settings):

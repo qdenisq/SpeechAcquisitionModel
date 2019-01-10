@@ -211,6 +211,7 @@ def train(settings, env, replay_buffer, preproc, lstm_net, target_trajectory, re
     num_episodes = 5000
     train_step_i = 0
     miss_thresh = 0.5
+    md_loss_thresh = 0.008
     # now at each step make 1 rollout, save it to a replay buffer and train model dynamics on a batch after each episode
     for i in range(num_episodes):
         s0 = env.reset(reference_s0)
@@ -308,43 +309,46 @@ def train(settings, env, replay_buffer, preproc, lstm_net, target_trajectory, re
                 denormed_y = torch.from_numpy(denormalize(md_target_Y.detach().numpy(), g_bound))
                 md_loss_denormed = torch.nn.MSELoss()(denormed_pred, denormed_y)
 
-                #############################################################
-                # train policy
-                ##############################################################
+                policy_loss_out = 0.
+                if md_loss.detach() < md_loss_thresh:
 
-                # zero grad
-                policy_optimizer.zero_grad()
-                # predict actions
-                policy_input_X = np.concatenate((s0_batch_normed,
-                                                 g0_batch_normed,
-                                                 target_batch_normed), axis=1)
-                policy_input_X = torch.from_numpy(policy_input_X).float()
+                    #############################################################
+                    # train policy
+                    ##############################################################
+
+                    # zero grad
+                    policy_optimizer.zero_grad()
+                    # predict actions
+                    policy_input_X = np.concatenate((s0_batch_normed,
+                                                     g0_batch_normed,
+                                                     target_batch_normed), axis=1)
+                    policy_input_X = torch.from_numpy(policy_input_X).float()
 
 
-                actions_normed = policy_net(policy_input_X).float()
+                    actions_normed = policy_net(policy_input_X).float()
 
-                # predict state if predicted actions will be applied
-                md_input_X = np.concatenate((s0_batch_normed,
-                                             g0_batch_normed), axis=1)
+                    # predict state if predicted actions will be applied
+                    md_input_X = np.concatenate((s0_batch_normed,
+                                                 g0_batch_normed), axis=1)
 
-                md_input_X = torch.from_numpy(md_input_X).float()
+                    md_input_X = torch.from_numpy(md_input_X).float()
 
-                # now stack the rest action tensor
-                md_input_X = torch.cat((md_input_X, actions_normed), 1)
+                    # now stack the rest action tensor
+                    md_input_X = torch.cat((md_input_X, actions_normed), 1)
 
-                md_target_Y = torch.from_numpy(target_batch_normed).float()
+                    md_target_Y = torch.from_numpy(target_batch_normed).float()
 
-                md_pred = md_goal_net(md_input_X)
-                loss = torch.nn.MSELoss()(md_pred, md_target_Y)
+                    md_pred = md_goal_net(md_input_X)
+                    loss = torch.nn.MSELoss()(md_pred, md_target_Y)
 
-                loss.backward()
-                # clip gradients
-                torch.nn.utils.clip_grad_norm(policy_net.parameters(), 0.001)
+                    loss.backward()
+                    # clip gradients
+                    torch.nn.utils.clip_grad_norm(policy_net.parameters(), 0.001)
 
-                policy_optimizer.step()
+                    policy_optimizer.step()
 
-                # note that policy loss here is calculated in accordance with the model dynamics
-                policy_loss_out = loss.detach().numpy()
+                    # note that policy loss here is calculated in accordance with the model dynamics
+                    policy_loss_out = loss.detach().numpy()
 
                 print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| model_dynamics denormed loss: {:.8f}| policy loss: {:.5f}"
                       .format(i, train_step_i, md_loss.detach().numpy(), md_loss_denormed.detach().numpy(), policy_loss_out))

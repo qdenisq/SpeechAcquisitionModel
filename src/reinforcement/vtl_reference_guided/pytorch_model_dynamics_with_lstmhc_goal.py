@@ -181,6 +181,12 @@ for i in range(num_episodes):
     # pick 2 random sounds to make a transition
     sound1, cf1 = random.choice(list(zip(sound_names, sound_cfs)))
     sound2, cf2 = random.choice(list(zip(sound_names, sound_cfs)))
+
+    sound1 = sound_names[0]
+    cf1 = sound_cfs[0]
+    sound2 = sound_names[1]
+    cf2 = sound_cfs[1]
+
     # cf1 = random.choice(sound_cfs)
     # cf2 = random.choice(sound_cfs)
 
@@ -223,8 +229,12 @@ for i in range(num_episodes):
         s0 = s1
         g0 = g1
 
-    # sample from replay buffer and train model_dynamics
+        if j > 1:
+            break
     adapt_minibatch = n_minibatch_size * 2 ** ((i * 5) // num_episodes)
+    if replay_buffer.size() < adapt_minibatch:
+        continue
+    # sample from replay buffer and train model_dynamics
     # collect data
     s0_batch, g0_batch, a_batch, s1_batch, g1_batch = \
         replay_buffer.sample_batch(adapt_minibatch)

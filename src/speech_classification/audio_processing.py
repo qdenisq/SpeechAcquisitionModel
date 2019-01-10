@@ -494,7 +494,7 @@ class SpeechCommandsDataCollector(object):
 
 
 class AudioPreprocessor(object):
-    def __init__(self, numcep=40, winlen=0.025, winstep=0.025):
+    def __init__(self, numcep=40, winlen=0.025, winstep=0.025, **kwargs):
         self.__numcep = numcep
         self.__winlen = winlen
         self.__winstep = winstep
@@ -503,12 +503,10 @@ class AudioPreprocessor(object):
     def __call__(self, *args, **kwargs):
         if len(args) == 1 and isinstance(args[0], str):
             return self.__from_file(args[0])
-        elif len(args) == 1 and isinstance(args[0], np.ndarray):
-            return self.__from_array(args[0], None)
         elif len(args) == 2 and isinstance(args[0], np.ndarray) and isinstance(args[1], int):
             return self.__from_array(args[0], args[1])
         else:
-            raise TypeError("Expected either filename for audio file as an argument either raw audio")
+            raise TypeError("Expected either filename for audio file as an argument either raw audio with defined sample rate")
 
     def __from_array(self, input, sr):
         out = mfcc(input, samplerate=sr, numcep=self.__numcep + 1, winlen=self.__winlen, nfft=int(sr*self.__winlen), winstep=self.__winstep)

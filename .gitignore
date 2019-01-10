@@ -1,6 +1,8 @@
 
 logs/
 videos/
+models/
+data/
 ddpg/results/
 .idea/
 

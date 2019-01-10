@@ -102,7 +102,7 @@ def train(settings, env, replay_buffer, reference_trajectory):
 
     # setup all summaries and dump directories
 
-    num_episodes = 50000
+    num_episodes = 5000
     action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.001)
     s_dim = settings['state_dim']
     g_dim = settings['goal_dim']
@@ -358,7 +358,7 @@ def main():
             'save_video_step': 200,
 
             'actor_tau': 0.01,
-            'actor_learning_rate': 0.000001,
+            'actor_learning_rate': 0.001,
 
             'model_dynamics_learning_rate': 0.05,
 
@@ -368,7 +368,7 @@ def main():
 
     replay_buffer = ReplayBuffer(100000)
 
-    reference_fname = r'C:\Study\SpeechAcquisitionModel\src\VTL\references\a_i.pkl'
+    reference_fname = r'C:\Study\SpeechAcquisitionModel\src\VTL\references\a_o.pkl'
     with open(reference_fname, 'rb') as f:
         (tract_params, glottis_params) = pickle.load(f)
         target_trajectory = np.hstack((np.array(tract_params), np.array(glottis_params)))

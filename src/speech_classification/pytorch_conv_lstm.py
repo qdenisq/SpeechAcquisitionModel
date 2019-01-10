@@ -95,15 +95,18 @@ class LstmNet(nn.Module):
         #     hidden = torch.zeros(x.size(0), self.n_hidden)
 
         x, hidden = self.__lstm(x, hidden)
+        lstm_out = x
         last_elements = seq_lens - 1
         # adjust x to the actual seq length for every sequence
         x_1 = x[np.arange(0, len(seq_lens)), last_elements, :]
         x = self.__output_layer(x_1)
-        return x, hidden
+        return x, hidden, lstm_out
+
 
 def accuracy(out, labels):
     outputs = np.argmax(out, axis=1)
     return np.sum(outputs == labels, axis=None) / float(labels.size)
+
 
 if __name__ == '__main__':
 
@@ -127,12 +130,12 @@ if __name__ == '__main__':
     model_settings = {
         'dct_coefficient_count': 12,
         'label_count': len(wanted_words_tanh_transition) + 2,
-        'hidden_reccurent_cells_count': 50,
+        'hidden_reccurent_cells_count': 64,
         'winlen': 0.02,
         'winstep': 0.02
     }
 
-    save_dir = r'C:\Study\SpeechAcquisitionModel\reports\VTL_sigmoid_transition_classification\checkpoints'
+    save_dir = r'C:\Study\SpeechAcquisitionModel\models\speech_classification'
     if not os.path.exists(save_dir):
         try:
             os.makedirs(save_dir)
@@ -152,12 +155,12 @@ if __name__ == '__main__':
     optimizer = torch.optim.RMSprop(net.parameters(), lr=0.001)
 
     # configure training procedure
-    n_train_steps = 1000
+    n_train_steps = 500
     n_mini_batch_size = 256
 
     for i in range(n_train_steps):
         # collect data
-        d = data_iter.get_data(n_mini_batch_size,0,'training')
+        d = data_iter.get_data(n_mini_batch_size, 0, 'training')
         data = d['x']
         labels = d['y']
         seq_lengths = d['seq_len']
@@ -169,7 +172,7 @@ if __name__ == '__main__':
         # zero grad
         optimizer.zero_grad()
 
-        pred, hidden = net(data, seq_lengths)
+        pred, hidden, _ = net(data, seq_lengths)
         loss = torch.nn.CrossEntropyLoss()(pred, labels)
         loss.backward()
         optimizer.step()
@@ -188,7 +191,7 @@ if __name__ == '__main__':
             # zero grad
             optimizer.zero_grad()
 
-            pred, hidden = net(data, seq_lengths)
+            pred, hidden, _ = net(data, seq_lengths)
             validation_loss = torch.nn.CrossEntropyLoss()(pred.detach(), labels.detach())
             acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
             print("Validation loss: {:.4f}| accuracy: {:.4f}|".format(validation_loss.detach(), acc))
@@ -198,7 +201,7 @@ if __name__ == '__main__':
                 lowest_loss = validation_loss
                 dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
                 fname = os.path.join(save_dir, '{}_{}_acc_{:.4f}.pt'.format("simple_lstm", dt, acc))
-                torch.save(net.state_dict(), fname)
+                torch.save(net, fname)
 
     # Final test accuracy
     d = data_iter.get_data(n_mini_batch_size, 0, 'testing')
@@ -207,7 +210,7 @@ if __name__ == '__main__':
     seq_lengths = d['seq_len']
 
     # load best model
-    net.load_state_dict(torch.load(fname))
+    net = torch.load(fname)
 
     data = torch.from_numpy(data).float()
     labels = torch.from_numpy(labels).long()

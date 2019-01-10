@@ -176,7 +176,7 @@ def create_reference(s1, s2, duration=1., frame_rate=50, name='', directory=''):
 
 def test_create_reference():
     s1 = 'a'
-    s2 = 'i'
+    s2 = 'o'
     name = s1 + '_' + s2
     directory = 'references'
     create_reference(s1, s2, name=name, directory=directory)
@@ -187,7 +187,7 @@ def test_create_reference():
 
 def tes_dynamic_sound_synthesis():
     s1 = 'a'
-    s2 = 'i'
+    s2 = 'o'
     audio, tract_params, glottis_params = synth_dynamic_sound(s1, s2)
     wavfile.write('ai_test.wav', audio_sampling_rate.value, audio)
 
