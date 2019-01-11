@@ -50,7 +50,7 @@ def generate_random_rollout_dataset(env, num_rollouts, ep_duration, timestep, in
         audios, states, actions = random_rollout(env, ep_duration, timestep, state)
         ep_name = os.path.join(save_dir, str(i))
         env.dump_episode(ep_name)
-        rollouts.loc[i] = [np.asarray(audios), np.asarray(states), np.asarray(actions)]
+        rollouts.loc[i] = [np.array(audios), np.array(states), np.array(actions)]
 
         if i % 500 == 0:
             rollouts.to_pickle(path=fname)
@@ -61,7 +61,7 @@ def generate_random_rollout_dataset(env, num_rollouts, ep_duration, timestep, in
 if __name__ == '__main__':
     speaker_fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker')
     lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VocalTractLab2.dll')
-    num_episodes = 10
+    num_episodes = 10000
     ep_duration = 1000
     timestep = 20
     num_steps_per_ep = ep_duration // timestep

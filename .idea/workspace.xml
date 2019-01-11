@@ -2,25 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/VTL/utils.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement/model_dynamics/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/SpeechAcquisitionModel.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SpeechAcquisitionModel.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/VTL/pyvtl_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/VTL/pyvtl_v2.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/VTL/vtl_environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/VTL/vtl_environment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/conv_rnn_model/multi_conv_rnn_4.ckpt-6000.data-00000-of-00001" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/conv_rnn_model/multi_conv_rnn_4.ckpt-6000.index" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/conv_rnn_model/multi_conv_rnn_4.ckpt-6000.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/conv_rnn_model/multi_conv_rnn_4.pbtxt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/conv_rnn_model/multi_conv_rnn_4_labels.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/model_dynamics.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/model_dynamics.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_lstmhc_goal.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_lstmhc_goal.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/speech_classification/audio_processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/audio_processing.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/VTL/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/VTL/utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -37,50 +21,39 @@
       <usages-collector id="statistics.lifecycle.project">
         <counts>
           <entry key="project.open.time.5" value="2" />
-          <entry key="project.opened" value="2" />
+          <entry key="project.open.time.7" value="1" />
+          <entry key="project.opened" value="3" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="28" />
+          <entry key="py" value="29" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="28" />
+          <entry key="Python" value="29" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="2914" />
+          <entry key="py" value="4063" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="2914" />
+          <entry key="Python" value="4063" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="166">
-              <caret line="191" column="33" lean-forward="true" selection-start-line="191" selection-start-column="33" selection-end-line="191" selection-end-column="33" />
-              <folding>
-                <element signature="e#0#47#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="381">
-              <caret line="56" column="14" selection-start-line="56" selection-start-column="14" selection-end-line="56" selection-end-column="14" />
+            <state relative-caret-position="335">
+              <caret line="67" column="78" selection-start-line="67" selection-start-column="78" selection-end-line="67" selection-end-column="78" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -89,9 +62,18 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_mfcc_goal.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="898">
+              <caret line="266" column="39" selection-start-line="266" selection-start-column="23" selection-end-line="266" selection-end-column="39" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/rnn.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
+            <state relative-caret-position="3020">
               <caret line="159" selection-start-line="159" selection-end-line="159" />
             </state>
           </provider>
@@ -100,7 +82,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/VTL/pyvtl_v2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2720">
+            <state relative-caret-position="3260">
               <caret line="170" column="65" selection-start-line="170" selection-start-column="65" selection-end-line="170" selection-end-column="65" />
             </state>
           </provider>
@@ -118,8 +100,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/VTL/utils.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="681">
-              <caret line="53" selection-start-line="53" selection-end-line="53" />
+            <state relative-caret-position="346">
+              <caret line="63" column="24" selection-start-line="63" selection-start-column="24" selection-end-line="63" selection-end-column="24" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -130,7 +112,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/speech_classification/audio_processing.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
+            <state relative-caret-position="9440">
               <caret line="496" column="8" selection-start-line="496" selection-start-column="8" selection-end-line="496" selection-end-column="8" />
             </state>
           </provider>
@@ -139,7 +121,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/python_speech_features/sigproc.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="404">
+            <state relative-caret-position="2260">
               <caret line="117" selection-start-line="117" selection-end-line="117" />
             </state>
           </provider>
@@ -148,7 +130,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/python_speech_features/base.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="201">
+            <state relative-caret-position="480">
               <caret line="27" selection-start-line="27" selection-end-line="27" />
             </state>
           </provider>
@@ -157,8 +139,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/VTL/vtl_environment.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="387">
-              <caret line="198" column="31" lean-forward="true" selection-start-line="198" selection-start-column="31" selection-end-line="198" selection-end-column="31" />
+            <state relative-caret-position="3800">
+              <caret line="198" column="31" selection-start-line="198" selection-start-column="31" selection-end-line="198" selection-end-column="31" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -243,8 +225,8 @@
         <option value="$PROJECT_DIR$/src/VTL/vtl_environment.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/model_dynamics.py" />
         <option value="$PROJECT_DIR$/src/speech_classification/audio_processing.py" />
-        <option value="$PROJECT_DIR$/src/VTL/utils.py" />
         <option value="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" />
+        <option value="$PROJECT_DIR$/src/VTL/utils.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py" />
       </list>
     </option>
@@ -393,7 +375,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.pytorch_conv_lstm">
+  <component name="RunManager" selected="Python.rnn_md">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -558,9 +540,9 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.pytorch_conv_lstm" />
         <item itemvalue="Python.rnn_md" />
         <item itemvalue="Python.utils" />
+        <item itemvalue="Python.pytorch_conv_lstm" />
         <item itemvalue="Python.pytorch_train" />
         <item itemvalue="Python tests.Nosetests in pyvtl_v2.py" />
       </list>
@@ -614,8 +596,8 @@
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.31543624" />
-      <window_info anchor="bottom" id="Debug" order="3" weight="0.37488016" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.31543624" />
+      <window_info active="true" anchor="bottom" id="Debug" order="3" visible="true" weight="0.37488016" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
       <window_info anchor="bottom" id="TODO" order="6" />
@@ -721,11 +703,6 @@
           <option name="timeStamp" value="368" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py</url>
-          <line>61</line>
-          <option name="timeStamp" value="369" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/VTL/utils.py</url>
           <line>50</line>
           <option name="timeStamp" value="378" />
@@ -742,8 +719,18 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py</url>
-          <line>56</line>
-          <option name="timeStamp" value="381" />
+          <line>58</line>
+          <option name="timeStamp" value="386" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py</url>
+          <line>71</line>
+          <option name="timeStamp" value="387" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py</url>
+          <line>66</line>
+          <option name="timeStamp" value="388" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -754,11 +741,6 @@
         </breakpoint>
       </default-breakpoints>
     </breakpoint-manager>
-    <watches-manager>
-      <configuration name="PythonConfigurationType">
-        <watch expression="sample" />
-      </configuration>
-    </watches-manager>
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
@@ -895,13 +877,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_mfcc_goal.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="4440">
-          <caret line="234" selection-start-line="234" selection-end-line="236" selection-end-column="11" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -924,30 +899,14 @@
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/speech_classification/test_conv_rnn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/speech_classification/convRNN.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state>
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
+      <provider selected="true" editor-type-id="text-editor" />
     </entry>
     <entry file="file://$PROJECT_DIR$/src/som/neural_map.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-4374">
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-4374" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/lstm_ddpg_1/lstm_ddpg.py">
@@ -966,28 +925,18 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-640">
           <caret line="88" column="4" selection-start-line="88" selection-start-column="4" selection-end-line="88" selection-end-column="4" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-660">
-          <folding>
-            <element signature="e#293#316#0" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-660" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../p2_control_temp/udacity_p2_continious_control/src/train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="300">
           <caret line="15" column="44" lean-forward="true" selection-start-line="15" selection-start-column="44" selection-end-line="15" selection-end-column="44" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -998,9 +947,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-1354">
           <caret line="161" column="22" lean-forward="true" selection-start-line="161" selection-start-column="22" selection-end-line="161" selection-end-column="22" />
-          <folding>
-            <element signature="e#0#13#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1011,41 +957,65 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="4120">
+          <caret line="219" column="19" selection-start-line="219" selection-start-column="19" selection-end-line="219" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/rnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3020">
+          <caret line="159" selection-start-line="159" selection-end-line="159" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/VTL/pyvtl_v2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3260">
+          <caret line="170" column="65" selection-start-line="170" selection-start-column="65" selection-end-line="170" selection-end-column="65" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/speech_classification/audio_processing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9440">
+          <caret line="496" column="8" selection-start-line="496" selection-start-column="8" selection-end-line="496" selection-end-column="8" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/python_speech_features/sigproc.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="404">
+        <state relative-caret-position="2260">
           <caret line="117" selection-start-line="117" selection-end-line="117" />
         </state>
       </provider>
     </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/python_speech_features/base.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
+        <state relative-caret-position="480">
           <caret line="27" selection-start-line="27" selection-end-line="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/VTL/pyvtl_v2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2720">
-          <caret line="170" column="65" selection-start-line="170" selection-start-column="65" selection-end-line="170" selection-end-column="65" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/VTL/vtl_environment.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="387">
-          <caret line="198" column="31" lean-forward="true" selection-start-line="198" selection-start-column="31" selection-end-line="198" selection-end-column="31" />
+        <state relative-caret-position="3800">
+          <caret line="198" column="31" selection-start-line="198" selection-start-column="31" selection-end-line="198" selection-end-column="31" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/speech_classification/audio_processing.py">
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_mfcc_goal.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="496" column="8" selection-start-line="496" selection-start-column="8" selection-end-line="496" selection-end-column="8" />
+        <state relative-caret-position="898">
+          <caret line="266" column="39" selection-start-line="266" selection-start-column="23" selection-end-line="266" selection-end-column="39" />
         </state>
       </provider>
     </entry>
@@ -1058,35 +1028,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/VTL/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="681">
-          <caret line="53" selection-start-line="53" selection-end-line="53" />
+        <state relative-caret-position="346">
+          <caret line="63" column="24" selection-start-line="63" selection-start-column="24" selection-end-line="63" selection-end-column="24" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="166">
-          <caret line="191" column="33" lean-forward="true" selection-start-line="191" selection-start-column="33" selection-end-line="191" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#47#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/rnn.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="201">
-          <caret line="159" selection-start-line="159" selection-end-line="159" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="381">
-          <caret line="56" column="14" selection-start-line="56" selection-start-column="14" selection-end-line="56" selection-end-column="14" />
+        <state relative-caret-position="335">
+          <caret line="67" column="78" selection-start-line="67" selection-start-column="78" selection-end-line="67" selection-end-column="78" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>

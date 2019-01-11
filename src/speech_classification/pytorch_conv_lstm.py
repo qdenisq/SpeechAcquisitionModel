@@ -217,7 +217,7 @@ if __name__ == '__main__':
     # zero grad
     optimizer.zero_grad()
 
-    pred, hidden = net(data, seq_lengths)
+    pred, hidden, _ = net(data, seq_lengths)
     test_loss = torch.nn.CrossEntropyLoss()(pred, labels)
     acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
     print("Test loss: {:.4f}| accuracy: {:.4f}|".format(test_loss.detach(), acc))
