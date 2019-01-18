@@ -22,9 +22,12 @@ class LstmModelDynamics(Module):
         self.__bn1 = torch.nn.BatchNorm1d(self.__acoustic_state_dim + self.__state_dim + self.__action_dim)
 
         self.__lstm = LSTM(self.__acoustic_state_dim + self.__state_dim + self.__action_dim,
-                              self.__hidden_cells, batch_first=True)
+                           self.__hidden_cells, batch_first=True)
+        self.__lstm_1 = LSTM(self.__hidden_cells,
+                           self.__hidden_cells, batch_first=True)
         self.__linear_layer = Linear(self.__hidden_cells, 256)
-        self.__output_layer = Linear(256, self.__acoustic_state_dim)
+        self.__linear_layer_1 = Linear(256, 128)
+        self.__output_layer = Linear(128, self.__acoustic_state_dim)
 
 
     def forward(self, acoustic_states, states, actions, hidden=None):
@@ -34,8 +37,11 @@ class LstmModelDynamics(Module):
         x = self.__bn1(x.view(-1, original_dim[-1]))
         x = x.view(original_dim)
         lstm_output, hidden = self.__lstm(x, hidden)
-        x = lstm_output
+        hidden1 = None
+        lstm_output1, hidden1 = self.__lstm_1(lstm_output, hidden1)
+        x = lstm_output1
         x = Tanh()(self.__linear_layer(x))
+        x = Tanh()(self.__linear_layer_1(x))
         x = self.__output_layer(x)
         return lstm_output, x
 
@@ -99,7 +105,10 @@ def train(*args, **kwargs):
         loss.backward()
         optim.step()
 
-        print("\rstep: {} | loss: {:.4f}".format(i, loss.detach().cpu().item()), end="")
+        dynamics = MSELoss(reduction='sum')(acoustic_states[:, :-1, :].contiguous().view(-1, acoustic_state_dim),
+                                        acoustic_states[:, 1:, :].contiguous().view(-1, acoustic_state_dim)) / (seq_len * kwargs['train']['minibatch_size'])
+
+        print("\rstep: {} | loss: {:.4f}| actual_dynamics: {:.4f}".format(i, loss.detach().cpu().item(), dynamics.detach().cpu().item()), end="")
 
 
 if __name__ == '__main__':

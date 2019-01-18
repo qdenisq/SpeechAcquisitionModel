@@ -203,17 +203,21 @@ def train(settings, env, replay_buffer, preproc, lstm_net, target_trajectory, re
     n_minibatch_size = 512
 
     md_goal_net = ModelDynamicsWithAudioGoalNet(s_dim, g_dim, a_dim)
-    md_goal_optimizer = torch.optim.Adam(md_goal_net.parameters()) #rms prop lr=0.001
+    md_goal_optimizer = torch.optim.RMSprop(md_goal_net.parameters(), lr=0.001) #rms prop lr=0.001
 
     policy_net = PolicyNet(s_dim, g_dim, a_dim, s_bound, a_bound)
-    policy_optimizer = torch.optim.Adam(policy_net.parameters(), lr=0.00001)
+    policy_optimizer = torch.optim.RMSprop(policy_net.parameters(), lr=0.001)
 
     num_episodes = 5000
     train_step_i = 0
-    miss_thresh = 0.5
-    md_loss_thresh = 0.008
+    miss_thresh = 0.2
+    md_loss_thresh = 0.01
     # now at each step make 1 rollout, save it to a replay buffer and train model dynamics on a batch after each episode
     for i in range(num_episodes):
+        md_goal_net.eval()
+        policy_net.eval()
+
+
         s0 = env.reset(reference_s0)
         g0 = np.zeros(g_dim)
 
@@ -249,12 +253,12 @@ def train(settings, env, replay_buffer, preproc, lstm_net, target_trajectory, re
             mfcc = torch.from_numpy(np.expand_dims(mfcc, axis=0)).float()
             # get hidden state from lstm net
             hidden = None
-            pred, hidden = lstm_net(mfcc, np.array([1]), hidden=hidden)
+            pred, hidden, lstm_out = lstm_net(mfcc, np.array([1]), hidden=hidden)
             g1 = np.concatenate([hidden[0].detach().numpy().flatten(), hidden[0].detach().numpy().flatten()])
             env.render()
 
             # add to replay buffer
-            if not isnans.any():
+            if not isnans.any() and i % save_step != 0:
                 replay_buffer.add(s0, g0, action, s1, g1, target)
 
             s0 = s1
@@ -279,6 +283,7 @@ def train(settings, env, replay_buffer, preproc, lstm_net, target_trajectory, re
                     replay_buffer.sample_batch(minibatch_size)
 
                 # train model_dynamics
+                md_goal_net.train()
                 # normalize data before train
                 s0_batch_normed = normalize(s0_batch, s_bound)
                 g0_batch_normed = normalize(g0_batch, g_bound)
@@ -315,7 +320,8 @@ def train(settings, env, replay_buffer, preproc, lstm_net, target_trajectory, re
                     #############################################################
                     # train policy
                     ##############################################################
-
+                    policy_net.train()
+                    md_goal_net.eval()
                     # zero grad
                     policy_optimizer.zero_grad()
                     # predict actions
@@ -403,7 +409,7 @@ def main():
     target_trajectory = []
     for i in range(reference_mfcc.shape[0]):
         net_input = torch.from_numpy(np.reshape(reference_mfcc[i, :], (1, 1, reference_mfcc.shape[1]))).float()
-        _, hidden = lstm_net(net_input, np.array([1]), hidden)
+        _, hidden, _ = lstm_net(net_input, np.array([1]), hidden)
         t = np.concatenate([hidden[0].detach().numpy().flatten(), hidden[0].detach().numpy().flatten()])
         target_trajectory.append(t)
 

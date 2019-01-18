@@ -218,7 +218,7 @@ for i in range(num_episodes):
         mfcc = torch.from_numpy(np.expand_dims(mfcc, axis=0)).float()
         # get hidden state from lstm net
         hidden = None
-        pred, hidden = lstm_net(mfcc, np.array([1]), hidden=hidden)
+        pred, hidden, lstm_out = lstm_net(mfcc, np.array([1]), hidden=hidden)
         g1 = np.concatenate([hidden[0].detach().numpy().flatten(), hidden[0].detach().numpy().flatten()])
         env.render()
 

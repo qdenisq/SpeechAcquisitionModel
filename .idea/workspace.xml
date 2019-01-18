@@ -2,8 +2,17 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/notebooks/rnn_md.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/__init__.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/replay_buffer.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/VTL/VocalTractLab2.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/VTL/VocalTractLab2.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/VTL/utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/VTL/utils.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_lstmhc_goal.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_lstmhc_goal.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -26,33 +35,65 @@
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="py" value="35" />
+          <entry key="ipynb" value="1" />
+          <entry key="json" value="2" />
+          <entry key="py" value="51" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="Python" value="35" />
+          <entry key="IPNB" value="1" />
+          <entry key="JSON" value="2" />
+          <entry key="Python" value="51" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
-          <entry key="py" value="4967" />
+          <entry key="dummy" value="4" />
+          <entry key="json" value="166" />
+          <entry key="py" value="7754" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="Python" value="4967" />
+          <entry key="JSON" value="166" />
+          <entry key="PLAIN_TEXT" value="4" />
+          <entry key="Python" value="7754" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="280">
-              <caret line="26" column="40" selection-start-line="26" selection-start-column="40" selection-end-line="26" selection-end-column="40" />
+            <state relative-caret-position="546">
+              <caret line="113" lean-forward="true" selection-start-line="113" selection-end-line="113" />
+              <folding>
+                <element signature="e#0#41#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/replay_buffer.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="324">
+              <caret line="34" column="19" lean-forward="true" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
+              <folding>
+                <element signature="e#0#13#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_train.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="346">
+              <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -61,19 +102,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_mfcc_goal.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="20">
-              <caret line="103" column="29" selection-start-line="103" selection-start-column="21" selection-end-line="103" selection-end-column="29" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="169">
-              <caret line="147" column="35" selection-start-line="147" selection-start-column="35" selection-end-line="147" selection-end-column="35" />
+            <state relative-caret-position="381">
+              <caret line="98" selection-start-line="98" selection-end-line="98" />
               <folding>
                 <element signature="e#0#47#0" expanded="true" />
               </folding>
@@ -82,55 +114,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_config.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="426">
-              <caret line="103" column="29" selection-start-line="103" selection-start-column="21" selection-end-line="103" selection-end-column="29" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_mfcc_goal.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="666">
-              <caret line="154" column="53" selection-start-line="154" selection-start-column="53" selection-end-line="154" selection-end-column="53" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/loss.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="642">
-              <caret line="416" column="83" selection-start-line="416" selection-start-column="55" selection-end-line="416" selection-end-column="83" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/speech_classification/audio_processing.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-2074">
-              <caret line="320" column="8" selection-start-line="320" selection-start-column="8" selection-end-line="320" selection-end-column="8" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/model_dynamics.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-100">
-              <caret line="88" column="4" selection-start-line="88" selection-start-column="4" selection-end-line="88" selection-end-column="4" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/python_speech_features/base.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="480">
-              <caret line="27" selection-start-line="27" selection-end-line="27" />
+            <state relative-caret-position="240">
+              <caret line="12" column="22" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -138,8 +125,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/VTL/vtl_environment.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="3800">
-              <caret line="198" column="31" selection-start-line="198" selection-start-column="31" selection-end-line="198" selection-end-column="31" />
+            <state relative-caret-position="20">
+              <caret line="14" selection-start-line="14" selection-end-line="14" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -176,13 +163,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/reinforcement/model_based_ddpg/mbddpg.py" />
-        <option value="$PROJECT_DIR$/reinforcement/MUJOCO_LOG.TXT" />
-        <option value="$PROJECT_DIR$/reinforcement/mujoco_test.py" />
-        <option value="$PROJECT_DIR$/../openai/baselines/baselines/ppo2/run_mujoco.py" />
-        <option value="$PROJECT_DIR$/reinforcement/ddpg/ddpg.py" />
-        <option value="$PROJECT_DIR$/../openai/baselines/baselines/logger.py" />
-        <option value="$PROJECT_DIR$/../VTL/api/pyvtl_v1.py" />
         <option value="$PROJECT_DIR$/../openai/baselines/baselines/ddpg/main.py" />
         <option value="$PROJECT_DIR$/../openai/baselines/baselines/common/cmd_util.py" />
         <option value="$PROJECT_DIR$/../openai/baselines/baselines/ppo2/ppo2.py" />
@@ -216,17 +196,24 @@
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_mfcc_goal_playground.py" />
         <option value="$PROJECT_DIR$/src/speech_classification/VTl_transition_data_feneration.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_mfcc_goal_data_generation.py" />
-        <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py" />
-        <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_lstmhc_goal.py" />
-        <option value="$PROJECT_DIR$/src/VTL/pyvtl_v2.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train.py" />
-        <option value="$PROJECT_DIR$/src/VTL/vtl_environment.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/model_dynamics.py" />
         <option value="$PROJECT_DIR$/src/speech_classification/audio_processing.py" />
         <option value="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" />
-        <option value="$PROJECT_DIR$/src/VTL/utils.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_mfcc_goal.py" />
+        <option value="$PROJECT_DIR$/src/VTL/pyvtl_v2.py" />
+        <option value="$PROJECT_DIR$/src/VTL/vtl_environment.py" />
+        <option value="$PROJECT_DIR$/src/VTL/utils.py" />
+        <option value="$PROJECT_DIR$/notebooks/rnn_md.ipynb" />
         <option value="$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/__init__.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_lstmhc_goal.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/replay_buffer.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/md_train.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_config.json" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_train.py" />
       </list>
     </option>
   </component>
@@ -251,6 +238,11 @@
             <path>
               <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
               <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="notebooks" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -258,6 +250,13 @@
               <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+              <item name="goal_directed_model_based_rl" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
               <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
@@ -337,6 +336,36 @@
               <item name="Study" type="462c0819:PsiDirectoryNode" />
               <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+              <item name="goal_directed_model_based_rl" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Study" type="462c0819:PsiDirectoryNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+              <item name="model_dynamics" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Study" type="462c0819:PsiDirectoryNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+              <item name="vtl_reference_guided" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Study" type="462c0819:PsiDirectoryNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="speech_classification" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -356,17 +385,18 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="$PROJECT_DIR$/../udacity_p2_continious_control" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="preferences.keymap" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Study\SpeechAcquisitionModel\notebooks" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\vtl_reference_guided" />
       <recent name="C:\Study\SpeechAcquisitionModel\VTL" />
       <recent name="C:\Study\SpeechAcquisitionModel\reinforcement" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\notebooks" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -381,7 +411,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.rnn_md">
+  <component name="RunManager" selected="Python.md_train">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -400,6 +430,23 @@
       <option name="PATTERN" value="" />
       <option name="USE_PATTERN" value="false" />
       <method />
+    </configuration>
+    <configuration name="SpeechAcquisitionModel" type="JupiterNotebook" factoryName="Jupyter Notebook">
+      <module name="SpeechAcquisitionModel" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\envs\drlnd\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="additionalOptions" value="" />
+      <option name="ipnbHost" value="127.0.0.1" />
+      <option name="ipnbPort" value="8888" />
+      <method v="2" />
     </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -422,7 +469,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="pytorch_conv_lstm" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="md_train" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -430,11 +477,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/speech_classification" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" />
+      <option name="SCRIPT_NAME" value="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl\rnn_md_train.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -443,7 +490,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="pytorch_train" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="pytorch_model_dynamics_with_lstmhc_goal" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -455,7 +502,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -464,7 +511,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="pytorch_train_mfcc_goal" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="pytorch_train_lstmhc_goal" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -476,7 +523,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_mfcc_goal.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_lstmhc_goal.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -544,19 +591,20 @@
       <option name="ipnbPort" value="8888" />
     </configuration>
     <list>
-      <item itemvalue="Python.pytorch_conv_lstm" />
-      <item itemvalue="Python.pytorch_train" />
+      <item itemvalue="Jupyter Notebook.SpeechAcquisitionModel" />
       <item itemvalue="Python.utils" />
       <item itemvalue="Python.rnn_md" />
-      <item itemvalue="Python.pytorch_train_mfcc_goal" />
+      <item itemvalue="Python.pytorch_model_dynamics_with_lstmhc_goal" />
+      <item itemvalue="Python.pytorch_train_lstmhc_goal" />
+      <item itemvalue="Python.md_train" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.md_train" />
+        <item itemvalue="Python.pytorch_train_lstmhc_goal" />
+        <item itemvalue="Python.pytorch_model_dynamics_with_lstmhc_goal" />
         <item itemvalue="Python.rnn_md" />
-        <item itemvalue="Python.pytorch_train_mfcc_goal" />
         <item itemvalue="Python.utils" />
-        <item itemvalue="Python.pytorch_conv_lstm" />
-        <item itemvalue="Python.pytorch_train" />
       </list>
     </recent_temporary>
   </component>
@@ -603,7 +651,7 @@
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.20706007" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2665964" />
       <window_info id="Structure" order="1" weight="0.24960339" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
@@ -716,7 +764,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/VTL/utils.py</url>
-          <line>50</line>
+          <line>51</line>
           <option name="timeStamp" value="378" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -725,39 +773,39 @@
           <option name="timeStamp" value="379" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
-          <line>195</line>
-          <option name="timeStamp" value="380" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py</url>
-          <line>98</line>
+          <line>104</line>
           <option name="timeStamp" value="389" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py</url>
-          <line>97</line>
+          <line>103</line>
           <option name="timeStamp" value="391" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py</url>
-          <line>84</line>
+          <line>90</line>
           <option name="timeStamp" value="393" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py</url>
-          <line>73</line>
+          <line>79</line>
           <option name="timeStamp" value="394" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py</url>
-          <line>77</line>
+          <line>83</line>
           <option name="timeStamp" value="396" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py</url>
-          <line>35</line>
+          <line>38</line>
           <option name="timeStamp" value="397" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_train.py</url>
+          <line>119</line>
+          <option name="timeStamp" value="413" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -824,14 +872,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/gym/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/../Aero/quadrotor/gym_aero/gym_aero/envs/model_training_env.py" />
-    <entry file="file://$PROJECT_DIR$/../Aero/quadrotor/gym_aero/gym_aero/envs/trajectory_env.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/pkg_resources/__init__.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/gym/envs/__init__.py" />
-    <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/gym/envs/algorithmic/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/../Aero/quadrotor/gym_aero/__init__.py" />
-    <entry file="file://$PROJECT_DIR$/../Aero/quadrotor/gym_aero/gym_aero/envs/__init__.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/numpy/linalg/linalg.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/torch/__init__.py" />
     <entry file="file://$USER_HOME$/AppData/Local/Continuum/anaconda3/Lib/site-packages/torch/nn/modules/module.py" />
@@ -898,13 +938,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/functional.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="620">
-          <caret line="44" selection-start-line="44" selection-end-line="44" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
@@ -919,16 +952,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/speech_classification/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="160">
-          <caret line="8" column="44" selection-start-line="7" selection-start-column="16" selection-end-line="8" selection-end-column="44" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/speech_classification/test_conv_rnn.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/speech_classification/convRNN.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -940,13 +963,6 @@
     <entry file="file://$PROJECT_DIR$/src/reinforcement/lstm_ddpg_1/lstm_ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-960" />
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_lstmhc_goal.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="540">
-          <caret line="119" column="30" selection-start-line="119" selection-start-column="30" selection-end-line="119" selection-end-column="30" />
-        </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/lstm_ddpg_dynamic/lstm_ddpg.py">
@@ -978,30 +994,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/VTL/pyvtl_v2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3260">
-          <caret line="170" column="65" selection-start-line="170" selection-start-column="65" selection-end-line="170" selection-end-column="65" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9380">
-          <caret line="476" selection-start-line="476" selection-end-line="476" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/VTL/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1100">
-          <caret line="63" column="24" selection-start-line="63" selection-start-column="24" selection-end-line="63" selection-end-column="24" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/python_speech_features/sigproc.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="2260">
@@ -1013,16 +1005,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="480">
           <caret line="27" selection-start-line="27" selection-end-line="27" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/VTL/vtl_environment.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3800">
-          <caret line="198" column="31" selection-start-line="198" selection-start-column="31" selection-end-line="198" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1054,20 +1036,25 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
+    <entry file="file://$PROJECT_DIR$/../Speech_command_classification/rnn/quickdraw/create_dataset.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="169">
-          <caret line="147" column="35" selection-start-line="147" selection-start-column="35" selection-end-line="147" selection-end-column="35" />
+        <state relative-caret-position="-3060" />
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/speech_classification/test_conv_rnn.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="340">
+          <caret line="17" column="26" selection-start-line="17" selection-start-column="26" selection-end-line="17" selection-end-column="26" />
           <folding>
-            <element signature="e#0#47#0" expanded="true" />
+            <element signature="e#0#12#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py">
+    <entry file="file://$PROJECT_DIR$/src/speech_classification/utils.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="426">
-          <caret line="103" column="29" selection-start-line="103" selection-start-column="21" selection-end-line="103" selection-end-column="29" />
+        <state relative-caret-position="360">
+          <caret line="18" column="49" selection-start-line="18" selection-start-column="49" selection-end-line="18" selection-end-column="49" />
         </state>
       </provider>
     </entry>
@@ -1078,10 +1065,131 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md_config.json">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/notebooks/rnn_md.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/VTL/pyvtl_v2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="55" selection-start-line="55" selection-end-line="55" />
+          <folding>
+            <element signature="e#40#49#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="280">
-          <caret line="26" column="40" selection-start-line="26" selection-start-column="40" selection-end-line="26" selection-end-column="40" />
+        <state>
+          <caret selection-end-line="12" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/VTL/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="27" column="20" lean-forward="true" selection-start-line="15" selection-start-column="4" selection-end-line="27" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/VTL/vtl_environment.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="20">
+          <caret line="14" selection-start-line="14" selection-end-line="14" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_lstmhc_goal.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="404" column="29" selection-start-line="404" selection-start-column="29" selection-end-line="404" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/functional.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="587">
+          <caret line="1250" selection-start-line="1250" selection-end-line="1250" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/module.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="476" selection-start-line="476" selection-end-line="476" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state>
+          <caret selection-end-line="7" selection-end-column="18" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/replay_buffer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="34" column="19" lean-forward="true" selection-start-line="34" selection-start-column="19" selection-end-line="34" selection-end-column="19" />
+          <folding>
+            <element signature="e#0#13#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="546">
+          <caret line="113" lean-forward="true" selection-start-line="113" selection-end-line="113" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="381">
+          <caret line="98" selection-start-line="98" selection-end-line="98" />
+          <folding>
+            <element signature="e#0#47#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="12" column="22" selection-start-line="12" selection-start-column="1" selection-end-line="12" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="346">
+          <caret line="20" column="30" selection-start-line="20" selection-start-column="30" selection-end-line="20" selection-end-column="30" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>

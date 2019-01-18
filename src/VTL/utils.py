@@ -19,6 +19,7 @@ def random_rollout(env, ep_duration, timestep, initial_state=None):
     audios = []
     for step in range(num_steps_per_ep):
         action = (np.random.rand(action_space) - 0.5) * 0.2
+        # action = (np.random.rand(action_space)) * 100.
         action[env.number_vocal_tract_parameters:] = 0.
         state, audio = env.step(action, True)
         states.append(state)
@@ -61,7 +62,7 @@ def generate_random_rollout_dataset(env, num_rollouts, ep_duration, timestep, in
 if __name__ == '__main__':
     speaker_fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker')
     lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VocalTractLab2.dll')
-    num_episodes = 10000
+    num_episodes = 10
     ep_duration = 1000
     timestep = 20
     num_steps_per_ep = ep_duration // timestep
