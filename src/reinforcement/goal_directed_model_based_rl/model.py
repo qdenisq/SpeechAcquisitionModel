@@ -97,7 +97,7 @@ class StochasticLstmModelDynamics(Module):
         state_mu = self.tanh(self.state_mu(x))
         state_log_var = -self.relu(self.state_log_var(x))
         state_sigmas = state_log_var.exp().sqrt()
-        state_dists = Normal(state_mu, state_sigmas)
+        state_dists = Normal(state_mu, state_sigmas + 1.0e-4)
         states = state_dists.rsample()
         state_log_prob = state_dists.log_prob(states).sum(dim=-1, keepdim=True)
 
@@ -105,9 +105,9 @@ class StochasticLstmModelDynamics(Module):
         goal_mu = self.tanh(self.goal_mu(x))
         goal_log_var = -self.relu(self.goal_log_var(x))
         goal_sigmas = goal_log_var.exp().sqrt()
-        goal_dists = Normal(goal_mu, goal_sigmas)
+        goal_dists = Normal(goal_mu, goal_sigmas + 1.0e-4)
         goals = goal_dists.rsample()
         goal_log_prob = goal_dists.log_prob(goals).sum(dim=-1, keepdim=True)
 
-        return states, goals, state_log_prob, goal_log_prob
+        return states, goals, state_log_prob, goal_log_prob, state_dists, goal_dists
 

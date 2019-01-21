@@ -3,6 +3,7 @@ from pprint import pprint
 import os
 import numpy as np
 import pandas as pd
+import datetime
 
 import torch
 from torch.nn import Linear, LSTM, Tanh, ReLU, Module, MSELoss
@@ -40,7 +41,6 @@ def train(*args, **kwargs):
     # 5. Init environment
     speaker_fname = os.path.join(kwargs['vtl_dir'], 'JD2.speaker')
     lib_path = os.path.join(kwargs['vtl_dir'], 'VocalTractLab2.dll')
-    num_episodes = 10
     ep_duration = 1000
     timestep = 20
     num_steps_per_ep = ep_duration // timestep
@@ -105,25 +105,57 @@ def train(*args, **kwargs):
                 seq_len = a.shape[1]
                 goal_dim = kwargs['model_dynamics_params']["goal_dim"]
 
-                s = torch.from_numpy(s0).float().to(device)
+                s_bound = env.state_bound
+                a_bound = env.action_bound
+
+                s = torch.from_numpy(normalize(s0, s_bound)).float().to(device)
                 g = torch.from_numpy(g0).float().to(device)
-                a = torch.from_numpy(a).float().to(device)
+                a = torch.from_numpy(normalize(a, a_bound)).float().to(device)
+
 
                 # forward prop
-                s_pred, g_pred, s_prob, g_prob = md_net(s[:, :-1, :], g[:, :-1, :], a)
+                s_pred, g_pred, s_prob, g_prob, state_dists, goal_dists = md_net(s[:, :-1, :], g[:, :-1, :], a)
 
                 # compute error
-                loss = MSELoss(reduction='sum')(g_pred, g[:, 1:, :]) / (seq_len * kwargs['train']['minibatch_size'])
+                mse_loss = MSELoss(reduction='sum')(g_pred, g[:, 1:, :]) / (seq_len * kwargs['train']['minibatch_size'])
 
+                loss = -goal_dists.log_prob(g[:, 1:, :]).sum(dim=-1, keepdim=True).mean()
+
+                state_mse_loss = MSELoss(reduction='sum')(s_pred, s[:, 1:, :]) / (seq_len * kwargs['train']['minibatch_size'])
+                state_loss = -state_dists.log_prob(s[:, 1:, :]).sum(dim=-1, keepdim=True).mean()
+                total_loss = loss + state_loss
                 # backprop
                 optim.zero_grad()
-                loss.backward()
+                total_loss.backward()
                 optim.step()
 
                 dynamics = MSELoss(reduction='sum')(g[:, 1:, :], g[:, :-1, :]) / (seq_len * kwargs['train']['minibatch_size'])
 
-            print("\rstep: {} | loss: {:.4f}| actual_dynamics: {:.4f}".format(i, loss.detach().cpu().item(), dynamics.detach().cpu().item()), end="")
+            print("\rstep: {} | stochastic_loss: {:.4f} | loss: {:.4f}| actual_dynamics: {:.4f} |  state stochastic loss: {:.4f} | state_loss: {:.4f}".format(i, loss.detach().cpu().item(),
+                                                                                                        mse_loss.detach().cpu().item(),
+                                                                                                        dynamics.detach().cpu().item(),
+                                                                                                        state_loss.detach().cpu().item(),
+                  state_mse_loss.detach().cpu().item()),
+                  end="")
+            if step % 100 == 0:
+                print()
 
+    # 9. Save model
+    dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
+    md_fname = os.path.join(kwargs['save_dir'], '{}_{}.pt'.format("rnn_md", dt))
+    torch.save(md_net, md_fname)
+
+
+def normalize(data, bound):
+    largest = np.array([max(abs(y[0]), abs(y[1])) for y in bound])
+    normed_data = data / largest
+    return normed_data
+
+
+def denormalize(normed_data, bound):
+    largest = np.array([max(abs(y[0]), abs(y[1])) for y in bound])
+    data = normed_data * largest
+    return data
 
 if __name__ == '__main__':
     with open('rnn_md_config.json') as data_file:
