@@ -9,7 +9,7 @@ from scipy.io import wavfile
 import numpy as np
 
 class VTLEnv(object):
-    def __init__(self, lib_path, speaker_fname, timestep=10, max_episode_duration=1000, img_width=400, img_height=400):
+    def __init__(self, lib_path, speaker_fname, timestep=10, max_episode_duration=1000, img_width=400, img_height=400, **kwargs):
         # load vocaltractlab binary
         # Use 'VocalTractLabApi32.dll' if you use a 32-bit python version.
         if sys.platform == 'win32':
