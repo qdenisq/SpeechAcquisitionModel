@@ -1,0 +1,76 @@
+{
+  "env": {
+    "device": "cuda",
+    "seed": 1234,
+    "preproc_net_fname": "C:/Study/SpeechAcquisitionModel/models/speech_classification/simple_lstm_01_10_2019_05_01_PM_acc_0.9961.pt",
+    "goal_dim": 64,
+    "reference_fnames": [
+      "C:/Study/SpeechAcquisitionModel/data/raw/VTL_model_dynamics_sigmoid_transition_08_28_2018_03_57_PM_03/Videos/a_i/episode_08_28_2018_03_57_PM_06.wav"
+    ],
+    "vtl_dir": "C:/Study/SpeechAcquisitionModel/src/VTL",
+    "timestep": 20,
+    "preprocessing_params": {
+      "numcep": 12,
+      "winlen": 0.02,
+      "winstep": 0.02,
+      "sample_rate": 22050
+    }
+  },
+  "agent": {
+    "seed": 0,
+    "hidden_size": [
+      256,
+      128
+    ]
+  },
+  "ppo": {
+    "discount": 0.99,
+    "lambda": 0.0,
+    "epsilon": 0.2,
+    "beta": 0.0,
+    "learning_rate_eps": 1e-5,
+    "actor_lr": 0.0003,
+    "critic_lr": 0.0003,
+    "minibatch_size": 256,
+    "rollouts_per_update": 10,
+    "num_epochs_actor": 10,
+    "num_epochs_critic": 10,
+    "clip_grad": 5
+  },
+  "data_fname": "C:/Study/SpeechAcquisitionModel/data/raw/VTL_random_rollouts/01_11_2019_05_42_PM_47/01_11_2019_05_42_PM_47.pd",
+  "buffer_size": 10000,
+  "save_dir": "C:/Study/SpeechAcquisitionModel/models/rnn_md",
+  "episode_length": 1000,
+  "timestep": 20,
+  "model_dynamics_params": {
+    "goal_dim": 64,
+    "state_dim": 30,
+    "action_dim": 30,
+    "lstm_layers_size": [
+      1024,
+      512
+    ],
+    "linear_layers_size": [
+      512,
+      256
+    ],
+    "seed": 0
+  },
+  "policy_params": {
+    "input_dim": 94,
+    "action_dim": 30,
+    "linear_layers_size": [
+      512,
+      256
+    ],
+    "seed": 0
+  },
+  "train": {
+    "device": "cuda",
+    "num_steps": 3000,
+    "minibatch_size": 50,
+    "learning_rate": 0.001,
+    "learning_rate_eps": 1e-5,
+    "updates_per_episode": 20
+  }
+}
