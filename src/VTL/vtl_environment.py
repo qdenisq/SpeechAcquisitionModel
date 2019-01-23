@@ -59,7 +59,7 @@ class VTLEnv(object):
                                  ctypes.byref(tract_param_max),
                                  ctypes.byref(tract_param_neutral))
 
-        #self.tract_param_names = list(tract_param_names)
+        self.tract_param_names = [v.decode() for v in tract_param_names.value.split()]
         self.tract_param_max = list(tract_param_max)
         self.tract_param_min = list(tract_param_min)
         self.tract_param_neutral = list(tract_param_neutral)
@@ -77,7 +77,7 @@ class VTLEnv(object):
                                    ctypes.byref(glottis_param_max),
                                    ctypes.byref(glottis_param_neutral))
 
-        #self.glottis_param_names = list(glottis_param_names)
+        self.glottis_param_names = [v.decode() for v in glottis_param_names.value.split()]
         self.glottis_param_max = list(glottis_param_max)
         self.glottis_param_min = list(glottis_param_min)
         self.glottis_param_neutral = list(glottis_param_neutral)

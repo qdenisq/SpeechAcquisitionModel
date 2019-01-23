@@ -159,7 +159,7 @@ def synth_dynamic_sound(s1, s2, duration, frame_rate):
 
     if failure != 0:
         raise ValueError('Error in vtlSynthBlock! Errorcode: %i' % failure)
-    wav = np.array(audio)
+    wav = np.array(audio[:-2000])
     wav_audio = np.int16(wav * (2 ** 15 - 1))
     return wav_audio, tract_params, glottis_params
 
@@ -170,19 +170,21 @@ def create_reference(s1, s2, duration=1., frame_rate=50, name='', directory=''):
     audio, tract_params, glottis_params = synth_dynamic_sound(s1, s2, duration, frame_rate)
     wavfile.write(os.path.join(directory, name+'.wav'), audio_sampling_rate.value, audio)
     with open(os.path.join(directory, name+'.pkl'), 'wb') as f:
-        pickle.dump((tract_params, glottis_params), f, protocol=0)
+        pickle.dump({"audio": audio,
+                     "tract_params": tract_params,
+                     "glottis_params": glottis_params}, f, protocol=0)
     return audio, tract_params, glottis_params
 
 
 def test_create_reference():
     s1 = 'a'
-    s2 = 'o'
+    s2 = 'i'
     name = s1 + '_' + s2
     directory = 'references'
     create_reference(s1, s2, name=name, directory=directory)
     with open(os.path.join(directory, name + '.pkl'), 'rb') as f:
-        (tract_params, glottis_params) = pickle.load(f)
-    print(tract_params)
+        ref = pickle.load(f)
+    print(ref)
 
 
 def tes_dynamic_sound_synthesis():

@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 import torch
 
 from src.reinforcement.goal_directed_model_based_rl.model import SimpleStochasticActorCritic
-from src.reinforcement.goal_directed_model_based_rl.env import VTLEnvPreprocAudioWithReference
+from src.reinforcement.goal_directed_model_based_rl.env import VTLEnvWithReferenceTransitionMasked
 from src.reinforcement.goal_directed_model_based_rl.algs.ppo import PPO
 from src.speech_classification.pytorch_conv_lstm import LstmNet
 
@@ -23,7 +23,7 @@ def train(*args, **kwargs):
     speaker_fname = os.path.join(kwargs['env']['vtl_dir'], 'JD2.speaker')
     lib_path = os.path.join(kwargs['env']['vtl_dir'], 'VocalTractLab2.dll')
 
-    env = VTLEnvPreprocAudioWithReference(lib_path, speaker_fname, **kwargs['env'])
+    env = VTLEnvWithReferenceTransitionMasked(lib_path, speaker_fname, **kwargs['env'])
     env.reset(train_mode=True)
 
     state_dim = env.state_dim
@@ -64,7 +64,7 @@ def train(*args, **kwargs):
 
 
 if __name__ == '__main__':
-    with open('train_ppo_config.json') as data_file:
+    with open('train_ppo_config_tract_goal_only.json') as data_file:
         kwargs = json.load(data_file)
     pprint(kwargs)
     train(**kwargs)
