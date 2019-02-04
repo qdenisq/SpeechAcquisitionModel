@@ -77,11 +77,12 @@ class SimpleStochasticActorCritic(Module):
             x = self.relu(x)
         mu = self.tanh(self.mu(x))
 
-        log_var = -2. - self.relu(self.log_var(x))
+        log_var = - self.relu(self.log_var(x))
         sigmas = log_var.exp().sqrt() + 1.0e-5
         dists = Normal(mu, sigmas)
         if action is None:
             action = dists.sample()
+
         log_prob = dists.log_prob(action).sum(dim=-1, keepdim=True)
 
         x = state
@@ -102,6 +103,59 @@ class SimpleStochasticActorCritic(Module):
 #################################################################################
 # MODEL DYNAMICS
 #################################################################################
+
+class SimpleStochasticModelDynamics(Module):
+    def __init__(self, **kwargs):
+        super(SimpleStochasticModelDynamics, self).__init__()
+        self.__acoustic_state_dim = kwargs['goal_dim']
+        self.__state_dim = kwargs['action_dim']
+        self.__action_dim = kwargs['state_dim']
+        self.__linears_size = kwargs['linear_layers_size']
+
+        input_size = self.__acoustic_state_dim + self.__state_dim + self.__action_dim
+        self.__bn1 = torch.nn.BatchNorm1d(input_size)
+
+        self.linears = ModuleList([Linear(input_size, self.__linears_size[0])])
+        self.linears.extend(
+            [Linear(self.__linears_size[i - 1], self.__linears_size[i]) for i in range(1, len(self.__linears_size))])
+
+        self.goal_mu = Linear(self.__linears_size[-1], kwargs['goal_dim'])
+        self.goal_log_var = Linear(self.__linears_size[-1], kwargs['goal_dim'])
+
+        self.state_mu = Linear(self.__linears_size[-1], kwargs['state_dim'])
+        self.state_log_var = Linear(self.__linears_size[-1], kwargs['state_dim'])
+
+        self.relu = ReLU()
+        self.tanh = Tanh()
+
+        self.apply(init_weights)  # xavier uniform init
+
+    def forward(self, states, actions):
+        x = torch.cat((states, actions), -1)
+        original_dim = x.shape
+        x = self.__bn1(x.view(-1, original_dim[-1]))
+        x = x.view(original_dim)
+
+        for linear in self.linears:
+            x = self.relu(linear(x))
+
+        # predict state
+        state_mu = self.tanh(self.state_mu(x))
+        state_log_var = -self.relu(self.state_log_var(x))
+        state_sigmas = state_log_var.exp().sqrt()
+        state_dists = Normal(state_mu, state_sigmas + 1.0e-4)
+        states = state_dists.rsample()
+        state_log_prob = state_dists.log_prob(states).sum(dim=-1, keepdim=True)
+
+        # predict goal
+        goal_mu = self.tanh(self.goal_mu(x))
+        goal_log_var = -self.relu(self.goal_log_var(x))
+        goal_sigmas = goal_log_var.exp().sqrt()
+        goal_dists = Normal(goal_mu, goal_sigmas + 1.0e-4)
+        goals = goal_dists.rsample()
+        goal_log_prob = goal_dists.log_prob(goals).sum(dim=-1, keepdim=True)
+
+        return states, goals, state_log_prob, goal_log_prob, state_dists, goal_dists
 
 
 class StochasticLstmModelDynamics(Module):

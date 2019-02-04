@@ -51,15 +51,15 @@ def train(*args, **kwargs):
             print("\r play #{} | score: {}".format(i + 1, score), end='')
 
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
-    model_fname = "../models/ppo_reacher_{}.pt".format(dt)
+    model_fname = "../models/ppo_vtl_{}.pt".format(dt)
     torch.save(agent, model_fname)
 
-    scores_fname = "../reports/ppo_reacher_{}".format(dt)
+    scores_fname = "../reports/ppo_vtl_{}".format(dt)
     np.save(scores_fname, np.asarray(scores))
 
     plt.plot(scores)
     plt.plot(np.convolve(scores, np.ones(100)/100)[:200])
-    fig_name = "../reports/ppo_reacher_{}.png".format(dt)
+    fig_name = "../reports/ppo_vtl_{}.png".format(dt)
     plt.savefig(fig_name)
 
 

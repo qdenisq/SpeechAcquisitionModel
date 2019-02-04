@@ -144,7 +144,7 @@ class VTLEnvWithReferenceTransition(VTLEnvPreprocAudio):
 
         # add reference both tract_glottis and goal_audio in the state space
         self.goal_dim = self.state_dim
-        self.goal_bound = self.state_bound
+        self.goal_bound = self.state_bound.copy()
         self.state_dim += self.goal_dim
         self.state_bound.extend(self.goal_bound)
         self.current_reference_idx = 0
@@ -168,7 +168,7 @@ class VTLEnvWithReferenceTransition(VTLEnvPreprocAudio):
         info = None
         return state_out, reward, done, info
 
-    def _reward(self, state, goal):
+    def _reward(self, state, goal, action):
         res = -np.sum((state[-self.state_dim:] - goal) ** 2)
         return res
 
@@ -181,6 +181,8 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         self.original_state_bound = self.state_bound
         self.original_action_dim = self.action_dim
         self.original_action_bound = self.action_bound
+        self.original_goal_dim = self.goal_dim
+        self.original_goal_bound = self.goal_bound
 
         vtl_names = self.tract_param_names + self.glottis_param_names
         self.state_mask = np.zeros(self.original_state_dim, dtype=bool)
@@ -195,7 +197,6 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
                     self.state_mask[idx] = 1
                 except ValueError:
                     raise ValueError("unrecognised parameter name in VTL: {}".format(name))
-
 
         self.goal_mask_names = kwargs['goal_parameters_selected']
         self.goal_mask = np.zeros(self.goal_dim, dtype=bool)
@@ -222,10 +223,12 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
                 raise ValueError("unrecognised parameter name in VTL: {}".format(name))
 
         self.state_dim = int(sum(self.state_mask))
+        self.goal_dim = int(sum(self.goal_mask))
         self.action_dim = int(sum(self.action_mask))
 
         self.state_bound = np.array(self.state_bound)[np.array(self.state_mask)]
         self.action_bound = np.array(self.action_bound)[np.array(self.action_mask)]
+        self.goal_bound = np.array(self.goal_bound)[np.array(self.goal_mask)]
 
     def reset(self, state_to_reset=None, **kwargs):
         state_out = super(VTLEnvWithReferenceTransition, self).reset(state_to_reset)
@@ -244,15 +247,21 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         done = False
         if self.current_step >= self.references[self.current_reference_idx].shape[0] - 1:
             done = True
-        reward = self._reward(np.array(state_out)[self.goal_mask], np.array(goal)[self.goal_mask])
+        s_m_normed = self.normalize(np.array(state_out)[self.goal_mask], np.array(self.original_state_bound[:self.original_goal_dim])[self.goal_mask])
+        g_m_normed = self.normalize(np.array(goal)[self.goal_mask], np.array(self.original_state_bound[:self.original_goal_dim])[self.goal_mask])
+        reward = self._reward(s_m_normed, g_m_normed, action)
         state_out = np.concatenate((state_out, goal))
         state_out = state_out[self.state_mask]
         info = None
         return state_out, reward, done, info
 
-    def _reward(self, state, goal):
-        res = -np.sum((state[-self.state_dim:] - goal) ** 2)
+    def _reward(self, state, goal, action):
+        res = -np.sum((state[-len(goal):] - goal) ** 2)
         return res
+
+    def get_current_reference(self):
+        return self.references[self.current_reference_idx][:, self.goal_mask]
+
 
 
 

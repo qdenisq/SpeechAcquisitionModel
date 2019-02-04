@@ -149,7 +149,7 @@ def train(settings, env, replay_buffer, reference_trajectory):
 
     md_net = ModelDynamicsNet(s_dim, g_dim, a_dim)
     md_criterion = nn.MSELoss()
-    md_optimizer = torch.optim.Adadelta(md_net.parameters())
+    md_optimizer = torch.optim.Adam(md_net.parameters())
 
     ################################################################
     # Policy
@@ -184,7 +184,7 @@ def train(settings, env, replay_buffer, reference_trajectory):
             return num_features
 
     policy_net = PolicyNet(s_dim, g_dim, a_dim)
-    policy_optimizer = torch.optim.Adadelta(policy_net.parameters())
+    policy_optimizer = torch.optim.Adam(policy_net.parameters())
 
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
     # writer = tf.summary.FileWriter(settings['summary_dir'] + '/summary_md_' + dt, sess.graph)
@@ -199,7 +199,7 @@ def train(settings, env, replay_buffer, reference_trajectory):
     # main train loop
     ###########################################
     train_step_i = 0
-
+    r = []
     for i in range(num_episodes):
         # pick random initial state from the reference trajectory
         s0_index = randrange(0, reference_trajectory.shape[0] - 1)
@@ -210,7 +210,8 @@ def train(settings, env, replay_buffer, reference_trajectory):
         g0 = s0
         env.reset(s0)
 
-        r = []
+
+        ret = 0.
         # rollout episode
         for j in range(s0_index, len(reference_trajectory) - 1):
             target = reference_trajectory[j + 1]
@@ -242,8 +243,13 @@ def train(settings, env, replay_buffer, reference_trajectory):
             g1_normed = normalize(g1, g_bound)
             tar_normed = normalize(target, g_bound)
             miss = abs(tar_normed - g1_normed)
+
             if i % save_step != 0:
                 replay_buffer.add(s0, g0, action, s1, g1, target)
+
+            if i % save_step == 0:
+                ret += np.sum((tar_normed - g1_normed)**2)
+
             s0 = s1
             g0 = g1
             # some sort of early stopping
@@ -253,8 +259,10 @@ def train(settings, env, replay_buffer, reference_trajectory):
 
         # dump video
         if i % save_step == 0 and replay_buffer.size() > minibatch_size:
+            r.append(ret)
             fname = video_dir + '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
             env.dump_episode(fname)
+            pickle.dump(r, open( "return.pckl", "wb"))
         # train model_dynamics and policy
 
         if replay_buffer.size() > minibatch_size:
@@ -293,6 +301,18 @@ def train(settings, env, replay_buffer, reference_trajectory):
                 md_loss.backward()
                 md_optimizer.step()
 
+            for _ in range(n_train_steps):
+                # train_step_i += 1
+                s0_batch, g0_batch, a_batch, s1_batch, g1_batch, target_batch = \
+                    replay_buffer.sample_batch(minibatch_size)
+
+                # normalize data before train
+                s0_batch_normed = normalize(s0_batch, s_bound)
+                g0_batch_normed = normalize(g0_batch, g_bound)
+                a_batch_normed = normalize(a_batch, a_bound)
+                s1_batch_normed = normalize(s1_batch, s_bound)
+                g1_batch_normed = normalize(g1_batch, g_bound)
+                target_batch_normed = normalize(target_batch, g_bound)
 
                 #############################################################
                 # train policy
@@ -331,10 +351,10 @@ def train(settings, env, replay_buffer, reference_trajectory):
                 loss.backward()
                 policy_optimizer.step()
 
-                expected_actions_normed = target_batch_normed - g0_batch_normed
+                expected_actions_normed = normalize(denormalize(target_batch_normed - g0_batch_normed, g_bound), a_bound)
                 policy_loss_out = np.mean(np.sum(np.square(expected_actions_normed - actions_normed.detach().numpy()), axis=1), axis=0)
 
-                print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}".format(i, train_step_i, md_loss.detach().numpy(), policy_loss_out))
+            print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}".format(i, train_step_i, md_loss.detach().numpy(), policy_loss_out))
 
 
 
@@ -354,8 +374,8 @@ def main():
             'goal_bound': env.state_bound,
             'episode_length': 40,
             'minibatch_size': 512,
-            'max_train_per_simulation': 50,
-            'save_video_step': 200,
+            'max_train_per_simulation': 100,
+            'save_video_step': 20,
 
             'actor_tau': 0.01,
             'actor_learning_rate': 0.001,
@@ -368,7 +388,7 @@ def main():
 
     replay_buffer = ReplayBuffer(100000)
 
-    reference_fname = r'C:\Study\SpeechAcquisitionModel\src\VTL\references\a_o.pkl'
+    reference_fname = r'C:\Study\SpeechAcquisitionModel\src\VTL\references\a_u.pkl'
     with open(reference_fname, 'rb') as f:
         (tract_params, glottis_params) = pickle.load(f)
         target_trajectory = np.hstack((np.array(tract_params), np.array(glottis_params)))

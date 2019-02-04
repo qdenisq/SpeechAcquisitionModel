@@ -1,36 +1,30 @@
+import json
+from pprint import pprint
+import os
 import numpy as np
+import pandas as pd
+import datetime
+
 import torch
+from src.reinforcement.goal_directed_model_based_rl.algs.ppo import PPO
 
 
-class PPO:
-    def __init__(self, agent=None, **kwargs):
-        self.agent = agent
+class ModelBasedPPO(PPO):
+    def __init__(self, agent=None, model_dynamics=None, **kwargs):
+        super(ModelBasedPPO, self).__init__(agent=agent, **kwargs)
+        self.model_dynamics = model_dynamics
+        self.model_dynamics_optim = torch.optim.Adam(self.model_dynamics.parameters(), lr=kwargs['model_dynamics_lr'], eps=kwargs['learning_rate_eps'])
 
-        self.actor_optim = torch.optim.Adam(agent.get_actor_parameters(), lr=kwargs['actor_lr'], eps=kwargs['learning_rate_eps'])
-        self.critic_optim = torch.optim.Adam(agent.get_critic_parameters(), lr=kwargs['critic_lr'], eps=kwargs['learning_rate_eps'])
-
-        self.num_epochs_actor = kwargs['num_epochs_actor']
-        self.num_epochs_critic = kwargs['num_epochs_critic']
-        self.discount = kwargs['discount']
-        self.lmbda = kwargs['lambda']
-        self.minibatch_size = kwargs['minibatch_size']
-        self.epsilon = kwargs['epsilon']
-        self.beta = kwargs['beta']
-        self.clip_grad = kwargs['clip_grad']
-        self.device = kwargs['device']
-        self.num_rollouts_per_update = kwargs['rollouts_per_update']
-
-    def rollout(self, env, num_rollouts):
+    def virtual_rollout(self, env, num_rollouts):
         """
-           Runs an agent in the environment and collects trajectory
-           :param env: Environment to run the agent in (ReacherEnvironment)
-           :return states: (torch.Tensor)
-           :return actions: (torch.Tensor)
-           :return rewards: (torch.Tensor)
-           :return dones: (torch.Tensor)
-           :return values: (torch.Tensor)
-           :return old_log_probs: (torch.Tensor)
-           """
+          Runs an agent in the "virtual environment" using trained model dynamics and collects trajectory
+          :return states: (torch.Tensor)
+          :return actions: (torch.Tensor)
+          :return rewards: (torch.Tensor)
+          :return dones: (torch.Tensor)
+          :return values: (torch.Tensor)
+          :return old_log_probs: (torch.Tensor)
+          """
         states_out = []
         actions_out = []
         rewards_out = []
@@ -39,6 +33,11 @@ class PPO:
         old_log_probs_out = []
         for i in range(num_rollouts):
             state = env.reset()
+            state = env.normalize(state, env.state_bound)
+            reference = env.get_current_reference()
+
+            cur_step = 0
+            episode_length = len(reference)
             # Experiences
             states = []
             actions = []
@@ -48,15 +47,22 @@ class PPO:
             old_log_probs = []
 
             self.agent.eval()
+            self.model_dynamics.eval()
             # Rollout
             while True:
-                state = env.normalize(state, env.state_bound)
                 action, old_log_prob, _, value = self.agent(torch.from_numpy(state).float().to(self.device).view(1, -1))
                 action = np.clip(action.detach().cpu().numpy(), -1., 1.)
-                _, old_log_prob, _, _ = self.agent(torch.from_numpy(state).float().to(self.device).view(1, -1), torch.from_numpy(action).float().to(self.device))
+                _, old_log_prob, _, _ = self.agent(torch.from_numpy(state).float().to(self.device).view(1, -1),
+                                                   torch.from_numpy(action).float().to(self.device))
 
                 action_denorm = env.denormalize(action.squeeze(), env.action_bound)
-                next_state, reward, done, _ = env.step(action_denorm)
+                next_state = self.model_dynamics(torch.from_numpy(state).float().to(self.device).view(1, -1),
+                                                 torch.from_numpy(action).float().to(self.device))
+
+                goal = reference[cur_step]
+                reward = env._reward(next_state, goal, action)
+                cur_step += 1
+                done = cur_step >= episode_length
 
                 states.append(state)
                 actions.append(action.squeeze())
@@ -66,7 +72,6 @@ class PPO:
                 old_log_probs.append(old_log_prob.detach().cpu().numpy())
 
                 state = next_state
-                env.render()
                 if np.any(done):
                     break
 
@@ -87,6 +92,8 @@ class PPO:
 
         return states_out, actions_out, rewards_out, dones_out, values_out, old_log_probs_out
 
+
+
     def train(self, env, num_episodes):
         """
         Train the agent to solve environment
@@ -97,9 +104,13 @@ class PPO:
 
         scores = []
         for episode in range(num_episodes):
-            states, actions, rewards, dones, values, old_log_probs = self.rollout(env, self.num_rollouts_per_update)
+            # states, actions, rewards, dones, values, old_log_probs = self.rollout(env, self.num_rollouts_per_update)
+            states, actions, rewards, dones, values, old_log_probs = self.virtual_rollout(env, self.num_rollouts_per_update)
 
-            score = rewards.sum(dim=-1).mean()
+
+
+
+            score = rewards.sum(dim=0).mean()
 
             T = rewards.shape[0]
             last_advantage = torch.zeros((rewards.shape[1], 1))
@@ -115,8 +126,8 @@ class PPO:
 
             # Update
             returns = returns.view(-1, 1)
-            states = states.view(-1, env.state_dim)
-            actions = actions.view(-1, env.action_dim)
+            states = states.view(-1, env.get_state_dim())
+            actions = actions.view(-1, env.get_action_dim())
             old_log_probs = old_log_probs.view(-1, 1)
 
             # update critic
@@ -180,3 +191,14 @@ class PPO:
 
         print("Training finished. Result score: ", score)
         return scores
+
+
+
+if __name__ == '__main__':
+    with open('rnn_md_config.json') as data_file:
+        data = json.load(data_file)
+
+    pprint(data)
+    kwargs = data
+
+    train(**kwargs)
