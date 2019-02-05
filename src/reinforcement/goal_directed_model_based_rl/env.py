@@ -263,11 +263,7 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         return state_out, reward, done, info
 
     def _reward(self, state, goal, action):
-        res = -np.sum((state[self.state_goal_mask] - goal) ** 2)
-        if res > -0.1:
-            res = 1.
-        else:
-            res = 0.
+        res = np.exp(-10.*np.sum((state[self.state_goal_mask] - goal) ** 2))
         return res
 
     def get_current_reference(self):
