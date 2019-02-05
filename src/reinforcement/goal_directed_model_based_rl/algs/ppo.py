@@ -37,6 +37,7 @@ class PPO:
         dones_out = []
         values_out = []
         old_log_probs_out = []
+        next_states_out = []
         for i in range(num_rollouts):
             state = env.reset()
             # Experiences
@@ -46,6 +47,7 @@ class PPO:
             dones = []
             values = []
             old_log_probs = []
+            next_states = []
 
             self.agent.eval()
             # Rollout
@@ -64,6 +66,7 @@ class PPO:
                 dones.append(done)
                 values.append(value.detach().cpu().numpy().squeeze())
                 old_log_probs.append(old_log_prob.detach().cpu().numpy())
+                next_states.append(env.normalize(next_state, env.state_bound))
 
                 state = next_state
                 env.render()
@@ -76,6 +79,7 @@ class PPO:
             dones_out.append(dones)
             values_out.append(values)
             old_log_probs_out.append(old_log_probs)
+            next_states_out.append(next_states)
 
         states_out = torch.from_numpy(np.asarray(states_out)).float().to(self.device)
         actions_out = torch.from_numpy(np.asarray(actions_out)).float().to(self.device)
@@ -84,8 +88,9 @@ class PPO:
         values_out = torch.from_numpy(np.asarray(values_out)).float().to(self.device).unsqueeze(2)
         values_out = torch.cat([values_out, torch.zeros(1, values_out.shape[1], 1).to(self.device)], dim=0)
         old_log_probs_out = torch.from_numpy(np.asarray(old_log_probs_out)).float().to(self.device)
+        next_states_out = torch.from_numpy(np.asarray(next_states_out)).float().to(self.device)
 
-        return states_out, actions_out, rewards_out, dones_out, values_out, old_log_probs_out
+        return states_out, actions_out, rewards_out, dones_out, values_out, old_log_probs_out, next_states_out
 
     def train(self, env, num_episodes):
         """

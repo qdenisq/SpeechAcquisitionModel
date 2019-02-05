@@ -198,6 +198,7 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
                 except ValueError:
                     raise ValueError("unrecognised parameter name in VTL: {}".format(name))
 
+        self.state_goal_mask = np.zeros(int(sum(self.state_mask)), dtype=bool)
         self.goal_mask_names = kwargs['goal_parameters_selected']
         self.goal_mask = np.zeros(self.goal_dim, dtype=bool)
         shift = self.original_state_dim - self.goal_dim
@@ -212,6 +213,12 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
                     self.goal_mask[idx] = 1
                 except ValueError:
                     raise ValueError("unrecognised parameter name in VTL: {}".format(name))
+
+        j = 0
+        for i in range(len(self.goal_mask)):
+            if self.state_mask[i]:
+                self.state_goal_mask[j] = self.goal_mask[i]
+                j += 1
 
         self.action_mask_names = kwargs['action_parameters_selected']
         self.action_mask = np.zeros(self.original_action_dim, dtype=bool)
@@ -247,7 +254,7 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         done = False
         if self.current_step >= self.references[self.current_reference_idx].shape[0] - 1:
             done = True
-        s_m_normed = self.normalize(np.array(state_out)[self.goal_mask], np.array(self.original_state_bound[:self.original_goal_dim])[self.goal_mask])
+        s_m_normed = self.normalize(np.array(state_out), np.array(self.original_state_bound[:self.original_goal_dim]))[self.state_mask[:self.original_goal_dim]]
         g_m_normed = self.normalize(np.array(goal)[self.goal_mask], np.array(self.original_state_bound[:self.original_goal_dim])[self.goal_mask])
         reward = self._reward(s_m_normed, g_m_normed, action)
         state_out = np.concatenate((state_out, goal))
@@ -256,7 +263,11 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         return state_out, reward, done, info
 
     def _reward(self, state, goal, action):
-        res = -np.sum((state[-len(goal):] - goal) ** 2)
+        res = -np.sum((state[self.state_goal_mask] - goal) ** 2)
+        if res > -0.1:
+            res = 1.
+        else:
+            res = 0.
         return res
 
     def get_current_reference(self):
