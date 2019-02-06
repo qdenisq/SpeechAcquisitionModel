@@ -39,7 +39,7 @@ class SimpleStochasticPolicy(Module):
         mu = self.tanh(self.mu(x))
         log_var = -self.relu(self.log_var(x))
         sigmas = log_var.exp().sqrt()
-        dists = Normal(mu, sigmas)
+        dists = Normal(mu, sigmas + 1.0e-4)
         if action is None:
             action = dists.rsample()
         log_prob = dists.log_prob(action).sum(dim=-1, keepdim=True)

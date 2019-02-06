@@ -195,9 +195,9 @@ class ModelBasedBackProp:
                     states, actions, dones, next_states = self.virtual_rollout(env,
                                                                                self.num_virtual_rollouts_per_update)
                     idx = np.random.randint(0, actions.shape[0], self.minibatch_size)
-                    states_batch = states
+                    states_batch = states.view(-1, env.state_dim)
                     actions_batch = actions
-                    next_states_batch = next_states
+                    next_states_batch = next_states.view(-1, env.state_dim)
 
                     policy_loss = torch.nn.MSELoss()(
                         next_states_batch[:, :-env.goal_dim][:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
@@ -214,14 +214,3 @@ class ModelBasedBackProp:
 
         print("Training finished. Result score: ", score)
         return scores
-
-
-
-if __name__ == '__main__':
-    with open('rnn_md_config.json') as data_file:
-        data = json.load(data_file)
-
-    pprint(data)
-    kwargs = data
-
-    train(**kwargs)
