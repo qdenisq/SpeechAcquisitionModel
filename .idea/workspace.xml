@@ -2,18 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_backprop.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbbackprop.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/notebooks/VTL_model_dynamics_nb.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/notebooks/VTL_model_dynamics_nb.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_ppo.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_ppo.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/replay_buffer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/replay_buffer.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_train.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_train.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbppo_config_tract_goal_only.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbppo_config_tract_goal_only.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_model_based_ppo.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_model_based_ppo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_backprop.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_backprop.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbbackprop_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbbackprop_config.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -38,40 +28,40 @@
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="ipynb" value="2" />
-          <entry key="json" value="11" />
+          <entry key="json" value="12" />
           <entry key="py" value="95" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="IPNB" value="2" />
-          <entry key="JSON" value="11" />
+          <entry key="JSON" value="12" />
           <entry key="Python" value="95" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.edit">
         <counts>
           <entry key="dummy" value="4" />
-          <entry key="json" value="594" />
-          <entry key="py" value="18146" />
+          <entry key="json" value="595" />
+          <entry key="py" value="18189" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JSON" value="594" />
+          <entry key="JSON" value="595" />
           <entry key="PLAIN_TEXT" value="4" />
-          <entry key="Python" value="18146" />
+          <entry key="Python" value="18189" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_backprop.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="461">
-              <caret line="209" column="97" selection-start-line="209" selection-start-column="97" selection-end-line="209" selection-end-column="97" />
+            <state relative-caret-position="206">
+              <caret line="193" column="46" lean-forward="true" selection-start-line="193" selection-start-column="18" selection-end-line="193" selection-end-column="46" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -137,15 +127,6 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_config.json">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="370">
-              <caret line="33" column="23" selection-start-line="33" selection-start-column="23" selection-end-line="33" selection-end-column="23" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/replay_buffer.py">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="464">
@@ -160,8 +141,17 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbppo_config_tract_goal_only.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-60">
-              <caret line="33" column="19" selection-end-line="79" selection-end-column="1" />
+            <state relative-caret-position="440">
+              <caret line="58" column="19" selection-start-line="58" selection-start-column="19" selection-end-line="58" selection-end-column="19" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbbackprop_config.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="540">
+              <caret line="48" column="26" selection-start-line="48" selection-start-column="26" selection-end-line="48" selection-end-column="26" />
             </state>
           </provider>
         </entry>
@@ -211,7 +201,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/Pytorch_based_test_subtract_and_addition.py" />
         <option value="$PROJECT_DIR$/../Speech_command_classification/convRNN.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/tf_train.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/train.py" />
@@ -262,6 +251,7 @@
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbbackprop.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_backprop.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbbackprop_config.json" />
       </list>
     </option>
   </component>
@@ -870,7 +860,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_backprop.py</url>
-          <line>198</line>
+          <line>201</line>
           <option name="timeStamp" value="492" />
         </line-breakpoint>
       </breakpoints>
@@ -934,9 +924,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/speech_classification/convRNN.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/som/neural_map.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="-4374" />
@@ -1226,13 +1213,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbppo_config_tract_goal_only.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-60">
-          <caret line="33" column="19" selection-end-line="79" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbbackprop.json">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="560">
@@ -1314,13 +1294,27 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbppo_config_tract_goal_only.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="440">
+          <caret line="58" column="19" selection-start-line="58" selection-start-column="19" selection-end-line="58" selection-end-column="19" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_backprop.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="461">
-          <caret line="209" column="97" selection-start-line="209" selection-start-column="97" selection-end-line="209" selection-end-column="97" />
+        <state relative-caret-position="206">
+          <caret line="193" column="46" lean-forward="true" selection-start-line="193" selection-start-column="18" selection-end-line="193" selection-end-column="46" />
           <folding>
             <element signature="e#0#11#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbbackprop_config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="540">
+          <caret line="48" column="26" selection-start-line="48" selection-start-column="26" selection-end-line="48" selection-end-column="26" />
         </state>
       </provider>
     </entry>

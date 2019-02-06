@@ -46,7 +46,7 @@
     "minibatch_size": 50,
     "rollouts_per_update": 10,
     "virtual_rollouts_per_update": 10,
-    "num_epochs_actor": 10,
+    "num_epochs_actor": 100,
     "num_epochs_critic": 10,
     "num_epochs_model_dynamics": 10,
     "clip_grad": 1,

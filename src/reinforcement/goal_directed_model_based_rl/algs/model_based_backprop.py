@@ -163,6 +163,7 @@ class ModelBasedBackProp:
             # update model dynamics
             num_updates = actions.shape[0] // self.minibatch_size
             self.model_dynamics.train()
+            self.agent.eval()
             for k in range(self.num_epochs_model_dynamics):
                 for _ in range(num_updates):
                     idx = np.random.randint(0, actions.shape[0], self.minibatch_size)
@@ -184,17 +185,19 @@ class ModelBasedBackProp:
 
             # do virtual rollouts
             self.agent.train()
-
+            self.model_dynamics.eval()
             states, actions, dones, next_states = self.virtual_rollout(env, self.num_virtual_rollouts_per_update)
 
             T = states.shape[0]
             # update actor
             for k in range(self.num_epochs_actor):
-                for _ in range(num_updates):
+                # for _ in range(num_updates):
+                    states, actions, dones, next_states = self.virtual_rollout(env,
+                                                                               self.num_virtual_rollouts_per_update)
                     idx = np.random.randint(0, actions.shape[0], self.minibatch_size)
-                    states_batch = states[idx]
-                    actions_batch = actions[idx]
-                    next_states_batch = next_states[idx]
+                    states_batch = states
+                    actions_batch = actions
+                    next_states_batch = next_states
 
                     policy_loss = torch.nn.MSELoss()(
                         next_states_batch[:, :-env.goal_dim][:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
