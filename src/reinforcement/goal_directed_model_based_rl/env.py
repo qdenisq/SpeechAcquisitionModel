@@ -246,7 +246,14 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
     def step(self, action, render=True):
         cur_state = np.array(list(self.tract_params_out) + list(self.glottis_params_out))
         reference_action = self.references[self.current_reference_idx][self.current_step][:len(cur_state)] - cur_state
-        unmasked_action = [action[i] if self.action_mask[i] else reference_action[i] for i in range(len(reference_action))]
+        j = 0
+        unmasked_action = np.zeros(len(reference_action))
+        for i in range(len(reference_action)):
+            if self.action_mask[i]:
+                unmasked_action[i] = action[j]
+                j += 1
+            else:
+                unmasked_action[i] = reference_action[i]
 
         goal = self.references[self.current_reference_idx][self.current_step]
 

@@ -41,7 +41,7 @@ class SimpleStochasticPolicy(Module):
         sigmas = log_var.exp().sqrt()
         dists = Normal(mu, sigmas)
         if action is None:
-            action = dists.sample()
+            action = dists.rsample()
         log_prob = dists.log_prob(action).sum(dim=-1, keepdim=True)
         return action, log_prob, dists.entropy()
 

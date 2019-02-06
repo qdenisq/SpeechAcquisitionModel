@@ -38,11 +38,7 @@
     "learning_rate_eps": 1e-5
   },
 
-  "mbppo": {
-    "discount": 0.9,
-    "lambda": 0.0,
-    "epsilon": 0.2,
-    "beta": 0.0,
+  "mbbackprop": {
     "learning_rate_eps": 1e-5,
     "actor_lr": 0.001,
     "critic_lr": 0.001,
@@ -53,7 +49,8 @@
     "num_epochs_actor": 10,
     "num_epochs_critic": 10,
     "num_epochs_model_dynamics": 10,
-    "clip_grad": 1
+    "clip_grad": 1,
+    "buffer_size": 10000
   },
   "data_fname": "C:/Study/SpeechAcquisitionModel/data/raw/VTL_random_rollouts/01_11_2019_05_42_PM_47/01_11_2019_05_42_PM_47.pd",
   "buffer_size": 10000,

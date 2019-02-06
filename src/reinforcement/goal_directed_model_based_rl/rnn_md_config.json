@@ -31,7 +31,7 @@
 "train":{
 	"device": "cuda",
 	"num_steps": 3000,
-	"minibatch_size": 50,
+	"minibatch_size": 2,
 	"learning_rate": 0.001,
 	"learning_rate_eps" : 1e-5,
     "updates_per_episode": 20

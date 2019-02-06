@@ -141,7 +141,7 @@ class ModelBasedPPO(PPO):
 
 
             # do virtual rollouts
-            # states, actions, rewards, dones, values, old_log_probs, _ = self.virtual_rollout(env, self.num_virtual_rollouts_per_update)
+            states, actions, rewards, dones, values, old_log_probs, _ = self.virtual_rollout(env, self.num_virtual_rollouts_per_update)
             score_pred = rewards.sum(dim=1).mean()
 
             T = rewards.shape[0]

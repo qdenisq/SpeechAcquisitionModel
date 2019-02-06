@@ -92,7 +92,7 @@ def train(*args, **kwargs):
 
             env.render()
 
-        replay_buffer.add(states, goal_states, actions, None, None)
+        replay_buffer.add((states, goal_states, actions, None, None))
 
         minibatch_size = kwargs['train']['minibatch_size']
         if replay_buffer.size() > minibatch_size:

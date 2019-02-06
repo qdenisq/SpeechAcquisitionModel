@@ -13,13 +13,13 @@ class ReplayBuffer(object):
         self.buffer = deque()
         random.seed(random_seed)
 
-    def add(self, s0, g0, a, s1, g1):
+    def add(self, sample):
         if self.count < self.buffer_size:
-            self.buffer.append((s0, g0, a, s1, g1))
+            self.buffer.append(sample)
             self.count += 1
         else:
             self.buffer.popleft()
-            self.buffer.append((s0, g0, a, s1, g1))
+            self.buffer.append(sample)
 
     def size(self):
         return self.count
@@ -32,13 +32,9 @@ class ReplayBuffer(object):
         else:
             batch = random.sample(self.buffer, batch_size)
 
-        s0_batch = np.array([_[0] for _ in batch])
-        g0_batch = np.array([_[1] for _ in batch])
-        a_batch = np.array([_[2] for _ in batch])
-        s1_batch = np.array([_[3] for _ in batch])
-        g1_batch = np.array([_[4] for _ in batch])
+        res = [np.array(t) for t in zip(*batch)]
 
-        return s0_batch, g0_batch, a_batch, s1_batch, g1_batch
+        return tuple(res)
 
     def clear(self):
         self.buffer.clear()

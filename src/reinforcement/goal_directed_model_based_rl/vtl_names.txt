@@ -1,0 +1,1 @@
+<class "list">: ["HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "f0", "pressure", "lower_rest_displacement", "upper_rest_displacement", "ary_area", "aspiration_strength"]
