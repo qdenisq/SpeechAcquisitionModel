@@ -33,7 +33,7 @@ def train(*args, **kwargs):
     agent = SimpleStochasticActorCritic(**kwargs['agent']).to(device)
     md = SimpleStochasticModelDynamics(**kwargs['model_dynamics']).to(device)
     alg = ModelBasedPPO(agent=agent, model_dynamics=md, **kwargs['mbppo'])
-    scores = alg.train(env, 500)
+    scores = alg.train(env, 1000)
 
     agent.eval()
     for i in range(1):

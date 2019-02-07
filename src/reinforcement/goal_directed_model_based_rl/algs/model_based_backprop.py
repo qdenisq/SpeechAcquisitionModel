@@ -73,6 +73,12 @@ class ModelBasedBackProp:
 
                 state = next_state
                 env.render()
+
+                miss = torch.nn.MSELoss()(torch.from_numpy(next_state).float().to(self.device)[:-env.goal_dim][torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
+                                          torch.from_numpy(state).float().to(self.device)[-env.goal_dim:])
+                if miss > 0.05 and env.current_step > 3:
+                    break
+
                 if np.any(done):
                     break
 
@@ -129,6 +135,15 @@ class ModelBasedBackProp:
             goals.append(goal)
 
             state = next_state
+            state = state.detach()
+
+            # early stopping
+            miss = torch.nn.MSELoss()(next_state[:, :-env.goal_dim][:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
+                                      state[:, -env.goal_dim:])
+            if miss > 0.05 and cur_step > 3:
+                break
+
+
             if np.any(done):
                 break
 
@@ -204,7 +219,7 @@ class ModelBasedBackProp:
                         states_batch[:, -env.goal_dim:])
 
                     self.actor_optim.zero_grad()
-                    policy_loss.backward(retain_graph=True)
+                    policy_loss.backward()
                     torch.nn.utils.clip_grad_norm_(self.agent.get_actor_parameters(), self.clip_grad)
                     self.actor_optim.step()
 
