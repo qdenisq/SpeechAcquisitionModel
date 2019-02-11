@@ -135,8 +135,8 @@ def train(settings, env, replay_buffer, reference_trajectory):
             torch.nn.init.xavier_uniform_(self.fc3.weight)
 
         def forward(self, x):
-            x = self.fc1(x)
-            x = self.fc2(x)
+            x = torch.nn.ReLU()(self.fc1(x))
+            x = torch.nn.ReLU()(self.fc2(x))
             x = self.fc3(x)
             return x
 
@@ -171,8 +171,8 @@ def train(settings, env, replay_buffer, reference_trajectory):
             torch.nn.init.xavier_uniform_(self.fc3.weight)
 
         def forward(self, x):
-            x = self.fc1(x)
-            x = self.fc2(x)
+            x = torch.nn.ReLU()(self.fc1(x))
+            x = torch.nn.ReLU()(self.fc2(x))
             x = self.fc3(x)
             return x
 
@@ -203,6 +203,7 @@ def train(settings, env, replay_buffer, reference_trajectory):
     for i in range(num_episodes):
         # pick random initial state from the reference trajectory
         s0_index = randrange(0, reference_trajectory.shape[0] - 1)
+        s0_index = 0
         if i % save_step == 0:
             s0_index = 0
 
@@ -361,7 +362,7 @@ def train(settings, env, replay_buffer, reference_trajectory):
 def main():
     speaker_fname = os.path.join(r'C:\Study\SpeechAcquisitionModel\src\VTL', 'JD2.speaker')
     lib_path = os.path.join(r'C:\Study\SpeechAcquisitionModel\src\VTL', 'VocalTractLab2.dll')
-    ep_duration = 5000
+    ep_duration = 20000
     timestep = 20
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
 

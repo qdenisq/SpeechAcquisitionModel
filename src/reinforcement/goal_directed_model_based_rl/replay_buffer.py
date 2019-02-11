@@ -1,6 +1,7 @@
 import random
 from collections import deque
 import numpy as np
+import torch
 
 class ReplayBuffer(object):
 
@@ -32,7 +33,7 @@ class ReplayBuffer(object):
         else:
             batch = random.sample(self.buffer, batch_size)
 
-        res = [np.array(t) for t in zip(*batch)]
+        res = [torch.from_numpy(np.array(t)) for t in zip(*batch)]
 
         return tuple(res)
 
