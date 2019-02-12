@@ -8,8 +8,8 @@
       "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions/a_i.pkl"
     ],
     "vtl_dir": "C:/Study/SpeechAcquisitionModel/src/VTL",
-    "state_parameters_selected": ["HX", "HY", "TTX", "TTY"],
-    "goal_parameters_selected": ["HX", "HY", "TTX", "TTY"],
+    "state_parameters_selected": ["HX", "HY", "TTX", "TTY", "audio"],
+    "goal_parameters_selected": ["HX", "HY", "TTX", "TTY", "audio"],
     "action_parameters_selected": ["HX", "HY", "TTX", "TTY"],
 
     "timestep": 20,
@@ -21,18 +21,20 @@
     }
   },
   "agent": {
-    "seed": 0,
-    "hidden_size": [
+    "input_dim": 136,
+    "action_dim": 4,
+    "linear_layers_size": [
       1024,
       512,
       256
-    ]
+    ],
+    "seed": 0
   },
   "model_dynamics": {
-    "goal_dim": 4,
-	"state_dim": 4,
+    "goal_dim": 68,
+	"state_dim": 68,
 	"action_dim": 4,
-	"linear_layers_size": [512, 256],
+	"linear_layers_size": [1024, 512, 256],
 	"seed":0,
     "learning_rate": 0.001,
     "learning_rate_eps": 1e-5

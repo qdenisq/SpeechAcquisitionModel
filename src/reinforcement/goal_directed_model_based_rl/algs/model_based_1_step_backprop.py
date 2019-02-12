@@ -9,14 +9,36 @@ import torch
 from src.reinforcement.goal_directed_model_based_rl.replay_buffer import ReplayBuffer
 
 
+# Taken from https://github.com/openai/baselines/blob/master/baselines/ddpg/noise.py, which is
+# based on http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
+class OrnsteinUhlenbeckActionNoise:
+    def __init__(self, mu, sigma=0.003, theta=.15, dt=1e-2, x0=None):
+        self.theta = theta
+        self.mu = mu
+        self.sigma = sigma
+        self.dt = dt
+        self.x0 = x0
+        self.reset()
+
+    def __call__(self):
+        x = self.x_prev + self.theta * (self.mu - self.x_prev) * self.dt + \
+            self.sigma * np.sqrt(self.dt) * np.random.normal(size=self.mu.shape)
+        self.x_prev = x
+        return x
+
+    def reset(self):
+        self.x_prev = self.x0 if self.x0 is not None else np.zeros_like(self.mu)
+
+    def __repr__(self):
+        return 'OrnsteinUhlenbeckActionNoise(mu={}, sigma={})'.format(self.mu, self.sigma)
+
+
 class ModelBased1StepBackProp:
     def __init__(self, agent=None, model_dynamics=None, **kwargs):
         self.agent = agent
 
-        self.actor_optim = torch.optim.Adam(agent.get_actor_parameters(), lr=kwargs['actor_lr'],
+        self.actor_optim = torch.optim.Adam(agent.parameters(), lr=kwargs['actor_lr'],
                                             eps=kwargs['learning_rate_eps'])
-        self.critic_optim = torch.optim.Adam(agent.get_critic_parameters(), lr=kwargs['critic_lr'],
-                                             eps=kwargs['learning_rate_eps'])
 
         self.num_epochs_actor = kwargs['num_epochs_actor']
         self.num_epochs_critic = kwargs['num_epochs_critic']
@@ -40,6 +62,7 @@ class ModelBased1StepBackProp:
         :return scores: list of scores for each episode (list)
         """
 
+        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.001)
         scores = []
         train_step_i = 0
         for episode in range(num_episodes):
@@ -52,14 +75,15 @@ class ModelBased1StepBackProp:
             self.agent.eval()
             while True:
                 state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
-                action, _, _, _ = self.agent(state_tensor)
-                action_denorm = env.denormalize(action.detach().cpu().numpy().squeeze(), env.action_bound)
+                action = self.agent(state_tensor).detach().cpu().numpy().squeeze()
+                action = action + action_noise()
+                action_denorm = env.denormalize(action, env.action_bound)
                 next_state, reward, done, _ = env.step(action_denorm)
                 next_state = env.normalize(next_state, env.state_bound)
                 env.render()
 
                 # if i % save_step != 0:
-                self.replay_buffer.add((state, action.detach().cpu().numpy().squeeze(), next_state))
+                self.replay_buffer.add((state, action, next_state))
 
                 score += reward
                 miss = torch.abs(torch.from_numpy(next_state).float().to(self.device)[:-env.goal_dim][torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
@@ -85,7 +109,7 @@ class ModelBased1StepBackProp:
                     s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
 
                     self.model_dynamics_optim.zero_grad()
-                    s1_pred, _, _, _, _, _ = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
+                    s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
                     md_loss = torch.nn.MSELoss()(s1_pred, s1_batch[:, :-env.goal_dim].float().to(self.device))
                     md_loss.backward()
                     self.model_dynamics_optim.step()
@@ -100,9 +124,9 @@ class ModelBased1StepBackProp:
                     s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
 
                     self.actor_optim.zero_grad()
-                    actions_predicted, _, _, _ = self.agent(s0_batch.float().to(self.device))
+                    actions_predicted = self.agent(s0_batch.float().to(self.device))
                     # predict state if predicted actions will be applied
-                    s1_pred, _, _, _, _, _ = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
+                    s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
                     actor_loss = torch.nn.MSELoss()(
                         s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
                         s0_batch[:, -env.goal_dim:].float().to(self.device))
