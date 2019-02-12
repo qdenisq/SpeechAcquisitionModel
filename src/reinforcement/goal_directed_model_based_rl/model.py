@@ -34,7 +34,7 @@ class SimpleDeterministicPolicy(Module):
         for l in self.linears:
             x = l(x)
             x = self.relu(x)
-        action = self.out(x)
+        action = self.tanh(self.out(x))
         return action
 
 
@@ -279,9 +279,9 @@ class SimpleDeterministicModelDynamics(Module):
             x = self.relu(linear(x))
 
         # predict state
-        states = self.state(x)
+        states = self.tanh(self.state(x))
         # predict goal
-        goals = self.goal(x)
+        goals = self.tanh(self.goal(x))
 
         return states, goals
 

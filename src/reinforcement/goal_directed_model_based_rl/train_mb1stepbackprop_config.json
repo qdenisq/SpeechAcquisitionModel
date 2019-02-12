@@ -10,7 +10,7 @@
     "vtl_dir": "C:/Study/SpeechAcquisitionModel/src/VTL",
     "state_parameters_selected": ["HX", "HY", "TTX", "TTY", "audio"],
     "goal_parameters_selected": ["HX", "HY", "TTX", "TTY", "audio"],
-    "action_parameters_selected": ["HX", "HY", "TTX", "TTY"],
+    "action_parameters_selected": ["TTX", "TTY"],
 
     "timestep": 20,
     "preprocessing_params": {
@@ -22,7 +22,7 @@
   },
   "agent": {
     "input_dim": 136,
-    "action_dim": 4,
+    "action_dim": 2,
     "linear_layers_size": [
       1024,
       512,
@@ -33,7 +33,7 @@
   "model_dynamics": {
     "goal_dim": 68,
 	"state_dim": 68,
-	"action_dim": 4,
+	"action_dim": 2,
 	"linear_layers_size": [1024, 512, 256],
 	"seed":0,
     "learning_rate": 0.001,
