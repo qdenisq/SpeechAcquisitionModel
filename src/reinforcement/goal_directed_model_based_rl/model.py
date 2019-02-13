@@ -134,8 +134,8 @@ class SimpleStochasticModelDynamics(Module):
     def __init__(self, **kwargs):
         super(SimpleStochasticModelDynamics, self).__init__()
         self.__acoustic_state_dim = kwargs['goal_dim']
-        self.__state_dim = kwargs['action_dim']
-        self.__action_dim = kwargs['state_dim']
+        self.__action_dim = kwargs['action_dim']
+        self.__state_dim = kwargs['state_dim']
         self.__linears_size = kwargs['linear_layers_size']
 
         input_size = self.__acoustic_state_dim + self.__state_dim + self.__action_dim
@@ -190,8 +190,8 @@ class StochasticLstmModelDynamics(Module):
     def __init__(self, **kwargs):
         super(StochasticLstmModelDynamics, self).__init__()
         self.__acoustic_state_dim = kwargs['goal_dim']
-        self.__state_dim = kwargs['action_dim']
-        self.__action_dim = kwargs['state_dim']
+        self.__action_dim = kwargs['action_dim']
+        self.__state_dim = kwargs['state_dim']
         self.__lstm_sizes = kwargs['lstm_layers_size']
         self.__linears_size = kwargs['linear_layers_size']
 
@@ -246,12 +246,64 @@ class StochasticLstmModelDynamics(Module):
         return states, goals, state_log_prob, goal_log_prob, state_dists, goal_dists
 
 
+class DeterministicLstmModelDynamics(Module):
+    def __init__(self, **kwargs):
+        super(DeterministicLstmModelDynamics, self).__init__()
+        self.__acoustic_state_dim = kwargs['goal_dim']
+        self.__action_dim = kwargs['action_dim']
+        self.__state_dim = kwargs['state_dim']
+        self.__lstm_sizes = kwargs['lstm_layers_size']
+        self.__linears_size = kwargs['linear_layers_size']
+
+        input_size = self.__acoustic_state_dim + self.__state_dim + self.__action_dim
+        self.__bn1 = torch.nn.BatchNorm1d(input_size)
+
+        self.lstms = ModuleList([LSTM(input_size, self.__lstm_sizes[0], batch_first=True)])
+        self.lstms.extend([LSTM(self.__lstm_sizes[i - 1], self.__lstm_sizes[i], batch_first=True) for i in range(1, len(self.__lstm_sizes))])
+        self.hiddens = [None] * len(self.__lstm_sizes)
+
+        self.linears = ModuleList([Linear(self.__lstm_sizes[-1], self.__linears_size[0])])
+        self.linears.extend([Linear(self.__linears_size[i - 1], self.__linears_size[i]) for i in range(1, len(self.__linears_size))])
+
+        self.goal = Linear(self.__linears_size[-1], kwargs['goal_dim'])
+
+        self.state = Linear(self.__linears_size[-1], kwargs['state_dim'])
+
+        self.relu = ReLU()
+        self.tanh = Tanh()
+
+        self.apply(init_weights)  # xavier uniform init
+
+    def forward(self, states, actions, hidden=None):
+        x = torch.cat((states, actions), -1)
+        original_dim = x.shape
+        x = self.__bn1(x.view(-1, original_dim[-1]))
+        x = x.view(original_dim)
+
+        for i, lstm in enumerate(self.lstms):
+            x, self.hiddens[i] = lstm(x, self.hiddens[i])
+
+        for linear in self.linears:
+            x = self.relu(linear(x))
+
+        # predict state
+        states_out = self.state(x) + states[:, :self.__state_dim]
+
+        # predict goal
+        goals_out = self.goal(x) + states[:, self.__state_dim:]
+
+        return states_out, goals_out
+
+    def reset_hidden_state(self):
+        self.hiddens = [None] * len(self.__lstm_sizes)
+
+
 class SimpleDeterministicModelDynamics(Module):
     def __init__(self, **kwargs):
         super(SimpleDeterministicModelDynamics, self).__init__()
         self.__acoustic_state_dim = kwargs['goal_dim']
-        self.__state_dim = kwargs['action_dim']
-        self.__action_dim = kwargs['state_dim']
+        self.__action_dim = kwargs['action_dim']
+        self.__state_dim = kwargs['state_dim']
         self.__linears_size = kwargs['linear_layers_size']
 
         input_size = self.__acoustic_state_dim + self.__state_dim + self.__action_dim
@@ -284,4 +336,46 @@ class SimpleDeterministicModelDynamics(Module):
         goals = self.tanh(self.goal(x))
 
         return states, goals
+
+
+class SimpleDeterministicModelDynamicsDeltaPredict(Module):
+    def __init__(self, **kwargs):
+        super(SimpleDeterministicModelDynamicsDeltaPredict, self).__init__()
+        self.__acoustic_state_dim = kwargs['goal_dim']
+        self.__action_dim = kwargs['action_dim']
+        self.__state_dim = kwargs['state_dim']
+        self.__linears_size = kwargs['linear_layers_size']
+
+        input_size = self.__acoustic_state_dim + self.__state_dim + self.__action_dim
+        self.__bn1 = torch.nn.BatchNorm1d(input_size)
+
+        self.linears = ModuleList([Linear(input_size, self.__linears_size[0])])
+        self.linears.extend(
+            [Linear(self.__linears_size[i - 1], self.__linears_size[i]) for i in range(1, len(self.__linears_size))])
+
+        self.goal = Linear(self.__linears_size[-1], kwargs['goal_dim'])
+        self.state = Linear(self.__linears_size[-1], kwargs['state_dim'])
+
+        self.relu = ReLU()
+        self.tanh = Tanh()
+
+        self.apply(init_weights)  # xavier uniform init
+
+    def forward(self, states, actions):
+        x = torch.cat((states, actions), -1)
+        original_dim = x.shape
+        x = self.__bn1(x.view(-1, original_dim[-1]))
+        x = x.view(original_dim)
+
+        for linear in self.linears:
+            x = self.relu(linear(x))
+
+        # predict state
+        states_delta = self.tanh(self.state(x))
+        out_states = states[:, :self.__state_dim] + states_delta
+
+        # predict goal
+        goals_delta = self.tanh(self.goal(x))
+        out_goals = states[:, self.__state_dim:] + states_delta
+        return out_states, out_goals
 

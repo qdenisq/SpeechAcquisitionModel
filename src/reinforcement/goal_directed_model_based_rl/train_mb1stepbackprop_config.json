@@ -35,6 +35,7 @@
 	"state_dim": 68,
 	"action_dim": 2,
 	"linear_layers_size": [1024, 512, 256],
+	"lstm_layers_size": [1024, 512],
 	"seed":0,
     "learning_rate": 0.001,
     "learning_rate_eps": 1e-5
@@ -52,7 +53,8 @@
     "num_epochs_critic": 10,
     "num_epochs_model_dynamics": 10,
     "clip_grad": 1,
-    "buffer_size": 10000
+    "buffer_size": 10000,
+    "buffer_trajectories": "yes"
   },
   "data_fname": "C:/Study/SpeechAcquisitionModel/data/raw/VTL_random_rollouts/01_11_2019_05_42_PM_47/01_11_2019_05_42_PM_47.pd",
   "buffer_size": 10000,

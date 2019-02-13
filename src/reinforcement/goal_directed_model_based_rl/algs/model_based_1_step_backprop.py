@@ -53,6 +53,7 @@ class ModelBased1StepBackProp:
         self.num_virtual_rollouts_per_update = kwargs['virtual_rollouts_per_update']
 
         self.replay_buffer = ReplayBuffer(kwargs['buffer_size'])
+        self.buffer_trajectories = kwargs['buffer_trajectories']
 
     def train(self, env, num_episodes):
         """
@@ -72,6 +73,10 @@ class ModelBased1StepBackProp:
             state = env.normalize(state, env.state_bound)
             score = 0.
 
+            states = []
+            actions = []
+            next_states = []
+
             self.agent.eval()
             while True:
                 state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
@@ -83,7 +88,12 @@ class ModelBased1StepBackProp:
                 env.render()
 
                 # if i % save_step != 0:
-                self.replay_buffer.add((state, action, next_state))
+                if self.buffer_trajectories:
+                    states.append(state)
+                    actions.append(action)
+                    next_states.append(next_state)
+                else:
+                    self.replay_buffer.add((state, action, next_state))
 
                 score += reward
                 miss = torch.abs(torch.from_numpy(next_state).float().to(self.device)[:-env.goal_dim][torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
@@ -94,6 +104,9 @@ class ModelBased1StepBackProp:
                 if np.any(done):
                     break
                 state = next_state
+
+            if self.buffer_trajectories:
+                self.replay_buffer.add((states, actions, next_states))
             scores.append(score)
 
             if self.replay_buffer.size() > self.minibatch_size:

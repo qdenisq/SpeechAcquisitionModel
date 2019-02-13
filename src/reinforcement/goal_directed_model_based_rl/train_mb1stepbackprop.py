@@ -7,7 +7,8 @@ import datetime
 import matplotlib.pyplot as plt
 import torch
 
-from src.reinforcement.goal_directed_model_based_rl.model import SimpleStochasticActorCritic, SimpleStochasticModelDynamics, SimpleDeterministicPolicy, SimpleDeterministicModelDynamics
+from src.reinforcement.goal_directed_model_based_rl.model import SimpleStochasticActorCritic,\
+    SimpleStochasticModelDynamics, SimpleDeterministicPolicy, SimpleDeterministicModelDynamics, SimpleDeterministicModelDynamicsDeltaPredict, DeterministicLstmModelDynamics
 from src.reinforcement.goal_directed_model_based_rl.env import VTLEnvWithReferenceTransitionMasked
 from src.reinforcement.goal_directed_model_based_rl.algs.model_based_1_step_backprop import ModelBased1StepBackProp
 from src.speech_classification.pytorch_conv_lstm import LstmNet
@@ -31,7 +32,7 @@ def train(*args, **kwargs):
     kwargs['agent']['action_dim'] = action_dim
 
     agent = SimpleDeterministicPolicy(**kwargs['agent']).to(device)
-    md = SimpleDeterministicModelDynamics(**kwargs['model_dynamics']).to(device)
+    md = DeterministicLstmModelDynamics(**kwargs['model_dynamics']).to(device)
     alg = ModelBased1StepBackProp(agent=agent, model_dynamics=md, **kwargs['mbbackprop'])
     scores = alg.train(env, 10000)
 

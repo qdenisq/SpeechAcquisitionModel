@@ -19,13 +19,13 @@ class VTLEnvPreprocAudio(VTLEnv):
             self.preproc_net = torch.load(kwargs['preproc_net_fname']).to(self.device)
 
             self.audio_dim = kwargs["audio_dim"]
-            self.audio_bound = [(-1.0, 1.0)]*self.audio_dim
+            self.audio_bound = [(-1.0, 1.0)] * self.audio_dim
             self._hidden = None
 
         else:
             self.preproc_net = None
             self.audio_dim = kwargs["nump_cep"]
-            self.audio_bound = [(-1.0, 1.0)] * self.audio_dim # should be changed (whats the bound of MFCC values?)
+            self.audio_bound = [(-1.0, 1.0)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
 
         self.state_dim += self.audio_dim
         self.state_bound.extend(self.audio_bound)
@@ -44,6 +44,8 @@ class VTLEnvPreprocAudio(VTLEnv):
 
     def reset(self, state_to_reset=None, **kwargs):
         state_out = super(VTLEnvPreprocAudio, self).reset(state_to_reset)
+        if self.preproc_net:
+            self._hidden = None
         return np.concatenate((state_out, np.zeros(self.audio_dim)))
 
     def step(self, action, render=True):
@@ -52,8 +54,8 @@ class VTLEnvPreprocAudio(VTLEnv):
         if self.preproc_net:
             preproc_audio = torch.from_numpy(preproc_audio).float().to(self.device)
             _, self._hidden, new_goal_state = self.preproc_net(preproc_audio,
-                                                         seq_lens=np.array([preproc_audio.shape[1]]),
-                                                         hidden=self._hidden)
+                                                               seq_lens=np.array([preproc_audio.shape[1]]),
+                                                               hidden=self._hidden)
             new_goal_state = new_goal_state.detach().cpu().numpy().squeeze()
             state_out.extend(new_goal_state)
         else:
@@ -77,8 +79,8 @@ class VTLEnvPreprocAudioWithReference(VTLEnvPreprocAudio):
             if self.preproc_net:
                 preproc_audio = torch.from_numpy(preprocessed).float().to(self.device)
                 _, self._hidden, reference = self.preproc_net(preproc_audio,
-                                                                    seq_lens=np.array([preproc_audio.shape[1]]),
-                                                                    hidden=self._hidden)
+                                                              seq_lens=np.array([preproc_audio.shape[1]]),
+                                                              hidden=self._hidden)
                 reference = reference.detach().cpu().numpy().squeeze()
                 self.references.append(reference)
             else:
@@ -98,7 +100,7 @@ class VTLEnvPreprocAudioWithReference(VTLEnvPreprocAudio):
     def step(self, action, render=True):
         action = action / 10
         action[24:] = 0.
-        state_out, _, _, _ = super(VTLEnvPreprocAudioWithReference, self).step(action,render)
+        state_out, _, _, _ = super(VTLEnvPreprocAudioWithReference, self).step(action, render)
 
         goal = self.references[self.current_reference_idx][self.current_step]
 
@@ -111,7 +113,7 @@ class VTLEnvPreprocAudioWithReference(VTLEnvPreprocAudio):
         return state_out, reward, done, info
 
     def _reward(self, state, goal):
-        res = -np.sum((state[-self.audio_dim:] - goal)**2)
+        res = -np.sum((state[-self.audio_dim:] - goal) ** 2)
         return res
 
 
@@ -129,6 +131,7 @@ class VTLEnvWithReferenceTransition(VTLEnvPreprocAudio):
             preprocessed = self.preproc(audio, sr)[np.newaxis]
             if self.preproc_net:
                 preproc_audio = torch.from_numpy(preprocessed).float().to(self.device)
+                self._hidden = None
                 _, self._hidden, reference = self.preproc_net(preproc_audio,
                                                               seq_lens=np.array([preproc_audio.shape[1]]),
                                                               hidden=self._hidden)
@@ -261,8 +264,10 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         done = False
         if self.current_step >= self.references[self.current_reference_idx].shape[0] - 1:
             done = True
-        s_m_normed = self.normalize(np.array(state_out), np.array(self.original_state_bound[:self.original_goal_dim]))[self.state_mask[:self.original_goal_dim]]
-        g_m_normed = self.normalize(np.array(goal)[self.goal_mask], np.array(self.original_state_bound[:self.original_goal_dim])[self.goal_mask])
+        s_m_normed = self.normalize(np.array(state_out), np.array(self.original_state_bound[:self.original_goal_dim]))[
+            self.state_mask[:self.original_goal_dim]]
+        g_m_normed = self.normalize(np.array(goal)[self.goal_mask],
+                                    np.array(self.original_state_bound[:self.original_goal_dim])[self.goal_mask])
         reward = self._reward(s_m_normed, g_m_normed, action)
         state_out = np.concatenate((state_out, goal))
         state_out = state_out[self.state_mask]
@@ -270,23 +275,8 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         return state_out, reward, done, info
 
     def _reward(self, state, goal, action):
-        res = np.exp(-1.*np.sum((state[self.state_goal_mask] - goal) ** 2))
+        res = np.exp(-1. * np.mean((state[self.state_goal_mask] - goal) ** 2))
         return res
 
     def get_current_reference(self):
         return self.references[self.current_reference_idx][:, self.goal_mask]
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
