@@ -512,7 +512,7 @@ class AudioPreprocessor(object):
         if len(input.shape) >= 2:
             inp_shape = input.shape
             raise ValueError(f"input shape has to be N*1, got: {inp_shape}")
-        out = mfcc(input, samplerate=sr, numcep=self.__numcep + 1, winlen=self.__winlen, nfft=int(sr*self.__winlen + 1), winstep=self.__winstep, winfunc=np.hamming)
+        out = mfcc(input, samplerate=sr, numcep=self.__numcep + 1, winlen=self.__winlen, nfft=int(sr*self.__winlen), winstep=self.__winstep)
         return out[:, 1:]
 
     def __from_file(self, fname):
