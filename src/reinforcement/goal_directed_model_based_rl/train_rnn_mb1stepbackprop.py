@@ -8,9 +8,9 @@ import matplotlib.pyplot as plt
 import torch
 
 from src.reinforcement.goal_directed_model_based_rl.model import SimpleStochasticActorCritic,\
-    SimpleStochasticModelDynamics, SimpleDeterministicPolicy, SimpleDeterministicModelDynamics, SimpleDeterministicModelDynamicsDeltaPredict
+    SimpleStochasticModelDynamics, SimpleDeterministicPolicy, SimpleDeterministicModelDynamics, SimpleDeterministicModelDynamicsDeltaPredict, DeterministicLstmModelDynamics
 from src.reinforcement.goal_directed_model_based_rl.env import VTLEnvWithReferenceTransitionMasked
-from src.reinforcement.goal_directed_model_based_rl.algs.model_based_1_step_backprop import ModelBased1StepBackProp
+from src.reinforcement.goal_directed_model_based_rl.algs.rnn_model_based_1_step_backprop import RNNModelBased1StepBackProp
 from src.speech_classification.pytorch_conv_lstm import LstmNet
 
 
@@ -32,8 +32,8 @@ def train(*args, **kwargs):
     kwargs['agent']['action_dim'] = action_dim
 
     agent = SimpleDeterministicPolicy(**kwargs['agent']).to(device)
-    md = SimpleDeterministicModelDynamicsDeltaPredict(**kwargs['model_dynamics']).to(device)
-    alg = ModelBased1StepBackProp(agent=agent, model_dynamics=md, **kwargs['mbbackprop'])
+    md = DeterministicLstmModelDynamics(**kwargs['model_dynamics']).to(device)
+    alg = RNNModelBased1StepBackProp(agent=agent, model_dynamics=md, **kwargs['mbbackprop'])
     scores = alg.train(env, 10000)
 
     agent.eval()
@@ -65,7 +65,7 @@ def train(*args, **kwargs):
 
 
 if __name__ == '__main__':
-    with open('train_mb1stepbackprop_mfcc_config.json') as data_file:
+    with open('train_rnn_mb1stepbackprop_config.json') as data_file:
         kwargs = json.load(data_file)
     pprint(kwargs)
     train(**kwargs)

@@ -164,7 +164,7 @@ def synth_dynamic_sound(s1, s2, duration, frame_rate):
     return wav_audio, tract_params, glottis_params
 
 
-def create_reference(s1, s2, duration=1., frame_rate=50, name='', directory=''):
+def create_reference(s1, s2, duration=1., frame_rate=25, name='', directory=''):
     if name is '':
         name = '{}_{}'.format(s1, s2)
     audio, tract_params, glottis_params = synth_dynamic_sound(s1, s2, duration, frame_rate)
@@ -176,10 +176,10 @@ def create_reference(s1, s2, duration=1., frame_rate=50, name='', directory=''):
     return audio, tract_params, glottis_params
 
 
-def test_create_reference():
+def qtest_create_reference():
     s1 = 'a'
     s2 = 'i'
-    name = s1 + '_' + s2
+    name = s1 + '_' + s2 + "_2"
     directory = 'references'
     create_reference(s1, s2, name=name, directory=directory)
     with open(os.path.join(directory, name + '.pkl'), 'rb') as f:
@@ -194,4 +194,4 @@ def tes_dynamic_sound_synthesis():
     wavfile.write('ai_test.wav', audio_sampling_rate.value, audio)
 
 if __name__ == '__main__':
-    test_create_reference()
+    qtest_create_reference()

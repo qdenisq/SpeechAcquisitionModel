@@ -24,7 +24,7 @@ class VTLEnvPreprocAudio(VTLEnv):
 
         else:
             self.preproc_net = None
-            self.audio_dim = kwargs["nump_cep"]
+            self.audio_dim = kwargs['preprocessing_params']["numcep"]
             self.audio_bound = [(-1.0, 1.0)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
 
         self.state_dim += self.audio_dim
@@ -50,16 +50,16 @@ class VTLEnvPreprocAudio(VTLEnv):
 
     def step(self, action, render=True):
         state_out, audio_out = super(VTLEnvPreprocAudio, self).step(action, render)
-        preproc_audio = self.preproc(audio_out, self.sr)[np.newaxis]
+        preproc_audio = self.preproc(audio_out, self.sr)
         if self.preproc_net:
-            preproc_audio = torch.from_numpy(preproc_audio).float().to(self.device)
+            preproc_audio = torch.from_numpy(preproc_audio[np.newaxis]).float().to(self.device)
             _, self._hidden, new_goal_state = self.preproc_net(preproc_audio,
                                                                seq_lens=np.array([preproc_audio.shape[1]]),
                                                                hidden=self._hidden)
             new_goal_state = new_goal_state.detach().cpu().numpy().squeeze()
             state_out.extend(new_goal_state)
         else:
-            state_out.extend(preproc_audio)
+            state_out.extend(preproc_audio.squeeze())
 
         # there is no reward and time limit constraint for this environment
         reward = None
@@ -92,9 +92,10 @@ class VTLEnvPreprocAudioWithReference(VTLEnvPreprocAudio):
         self.current_reference_idx = 0
 
     def reset(self, state_to_reset=None, **kwargs):
+        goal = self.references[self.current_reference_idx][0]
+        state_to_reset = state_to_reset if state_to_reset else goal
         state_out = super(VTLEnvPreprocAudioWithReference, self).reset(state_to_reset)
         self.current_reference_idx = random.randint(0, len(self.references) - 1)
-        goal = self.references[self.current_reference_idx][self.current_step]
         return np.concatenate((state_out, goal))
 
     def step(self, action, render=True):
@@ -126,11 +127,11 @@ class VTLEnvWithReferenceTransition(VTLEnvPreprocAudio):
         for fname in self.reference_fnames:
             with open(fname, 'rb') as f:
                 ref = pickle.load(f)
-            audio = ref['audio']
+            audio = np.array(ref['audio'])
             sr = 22050
-            preprocessed = self.preproc(audio, sr)[np.newaxis]
+            preprocessed = np.stack([self.preproc(audio[i, :], sr) for i in range(audio.shape[0])]).squeeze()
             if self.preproc_net:
-                preproc_audio = torch.from_numpy(preprocessed).float().to(self.device)
+                preproc_audio = torch.from_numpy(preprocessed[np.newaxis]).float().to(self.device)
                 self._hidden = None
                 _, self._hidden, reference = self.preproc_net(preproc_audio,
                                                               seq_lens=np.array([preproc_audio.shape[1]]),
@@ -153,8 +154,10 @@ class VTLEnvWithReferenceTransition(VTLEnvPreprocAudio):
         self.current_reference_idx = 0
 
     def reset(self, state_to_reset=None, **kwargs):
-        state_out = super(VTLEnvWithReferenceTransition, self).reset(state_to_reset)
         self.current_reference_idx = random.randint(0, len(self.references) - 1)
+        goal = self.references[self.current_reference_idx][0]
+        state_to_reset = state_to_reset if state_to_reset else goal
+        state_out = super(VTLEnvWithReferenceTransition, self).reset(state_to_reset)
         goal = self.references[self.current_reference_idx][self.current_step]
         return np.concatenate((state_out, goal))
 
@@ -241,10 +244,8 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         self.goal_bound = np.array(self.goal_bound)[np.array(self.goal_mask)]
 
     def reset(self, state_to_reset=None, **kwargs):
-        state_out = super(VTLEnvWithReferenceTransition, self).reset(state_to_reset)
-        self.current_reference_idx = random.randint(0, len(self.references) - 1)
-        goal = self.references[self.current_reference_idx][self.current_step]
-        return np.concatenate((state_out, goal))[self.state_mask]
+        state_out = super(VTLEnvWithReferenceTransitionMasked, self).reset(state_to_reset)
+        return state_out[self.state_mask]
 
     def step(self, action, render=True):
         cur_state = np.array(list(self.tract_params_out) + list(self.glottis_params_out))

@@ -509,7 +509,10 @@ class AudioPreprocessor(object):
             raise TypeError("Expected either filename for audio file as an argument either raw audio with defined sample rate")
 
     def __from_array(self, input, sr):
-        out = mfcc(input, samplerate=sr, numcep=self.__numcep + 1, winlen=self.__winlen, nfft=int(sr*self.__winlen), winstep=self.__winstep)
+        if len(input.shape) >= 2:
+            inp_shape = input.shape
+            raise ValueError(f"input shape has to be N*1, got: {inp_shape}")
+        out = mfcc(input, samplerate=sr, numcep=self.__numcep + 1, winlen=self.__winlen, nfft=int(sr*self.__winlen + 1), winstep=self.__winstep, winfunc=np.hamming)
         return out[:, 1:]
 
     def __from_file(self, fname):

@@ -7,6 +7,7 @@ import datetime
 
 import torch
 from src.reinforcement.goal_directed_model_based_rl.replay_buffer import ReplayBuffer
+import matplotlib.pyplot as plt
 
 
 # Taken from https://github.com/openai/baselines/blob/master/baselines/ddpg/noise.py, which is
@@ -33,7 +34,7 @@ class OrnsteinUhlenbeckActionNoise:
         return 'OrnsteinUhlenbeckActionNoise(mu={}, sigma={})'.format(self.mu, self.sigma)
 
 
-class ModelBased1StepBackProp:
+class RNNModelBased1StepBackProp:
     def __init__(self, agent=None, model_dynamics=None, **kwargs):
         self.agent = agent
 
@@ -69,22 +70,11 @@ class ModelBased1StepBackProp:
         for episode in range(num_episodes):
             # rollout
             T = len(env.get_current_reference())
+            reference = env.get_current_reference()[:, 4:]
+            plt.imshow(reference.T)
+            plt.show()
             state = env.reset()
-            env.render()
             state = env.normalize(state, env.state_bound)
-            states = []
-            states.append(state)
-            # first chunk of audio is always broken due to weird clicking, we just skip it
-            for i in range(env.max_number_of_frames-1):
-                state, _, _, _ = env.step(np.zeros(env.action_dim))
-                env.render()
-                state = env.normalize(state, env.state_bound)
-                states.append(state)
-            mfcc = np.asarray(states)[:, :16]
-
-            mfcc_ref = np.asarray(env.normalize(list(env.get_current_reference()), env.state_bound[:16]))[:-1, :16]
-            diff = np.tanh(mfcc/10 - mfcc_ref/10)
-
             score = 0.
 
             self.agent.eval()

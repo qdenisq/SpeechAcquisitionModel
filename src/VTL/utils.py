@@ -64,7 +64,7 @@ if __name__ == '__main__':
     lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VocalTractLab2.dll')
     num_episodes = 10
     ep_duration = 1000
-    timestep = 20
+    timestep = 40
     num_steps_per_ep = ep_duration // timestep
 
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
