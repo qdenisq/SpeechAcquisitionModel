@@ -65,7 +65,7 @@ if __name__ == '__main__':
     speaker_fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker')
     lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VocalTractLab2.dll')
     ep_duration = 2000
-    timestep = 40
+    timestep = 80
     num_steps_per_ep = ep_duration // timestep
 
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
@@ -80,8 +80,8 @@ if __name__ == '__main__':
 
     preproc_params = {
         "numcep": 12,
-        "winlen": 0.04,
-        "winstep": 0.04,
+        "winlen": 0.08,
+        "winstep": 0.08,
         "sample_rate": 22050
     }
     sr = preproc_params['sample_rate']
@@ -99,8 +99,8 @@ if __name__ == '__main__':
     res1 = np.stack([preproc(audios[i, :], preproc_params['sample_rate']) for i in range(audios.shape[0])]).squeeze()
 
     res_lib_sin = librosa.feature.mfcc(y=audio_sin_wave, sr=sr, dct_type=2, n_mfcc=12, n_fft=int(sr*winlen), hop_length=int(sr*winlen))
-    res_lib_0 = librosa.feature.mfcc(y=audios.flatten(), sr=sr, dct_type=2, n_mfcc=12, n_fft=int(sr*winlen+1), hop_length=int(sr*winlen))
-    res_lib_1 = [librosa.feature.mfcc(y=audios[i, :], sr=sr, dct_type=2, n_mfcc=12, n_fft=int(sr*winlen+1), hop_length=int(sr*winlen)) for i in range(audios.shape[0])]
+    res_lib_0 = librosa.feature.mfcc(y=audios.flatten(), sr=sr, dct_type=2, n_mfcc=12, n_fft=int(sr*winlen-10), hop_length=int(sr*winlen+1), norm=None)
+    res_lib_1 = [librosa.feature.mfcc(y=audios[i, :], sr=sr, dct_type=2, n_mfcc=12, n_fft=int(sr*winlen-10), hop_length=int(sr*winlen+1), norm=None) for i in range(audios.shape[0])]
     res_lib_1 = np.array(res_lib_1).squeeze().T
 
 
