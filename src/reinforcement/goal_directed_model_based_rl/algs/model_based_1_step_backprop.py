@@ -72,18 +72,18 @@ class ModelBased1StepBackProp:
             state = env.reset()
             env.render()
             state = env.normalize(state, env.state_bound)
-            states = []
-            states.append(state)
-            # first chunk of audio is always broken due to weird clicking, we just skip it
-            for i in range(env.max_number_of_frames-1):
-                state, _, _, _ = env.step(np.zeros(env.action_dim))
-                env.render()
-                state = env.normalize(state, env.state_bound)
-                states.append(state)
-            mfcc = np.asarray(states)[:, :16]
-
-            mfcc_ref = np.asarray(env.normalize(list(env.get_current_reference()), env.state_bound[:16]))[:-1, :16]
-            diff = np.tanh(mfcc/10 - mfcc_ref/10)
+            # states = []
+            # states.append(state)
+            # # first chunk of audio is always broken due to weird clicking, we just skip it
+            # for i in range(env.max_number_of_frames-1):
+            #     state, _, _, _ = env.step(np.zeros(env.action_dim))
+            #     env.render()
+            #     state = env.normalize(state, env.state_bound)
+            #     states.append(state)
+            # mfcc = np.asarray(states)[:, :30]
+            #
+            # mfcc_ref = np.asarray(env.normalize(list(env.get_current_reference()), env.state_bound[:30]))[:-1, :30]
+            # diff = np.tanh(mfcc/10 - mfcc_ref/10)
 
             score = 0.
 

@@ -9,20 +9,20 @@
     ],
     "vtl_dir": "C:/Study/SpeechAcquisitionModel/src/VTL",
     "state_parameters_selected": ["HX", "HY", "TTX", "TTY", "audio"],
-    "goal_parameters_selected": ["HX", "HY", "TTX", "TTY", "audio"],
-    "action_parameters_selected": ["HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "f0", "pressure", "lower_rest_displacement", "upper_rest_displacement", "ary_area", "aspiration_strength"],
-    "max_episode_duration": 3000,
+    "goal_parameters_selected": ["audio"],
+    "action_parameters_selected": ["HX", "HY", "TTX", "TTY"],
+    "max_episode_duration": 1000,
     "timestep": 40,
     "preprocessing_params": {
-      "numcep": 12,
+      "nfilt": 26,
       "winlen": 0.04,
       "winstep": 0.04,
       "sample_rate": 22050
     }
   },
   "agent": {
-    "input_dim": 32,
-    "action_dim": 30,
+    "input_dim": 56,
+    "action_dim": 4,
     "linear_layers_size": [
       1024,
       512,
@@ -31,9 +31,9 @@
     "seed": 0
   },
   "model_dynamics": {
-    "goal_dim": 16,
-	"state_dim": 16,
-	"action_dim": 30,
+    "goal_dim": 26,
+	"state_dim": 30,
+	"action_dim": 4,
 	"linear_layers_size": [1024, 512, 256],
 	"lstm_layers_size": [1024, 512],
 	"seed":0,

@@ -22,7 +22,7 @@ from tensorflow.python.util import compat
 from numpy.lib.stride_tricks import as_strided
 
 from scipy.io import wavfile as wav
-from python_speech_features import mfcc
+from python_speech_features import mfcc, fbank
 
 RANDOM_SEED = 0
 MAX_NUM_WAVS_PER_CLASS = 2**27 - 1  # ~134M
@@ -31,6 +31,8 @@ SILENCE_INDEX = 0
 UNKNOWN_WORD_LABEL = '_unknown_'
 UNKNOWN_WORD_INDEX = 1
 BACKGROUND_NOISE_DIR_NAME = '_background_noise_'
+
+
 
 
 def prepare_words_list(wanted_words):
@@ -522,4 +524,36 @@ class AudioPreprocessor(object):
 
     def get_dim(self):
         return self.__numcep
+
+
+class AudioPreprocessorFbank(object):
+    def __init__(self, nfilt=40, winlen=0.025, winstep=0.025, **kwargs):
+        self.__nfilt = nfilt
+        self.__winlen = winlen
+        self.__winstep = winstep
+        return
+
+    def __call__(self, *args, **kwargs):
+        if len(args) == 1 and isinstance(args[0], str):
+            return self.__from_file(args[0])
+        elif len(args) == 2 and isinstance(args[0], np.ndarray) and isinstance(args[1], int):
+            return self.__from_array(args[0], args[1])
+        else:
+            raise TypeError("Expected either filename for audio file as an argument either raw audio with defined sample rate")
+
+    def __from_array(self, input, sr):
+        if len(input.shape) >= 2:
+            inp_shape = input.shape
+            raise ValueError(f"input shape has to be N*1, got: {inp_shape}")
+        feat, energy = fbank(input, sr, self.__winlen, self.__winstep, self.__nfilt, int(sr*self.__winlen), 0, sr//2, 0.97, lambda x: np.ones((x,)))
+        out = feat
+        return out[:, :]
+
+    def __from_file(self, fname):
+        rate, input = wav.read(fname)
+        out = self.__from_array(input, sr=rate)
+        return out
+
+    def get_dim(self):
+        return self.__nfilt
 

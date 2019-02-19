@@ -4,14 +4,14 @@ import random
 import pickle
 
 from src.VTL.vtl_environment import VTLEnv
-from src.speech_classification.audio_processing import AudioPreprocessor
+from src.speech_classification.audio_processing import AudioPreprocessorFbank
 
 
 class VTLEnvPreprocAudio(VTLEnv):
     def __init__(self, lib_path, speaker_fname, **kwargs):
         super(VTLEnvPreprocAudio, self).__init__(lib_path, speaker_fname, **kwargs)
 
-        self.preproc = AudioPreprocessor(**kwargs['preprocessing_params'])
+        self.preproc = AudioPreprocessorFbank(**kwargs['preprocessing_params'])
         self.sr = kwargs['preprocessing_params']['sample_rate']
 
         if "preproc_net_fname" in kwargs:
@@ -19,13 +19,13 @@ class VTLEnvPreprocAudio(VTLEnv):
             self.preproc_net = torch.load(kwargs['preproc_net_fname']).to(self.device)
 
             self.audio_dim = kwargs["audio_dim"]
-            self.audio_bound = [(-1.0, 1.0)] * self.audio_dim
+            self.audio_bound = [(-0.0001, 0.0001)] * self.audio_dim
             self._hidden = None
 
         else:
             self.preproc_net = None
-            self.audio_dim = kwargs['preprocessing_params']["numcep"]
-            self.audio_bound = [(-1.0, 1.0)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
+            self.audio_dim = self.preproc.get_dim()
+            self.audio_bound = [(-0.01, 0.01)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
 
         self.state_dim += self.audio_dim
         self.state_bound.extend(self.audio_bound)
@@ -245,7 +245,9 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
 
     def reset(self, state_to_reset=None, **kwargs):
         state_out = super(VTLEnvWithReferenceTransitionMasked, self).reset(state_to_reset)
-        return state_out[self.state_mask]
+        for i in range(3):
+            state_out, reward, done, info = self.step(np.zeros(self.action_dim))
+        return state_out
 
     def step(self, action, render=True):
         cur_state = np.array(list(self.tract_params_out) + list(self.glottis_params_out))

@@ -376,6 +376,6 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
 
         # predict goal
         goals_delta = self.tanh(self.goal(x))
-        out_goals = states[:, self.__state_dim:] + states_delta
+        out_goals = states[:, self.__state_dim:] + goals_delta
         return out_states, out_goals
 
