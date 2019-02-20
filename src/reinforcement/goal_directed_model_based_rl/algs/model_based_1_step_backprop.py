@@ -8,6 +8,8 @@ import datetime
 import torch
 from src.reinforcement.goal_directed_model_based_rl.replay_buffer import ReplayBuffer
 
+import matplotlib.pyplot as plt
+
 
 # Taken from https://github.com/openai/baselines/blob/master/baselines/ddpg/noise.py, which is
 # based on http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
@@ -54,6 +56,7 @@ class ModelBased1StepBackProp:
 
         self.replay_buffer = ReplayBuffer(kwargs['buffer_size'])
         self.buffer_trajectories = kwargs['buffer_trajectories']
+        self.videos_dir=kwargs['videos_dir']
 
     def train(self, env, num_episodes):
         """
@@ -66,24 +69,31 @@ class ModelBased1StepBackProp:
         action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.001)
         scores = []
         train_step_i = 0
+
+        # Share a X axis with each column of subplots
+        fig, axes = plt.subplots(3, 1)
+        cb=None
+        plt.ion()
+        plt.show()
+        dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
+        # writer = tf.summary.FileWriter(settings['summary_dir'] + '/summary_md_' + dt, sess.graph)
+        video_dir = self.videos_dir + '/video_mb1step_' + dt
+        try:
+            os.makedirs(video_dir)
+        except:
+            print("directory '{}' already exists")
+
+
         for episode in range(num_episodes):
+            ep_states = []
             # rollout
             T = len(env.get_current_reference())
             state = env.reset()
             env.render()
+            ep_states.append(state)
             state = env.normalize(state, env.state_bound)
-            # states = []
-            # states.append(state)
-            # # first chunk of audio is always broken due to weird clicking, we just skip it
-            # for i in range(env.max_number_of_frames-1):
-            #     state, _, _, _ = env.step(np.zeros(env.action_dim))
-            #     env.render()
-            #     state = env.normalize(state, env.state_bound)
-            #     states.append(state)
-            # mfcc = np.asarray(states)[:, :30]
-            #
-            # mfcc_ref = np.asarray(env.normalize(list(env.get_current_reference()), env.state_bound[:30]))[:-1, :30]
-            # diff = np.tanh(mfcc/10 - mfcc_ref/10)
+
+            axes[0].cla()
 
             score = 0.
 
@@ -94,16 +104,16 @@ class ModelBased1StepBackProp:
                 action = action + action_noise()
                 action_denorm = env.denormalize(action, env.action_bound)
                 next_state, reward, done, _ = env.step(action_denorm)
+                ep_states.append(next_state)
                 next_state = env.normalize(next_state, env.state_bound)
                 env.render()
-
-                # if i % save_step != 0:
-                self.replay_buffer.add((state, action, next_state))
+                if episode % 10 != 0:
+                    self.replay_buffer.add((state, action, next_state))
 
                 score += reward
                 miss = torch.abs(torch.from_numpy(next_state).float().to(self.device)[:-env.goal_dim][torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
                                  torch.from_numpy(state).float().to(self.device)[-env.goal_dim:])
-                if miss.max() > 0.1 and env.current_step > 3:
+                if miss.max() > 0.2 and env.current_step > 3 and episode % 10 != 0:
                     break
 
                 if np.any(done):
@@ -111,10 +121,27 @@ class ModelBased1StepBackProp:
                 state = next_state
             scores.append(score)
 
+            if episode % 10 == 0:
+                vmax = env.get_current_reference()[3:, :].max()
+                im0 = axes[0].imshow(np.array(ep_states)[:, 15:41].T, vmin=0., vmax=vmax)
+                im1 = axes[1].imshow(np.array(env.get_current_reference())[3:, :].T, vmin=0., vmax=vmax)
+                diff_img = np.abs(env.get_current_reference()[3:, :].T - np.array(ep_states)[:, 15:41].T)
+                diff_img_normed = env.normalize(diff_img.T, env.state_bound[15:41])
+                im2 = axes[2].imshow(np.array(diff_img_normed).T)
+                if cb is None:
+                    cb = plt.colorbar(im2, ax=axes[2])
+                    cb1 = plt.colorbar(im1, ax=axes[1])
+                plt.draw()
+                plt.pause(.001)
+
+                fname = video_dir + '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+                env.dump_episode(fname)
+
+
             if self.replay_buffer.size() > self.minibatch_size:
                 # train nets couple of times relative to the increase of replay buffer
                 n_train_steps = round(
-                    self.replay_buffer.size() / self.replay_buffer.buffer_size * self.num_epochs_model_dynamics + 1)
+                    self.replay_buffer.size() / self.minibatch_size * self.num_epochs_model_dynamics + 1)
                 ##############################################################
                 # train model dynamics
                 ##############################################################
@@ -132,6 +159,8 @@ class ModelBased1StepBackProp:
                 ##############################################################
                 # train policy
                 ##############################################################
+                n_train_steps = round(
+                    self.replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
                 self.agent.train()
                 self.model_dynamics.eval()
                 for _ in range(n_train_steps):

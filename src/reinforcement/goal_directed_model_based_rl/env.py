@@ -144,6 +144,12 @@ class VTLEnvWithReferenceTransition(VTLEnvPreprocAudio):
             goal_ref = np.concatenate((np.asarray(ref['tract_params']),
                                        np.asarray(ref['glottis_params']),
                                        ref['goal_audio']), axis=-1)
+
+            # audio_max = ref['goal_audio'][3:,:].max(axis=0)
+            # audio_bound = list(zip(-2.*audio_max, 2*audio_max))
+            # self.audio_bound = audio_bound
+            # vtl_names = self.tract_param_names + self.glottis_param_names
+            # self.state_bound[len(vtl_names): len(vtl_names) + self.audio_dim] = self.audio_bound
             self.references.append(goal_ref)
 
         # add reference both tract_glottis and goal_audio in the state space
@@ -245,6 +251,7 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
 
     def reset(self, state_to_reset=None, **kwargs):
         state_out = super(VTLEnvWithReferenceTransitionMasked, self).reset(state_to_reset)
+        # skip first 3 steps due to weird clicking sound in the beginning
         for i in range(3):
             state_out, reward, done, info = self.step(np.zeros(self.action_dim))
         return state_out
