@@ -546,6 +546,7 @@ class AudioPreprocessorFbank(object):
             inp_shape = input.shape
             raise ValueError(f"input shape has to be N*1, got: {inp_shape}")
         feat, energy = fbank(input, sr, self.__winlen, self.__winstep, self.__nfilt, int(sr*self.__winlen), 0, sr//2, 0.97, lambda x: np.ones((x,)))
+        # out = np.log10(feat)
         out = feat
         return out[:, :]
 

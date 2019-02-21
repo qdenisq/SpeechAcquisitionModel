@@ -371,11 +371,11 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
             x = self.relu(linear(x))
 
         # predict state
-        states_delta = self.tanh(self.state(x))
+        states_delta = self.state(x)
         out_states = states[:, :self.__state_dim] + states_delta
 
         # predict goal
-        goals_delta = self.tanh(self.goal(x))
+        goals_delta = self.goal(x)
         out_goals = states[:, self.__state_dim:] + goals_delta
         return out_states, out_goals
 

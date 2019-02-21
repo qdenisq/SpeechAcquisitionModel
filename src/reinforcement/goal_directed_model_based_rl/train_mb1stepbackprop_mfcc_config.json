@@ -14,7 +14,7 @@
       "audio"
     ],
     "action_parameters_selected": [
-      "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY"
+     "TCX", "TCY", "TTX", "TTY", "TBX", "TBY"
     ],
     "max_episode_duration": 1000,
     "timestep": 40,
@@ -27,8 +27,9 @@
   },
   "agent": {
     "input_dim": 67,
-    "action_dim": 15,
+    "action_dim": 6,
     "linear_layers_size": [
+      1024,
       1024,
       512,
       256
@@ -38,8 +39,9 @@
   "model_dynamics": {
     "goal_dim": 26,
     "state_dim": 41,
-    "action_dim": 15,
+    "action_dim": 6,
     "linear_layers_size": [
+      1024,
       1024,
       512,
       256

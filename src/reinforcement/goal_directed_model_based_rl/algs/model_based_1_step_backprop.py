@@ -39,8 +39,8 @@ class ModelBased1StepBackProp:
     def __init__(self, agent=None, model_dynamics=None, **kwargs):
         self.agent = agent
 
-        self.actor_optim = torch.optim.Adam(agent.parameters(), lr=kwargs['actor_lr'],
-                                            eps=kwargs['learning_rate_eps'])
+        self.actor_optim = torch.optim.Adam(agent.parameters(), lr=kwargs['actor_lr'], eps=kwargs['learning_rate_eps'])
+        # self.actor_optim = torch.optim.SGD(agent.parameters(), lr=kwargs['actor_lr'])
 
         self.num_epochs_actor = kwargs['num_epochs_actor']
         self.num_epochs_critic = kwargs['num_epochs_critic']
@@ -71,7 +71,7 @@ class ModelBased1StepBackProp:
         train_step_i = 0
 
         # Share a X axis with each column of subplots
-        fig, axes = plt.subplots(3, 1)
+        fig, axes = plt.subplots(4, 1)
         cb=None
         plt.ion()
         plt.show()
@@ -86,11 +86,13 @@ class ModelBased1StepBackProp:
 
         for episode in range(num_episodes):
             ep_states = []
+            ep_states_pred = []
             # rollout
             T = len(env.get_current_reference())
             state = env.reset()
             env.render()
             ep_states.append(state)
+            ep_states_pred.append(state[:-env.goal_dim])
             state = env.normalize(state, env.state_bound)
 
             axes[0].cla()
@@ -98,13 +100,19 @@ class ModelBased1StepBackProp:
             score = 0.
 
             self.agent.eval()
+            self.model_dynamics.eval()
             while True:
                 state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
                 action = self.agent(state_tensor).detach().cpu().numpy().squeeze()
                 action = action + action_noise()
                 action_denorm = env.denormalize(action, env.action_bound)
                 next_state, reward, done, _ = env.step(action_denorm)
+
+                next_state_pred, _ = self.model_dynamics(state_tensor, torch.from_numpy(action).float().to(self.device).view(1,-1))
+                next_state_pred = env.denormalize(next_state_pred.detach().cpu().numpy().squeeze(), env.state_bound[:-env.goal_dim])
+
                 ep_states.append(next_state)
+                ep_states_pred.append(next_state_pred)
                 next_state = env.normalize(next_state, env.state_bound)
                 env.render()
                 if episode % 10 != 0:
@@ -113,7 +121,7 @@ class ModelBased1StepBackProp:
                 score += reward
                 miss = torch.abs(torch.from_numpy(next_state).float().to(self.device)[:-env.goal_dim][torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
                                  torch.from_numpy(state).float().to(self.device)[-env.goal_dim:])
-                if miss.max() > 0.2 and env.current_step > 3 and episode % 10 != 0:
+                if miss.max() > 0.1 and env.current_step > 5 and episode % 10 != 0:
                     break
 
                 if np.any(done):
@@ -123,14 +131,16 @@ class ModelBased1StepBackProp:
 
             if episode % 10 == 0:
                 vmax = env.get_current_reference()[3:, :].max()
-                im0 = axes[0].imshow(np.array(ep_states)[:, 15:41].T, vmin=0., vmax=vmax)
-                im1 = axes[1].imshow(np.array(env.get_current_reference())[3:, :].T, vmin=0., vmax=vmax)
+                vmin = env.get_current_reference()[3:, :].min()
+                im0 = axes[0].imshow(np.array(ep_states)[:, 15:41].T, vmin=vmin, vmax=vmax)
+                im_pred = axes[1].imshow(np.array(ep_states_pred)[:, 15:].T, vmin=vmin, vmax=vmax)
+                im1 = axes[2].imshow(np.array(env.get_current_reference())[3:, :].T, vmin=vmin, vmax=vmax)
                 diff_img = np.abs(env.get_current_reference()[3:, :].T - np.array(ep_states)[:, 15:41].T)
                 diff_img_normed = env.normalize(diff_img.T, env.state_bound[15:41])
-                im2 = axes[2].imshow(np.array(diff_img_normed).T)
+                im2 = axes[3].imshow(np.array(diff_img_normed).T)
                 if cb is None:
-                    cb = plt.colorbar(im2, ax=axes[2])
-                    cb1 = plt.colorbar(im1, ax=axes[1])
+                    cb = plt.colorbar(im2, ax=axes[3])
+                    cb1 = plt.colorbar(im1, ax=axes[2])
                 plt.draw()
                 plt.pause(.001)
 
@@ -184,8 +194,8 @@ class ModelBased1StepBackProp:
 
                 print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} |".format(episode,
                                                                                                                               train_step_i,
-                                                                                                                              md_loss.detach().numpy(),
-                                                                                                                              actor_loss.detach().numpy(),
+                                                                                                                              md_loss.detach().cpu().numpy(),
+                                                                                                                              actor_loss.detach().cpu().numpy(),
                                                                                                                               score))
 
         print("Training finished. Result score: ", score)
