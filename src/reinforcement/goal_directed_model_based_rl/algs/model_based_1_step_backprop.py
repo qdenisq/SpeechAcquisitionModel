@@ -87,6 +87,7 @@ class ModelBased1StepBackProp:
         for episode in range(num_episodes):
             ep_states = []
             ep_states_pred = []
+            misses = []
             # rollout
             T = len(env.get_current_reference())
             state = env.reset()
@@ -121,7 +122,9 @@ class ModelBased1StepBackProp:
                 score += reward
                 miss = torch.abs(torch.from_numpy(next_state).float().to(self.device)[:-env.goal_dim][torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
                                  torch.from_numpy(state).float().to(self.device)[-env.goal_dim:])
-                if miss.max() > 0.1 and env.current_step > 5 and episode % 10 != 0:
+
+                misses.append(miss.max().detach().cpu().numpy())
+                if len(misses) > 2 and np.all(np.array(misses[-2:]) > 0.1) and episode % 10 != 0:
                     break
 
                 if np.any(done):
@@ -130,12 +133,12 @@ class ModelBased1StepBackProp:
             scores.append(score)
 
             if episode % 10 == 0:
-                vmax = env.get_current_reference()[3:, :].max()
-                vmin = env.get_current_reference()[3:, :].min()
+                vmax = env.get_current_reference()[3:, -26:].max()
+                vmin = env.get_current_reference()[3:, -26:].min()
                 im0 = axes[0].imshow(np.array(ep_states)[:, 15:41].T, vmin=vmin, vmax=vmax)
-                im_pred = axes[1].imshow(np.array(ep_states_pred)[:, 15:].T, vmin=vmin, vmax=vmax)
-                im1 = axes[2].imshow(np.array(env.get_current_reference())[3:, :].T, vmin=vmin, vmax=vmax)
-                diff_img = np.abs(env.get_current_reference()[3:, :].T - np.array(ep_states)[:, 15:41].T)
+                im_pred = axes[1].imshow(np.array(ep_states_pred)[:, -26:].T, vmin=vmin, vmax=vmax)
+                im1 = axes[2].imshow(np.array(env.get_current_reference())[3:, -26:].T, vmin=vmin, vmax=vmax)
+                diff_img = np.abs(env.get_current_reference()[3:, -26:].T - np.array(ep_states)[:, 15:41].T)
                 diff_img_normed = env.normalize(diff_img.T, env.state_bound[15:41])
                 im2 = axes[3].imshow(np.array(diff_img_normed).T)
                 if cb is None:

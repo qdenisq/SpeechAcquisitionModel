@@ -70,9 +70,9 @@ if __name__ == '__main__':
 
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
 
-    name = 'a_i_2'
+    name = 'a_o'
     initial_state = env.get_cf('a')
-    end_state = env.get_cf('i')
+    end_state = env.get_cf('o')
 
     directory = 'references'
 

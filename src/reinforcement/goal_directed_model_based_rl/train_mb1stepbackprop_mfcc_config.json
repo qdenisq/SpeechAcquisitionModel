@@ -4,17 +4,20 @@
     "seed": 1234,
     "audio_dim": 64,
     "reference_fnames": [
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl"
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_o.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_e.pkl"
     ],
     "vtl_dir": "C:/Study/SpeechAcquisitionModel/src/VTL",
     "state_parameters_selected": [
       "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "audio"
     ],
     "goal_parameters_selected": [
-      "audio"
+      "HX", "HY", "JX", "JA", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "audio"
     ],
     "action_parameters_selected": [
-     "TCX", "TCY", "TTX", "TTY", "TBX", "TBY"
+      "HX", "HY", "JX", "JA", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY"
     ],
     "max_episode_duration": 1000,
     "timestep": 40,
@@ -26,10 +29,9 @@
     }
   },
   "agent": {
-    "input_dim": 67,
-    "action_dim": 6,
+    "input_dim": 77,
+    "action_dim": 10,
     "linear_layers_size": [
-      1024,
       1024,
       512,
       256
@@ -37,11 +39,10 @@
     "seed": 0
   },
   "model_dynamics": {
-    "goal_dim": 26,
+    "goal_dim": 36,
     "state_dim": 41,
-    "action_dim": 6,
+    "action_dim": 10,
     "linear_layers_size": [
-      1024,
       1024,
       512,
       256

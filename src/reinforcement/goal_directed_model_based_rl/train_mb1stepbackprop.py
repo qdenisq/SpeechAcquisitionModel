@@ -17,7 +17,7 @@ from src.speech_classification.pytorch_conv_lstm import LstmNet
 def train(*args, **kwargs):
     print(kwargs)
 
-    device = 'cuda'
+    device = 'cpu'
     kwargs['mbbackprop']['device'] = device
 
     speaker_fname = os.path.join(kwargs['env']['vtl_dir'], 'JD2.speaker')
