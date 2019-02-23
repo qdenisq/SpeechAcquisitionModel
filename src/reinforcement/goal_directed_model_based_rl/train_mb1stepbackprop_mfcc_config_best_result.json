@@ -22,14 +22,14 @@
     "max_episode_duration": 1000,
     "timestep": 40,
     "preprocessing_params": {
-      "nfilt": 13,
+      "nfilt": 26,
       "winlen": 0.04,
       "winstep": 0.04,
       "sample_rate": 22050
     }
   },
   "agent": {
-    "input_dim": 51,
+    "input_dim": 77,
     "action_dim": 10,
     "linear_layers_size": [
       1024,
@@ -39,8 +39,8 @@
     "seed": 0
   },
   "model_dynamics": {
-    "goal_dim": 23,
-    "state_dim": 28,
+    "goal_dim": 36,
+    "state_dim": 41,
     "action_dim": 10,
     "linear_layers_size": [
       1024,

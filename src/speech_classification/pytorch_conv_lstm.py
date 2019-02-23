@@ -1,5 +1,5 @@
 import src.speech_classification.utils as utils
-from src.speech_classification.audio_processing import AudioPreprocessor, SpeechCommandsDataCollector
+from src.speech_classification.audio_processing import AudioPreprocessorFbank, SpeechCommandsDataCollector
 import torch as torch
 
 import os
@@ -128,11 +128,11 @@ if __name__ == '__main__':
                                     'o_a', 'o_i', 'o_u', 'o_o', 'o_e',
                                     'e_a', 'e_i', 'e_u', 'e_o', 'e_e']
     model_settings = {
-        'dct_coefficient_count': 12,
+        'dct_coefficient_count': 26,
         'label_count': len(wanted_words_tanh_transition) + 2,
         'hidden_reccurent_cells_count': 64,
-        'winlen': 0.02,
-        'winstep': 0.02
+        'winlen': 0.04,
+        'winstep': 0.04
     }
 
     save_dir = r'C:\Study\SpeechAcquisitionModel\models\speech_classification'
@@ -144,7 +144,7 @@ if __name__ == '__main__':
     best_acc = 0.0
     lowest_loss = 100.0
 
-    preproc = AudioPreprocessor(model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
+    preproc = AudioPreprocessorFbank(model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
     data_iter = SpeechCommandsDataCollector(preproc,
                                             data_dir=r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_sigmoid_transition_08_28_2018_03_57_PM_03\Videos',
                                             wanted_words=wanted_words_tanh_transition,

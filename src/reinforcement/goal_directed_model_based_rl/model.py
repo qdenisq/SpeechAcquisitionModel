@@ -346,7 +346,8 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         self.__state_dim = kwargs['state_dim']
         self.__linears_size = kwargs['linear_layers_size']
 
-        input_size = self.__acoustic_state_dim + self.__state_dim + self.__action_dim
+        # input_size = self.__acoustic_state_dim + self.__state_dim + self.__action_dim
+        input_size = self.__state_dim + self.__action_dim
         self.__bn1 = torch.nn.BatchNorm1d(input_size)
 
         self.linears = ModuleList([Linear(input_size, self.__linears_size[0])])
@@ -362,7 +363,7 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         self.apply(init_weights)  # xavier uniform init
 
     def forward(self, states, actions):
-        x = torch.cat((states, actions), -1)
+        x = torch.cat((states[:, :self.__state_dim], actions), -1)
         original_dim = x.shape
         x = self.__bn1(x.view(-1, original_dim[-1]))
         x = x.view(original_dim)

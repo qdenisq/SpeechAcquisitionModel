@@ -66,7 +66,7 @@ class ModelBased1StepBackProp:
         :return scores: list of scores for each episode (list)
         """
 
-        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.001)
+        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.1)
         scores = []
         train_step_i = 0
 
@@ -123,7 +123,7 @@ class ModelBased1StepBackProp:
                 miss = torch.abs(torch.from_numpy(next_state).float().to(self.device)[:-env.goal_dim][torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
                                  torch.from_numpy(state).float().to(self.device)[-env.goal_dim:])
 
-                misses.append(miss[:10].max().detach().cpu().numpy())
+                misses.append(miss.max().detach().cpu().numpy())
                 if len(misses) > 2 and np.all(np.array(misses[-2:]) > 0.1) and episode % 10 != 0:
                     break
 
@@ -188,7 +188,7 @@ class ModelBased1StepBackProp:
                     s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
                     actor_loss = torch.nn.MSELoss()(
                         s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()][:, :15],
-                        s0_batch[:, -env.goal_dim:][:, :15].float().to(self.device))
+                        s0_batch[:, -env.goal_dim:].float().to(self.device))
                     actor_loss.backward()
                     self.actor_optim.step()
 

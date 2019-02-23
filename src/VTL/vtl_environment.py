@@ -228,6 +228,18 @@ class VTLEnv(object):
         cf.extend(self.glottis_param_neutral)
         return cf
 
+    @staticmethod
+    def normalize(data, bound):
+        largest = np.array([max(abs(y[0]), abs(y[1])) for y in bound])
+        normed_data = data / largest
+        return normed_data
+
+    @staticmethod
+    def denormalize(normed_data, bound):
+        largest = np.array([max(abs(y[0]), abs(y[1])) for y in bound])
+        data = normed_data * largest
+        return data
+
 def run_test():
     speaker_fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker')
     lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VocalTractLab2.dll')

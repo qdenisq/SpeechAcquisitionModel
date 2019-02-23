@@ -13,18 +13,35 @@ import librosa
 
 import matplotlib.pyplot as plt
 
-def create_reference(env, ep_duration, timestep, initial_state=None, end_state=None, directory=None, name=None):
+
+def create_reference(env, ep_duration, timestep, initial_state=None, end_state=None, state_sigma=0.01, action_sigma=0.01, time_shift_max=4, directory=None, name=None):
     num_steps_per_ep = ep_duration // timestep
     action_space = env.number_glottis_parameters + env.number_vocal_tract_parameters
 
-    state = env.reset(initial_state)
+    init_state_sampled = np.random.normal(env.normalize(initial_state, env.state_bound), state_sigma, len(initial_state))
+    init_state_sampled = env.denormalize(init_state_sampled, env.state_bound)
+    init_state_sampled[24:] = initial_state[24:]
+
+    end_state_sampled = np.random.normal(env.normalize(end_state, env.state_bound), state_sigma, len(initial_state))
+    end_state_sampled = env.denormalize(end_state_sampled, env.state_bound)
+    end_state_sampled[24:] = end_state[24:]
+
+    state = env.reset(init_state_sampled)
     if not end_state:
         raise ValueError("end state is None")
     states = []
     actions = []
     audios = []
-    for i in range(num_steps_per_ep // 3):
-        action = np.zeros(action_space)
+
+    t0 = num_steps_per_ep // 3 + random.randint(0, 2 * time_shift_max) - time_shift_max
+
+    t1 = 2 * num_steps_per_ep // 3 + random.randint(0, 2 * time_shift_max) - time_shift_max
+
+    action_noise = lambda: np.random.normal(np.zeros(action_space), [action_sigma]*action_space, action_space)
+
+    for i in range(t0):
+        action = np.zeros(action_space) + action_noise()
+        action[24:] = 0.
         # action = (np.random.rand(action_space)) * 100.
         state, audio = env.step(action, True)
         states.append(state)
@@ -32,16 +49,18 @@ def create_reference(env, ep_duration, timestep, initial_state=None, end_state=N
         audios.append(audio)
         env.render()
 
-    for i in range(num_steps_per_ep // 3):
-        action = (np.asarray(end_state) - np.asarray(initial_state)) / (num_steps_per_ep // 3)
+    for i in range(t1 - t0):
+        action = (np.asarray(end_state_sampled) - np.asarray(init_state_sampled)) / (t1 - t0) + action_noise()
+        action[24:] = 0.
         state, audio = env.step(action, True)
         states.append(state)
         actions.append(action)
         audios.append(audio)
         env.render()
 
-    for i in range(num_steps_per_ep // 3):
-        action = np.zeros(action_space)
+    for i in range(num_steps_per_ep - t1):
+        action = np.zeros(action_space) + action_noise()
+        action[24:] = 0.
         # action = (np.random.rand(action_space)) * 100.
         state, audio = env.step(action, True)
         states.append(state)
@@ -61,7 +80,68 @@ def create_reference(env, ep_duration, timestep, initial_state=None, end_state=N
     return audios, states, actions
 
 
+def create_datatset(**kwargs):
+    dir_name = kwargs['dir']
+    sound_names = kwargs['sound_names']
+    num_samples_per_sound = kwargs['num_samples_per_sound']
+    num_rollouts = num_samples_per_sound * len(sound_names) * len(sound_names)
+
+    speaker_fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker')
+    lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VocalTractLab2.dll')
+    ep_duration = 1000
+    timestep = 40
+    num_steps_per_ep = ep_duration // timestep
+
+    env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
+
+
+    dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+    save_dir = os.path.join(dir_name, dt)
+    if not os.path.exists(save_dir):
+        try:
+            os.makedirs(save_dir)
+        except:
+            pass
+    fname = os.path.join(save_dir, dt) + '.pd'
+
+    rollouts = pd.DataFrame(columns=['y', 'audio', 'states', 'actions'])
+    i_g = 0
+    for s0 in sound_names:
+        for s1 in sound_names:
+            name = s0 + "_" + s1
+            sound_dir = os.path.join(save_dir, name)
+            if not os.path.exists(sound_dir):
+                try:
+                    os.makedirs(sound_dir)
+                except:
+                    pass
+            for i in range(num_samples_per_sound):
+
+                initial_state = env.get_cf(s0)
+                end_state = env.get_cf(s1)
+                audios, states, actions = create_reference(env, ep_duration, timestep, initial_state=initial_state, end_state=end_state, name=name, directory=sound_dir)
+                ep_name = os.path.join(sound_dir, str(i))
+                env.dump_episode(ep_name)
+                rollouts.loc[i_g] = [name, np.array(audios), np.array(states), np.array(actions)]
+                i_g += 1
+
+                if i_g % 500 == 0:
+                    rollouts.to_pickle(path=fname)
+                print('\rProgress: {} out of {}'.format(i_g, num_rollouts), end='')
+            rollouts.to_pickle(path=fname)
+
+
 if __name__ == '__main__':
+    kwargs = {
+        "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions",
+        "sound_names": ['a', 'i', 'u'' o', 'e'],
+        "num_samples_per_sound": 300
+    }
+    create_datatset(**kwargs)
+
+
+
+
     speaker_fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker')
     lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VocalTractLab2.dll')
     ep_duration = 1000
