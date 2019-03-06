@@ -146,7 +146,7 @@ if __name__ == '__main__':
 
     preproc = AudioPreprocessorFbank(model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
     data_iter = SpeechCommandsDataCollector(preproc,
-                                            data_dir=r'C:\Study\SpeechAcquisitionModel\data\raw\VTL_model_dynamics_sigmoid_transition_08_28_2018_03_57_PM_03\Videos',
+                                            data_dir=r'C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions/02_25_2019_03_29_PM_08',
                                             wanted_words=wanted_words_tanh_transition,
                                             testing_percentage=10,
                                             validation_percentage=10

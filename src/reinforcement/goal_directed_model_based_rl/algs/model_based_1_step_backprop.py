@@ -66,12 +66,12 @@ class ModelBased1StepBackProp:
         :return scores: list of scores for each episode (list)
         """
 
-        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.001)
+        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.1)
         scores = []
         train_step_i = 0
 
         # Share a X axis with each column of subplots
-        fig, axes = plt.subplots(4, 1, figsize=(6, 10))
+        fig, axes = plt.subplots(4, 2, figsize=(6, 10))
         cb=None
         plt.ion()
         plt.show()
@@ -87,16 +87,18 @@ class ModelBased1StepBackProp:
         for episode in range(num_episodes):
             ep_states = []
             ep_states_pred = []
+            ep_actions = []
             misses = []
             # rollout
             T = len(env.get_current_reference())
-            state = env.reset()
+            state0 = env.reset()
+            state = state0
             env.render()
             ep_states.append(state)
             ep_states_pred.append(state[:-env.goal_dim])
             state = env.normalize(state, env.state_bound)
 
-            axes[0].cla()
+            # axes[0].cla()
 
             score = 0.
 
@@ -106,6 +108,7 @@ class ModelBased1StepBackProp:
                 state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
                 action = self.agent(state_tensor).detach().cpu().numpy().squeeze()
                 action = action + action_noise()
+                ep_actions.append(action)
                 action_denorm = env.denormalize(action, env.action_bound)
                 next_state, reward, done, _ = env.step(action_denorm)
 
@@ -123,8 +126,8 @@ class ModelBased1StepBackProp:
                 miss = torch.abs(torch.from_numpy(next_state).float().to(self.device)[:-env.goal_dim][torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
                                  torch.from_numpy(state).float().to(self.device)[-env.goal_dim:])
 
-                misses.append(miss[:10].max().detach().cpu().numpy())
-                if len(misses) > 2 and np.all(np.array(misses[-2:]) > 0.1) and episode % 10 != 0:
+                misses.append(miss[:].max().detach().cpu().numpy())
+                if len(misses) >= 2 and np.all(np.array(misses[-2:]) > 0.1) and episode % 10 != 0:
                     break
 
                 if np.any(done):
@@ -132,20 +135,44 @@ class ModelBased1StepBackProp:
                 state = next_state
             scores.append(score)
 
-            if episode % 10 == 0:
-                n_audio = 13
-                n_artic =15
-                vmax = env.get_current_reference()[3:, -n_audio:].max()
-                vmin = env.get_current_reference()[3:, -n_audio:].min()
-                im0 = axes[0].imshow(np.array(ep_states)[:, n_artic:n_artic+n_audio].T, vmin=vmin, vmax=vmax)
-                im_pred = axes[1].imshow(np.array(ep_states_pred)[:, -n_audio:].T, vmin=vmin, vmax=vmax)
-                im1 = axes[2].imshow(np.array(env.get_current_reference())[3:, -n_audio:].T, vmin=vmin, vmax=vmax)
-                diff_img = np.abs(env.get_current_reference()[3:, -n_audio:].T - np.array(ep_states)[:, n_artic:n_artic+n_audio].T)
-                diff_img_normed = env.normalize(diff_img.T, env.state_bound[n_artic:n_artic+n_audio])
-                im2 = axes[3].imshow(np.array(diff_img_normed).T)
+            if episode % 10 == 0 and episode > 1:
+                n_audio = 26
+                n_artic = 15
+                #show fully predicted rollout given s0  and list of actions
+                pred_states = []
+                state = state0
+                for idx, a in enumerate(ep_actions):
+                    state = env.normalize(state, env.state_bound)
+                    pred_states.append(state)
+
+                    state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
+                    next_state_pred, _ = self.model_dynamics(state_tensor,
+                                                             torch.from_numpy(a).float().to(self.device).view(1,
+                                                                                                                   -1))
+                    next_state_pred = env.denormalize(next_state_pred.detach().cpu().numpy().squeeze(),
+                                                      env.state_bound[:-env.goal_dim])
+                    state = np.concatenate((next_state_pred, ep_states[idx][-env.goal_dim:]))
+
+
+
+
+                ep_states = env.normalize(np.array(ep_states), env.state_bound)
+                vmax = env.get_current_reference()[3:, :].max()
+                vmin = env.get_current_reference()[3:, :].min()
+                im0 = axes[0, 0].imshow(np.array(ep_states)[:, :n_artic].T, vmin=-1., vmax=1.)
+                im0 = axes[0, 1].imshow(np.array(ep_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
+                # im_pred = axes[1].imshow(np.array(ep_states_pred)[:, -n_audio:].T, vmin=vmin, vmax=vmax)
+                im_pred = axes[1, 0].imshow(np.array(pred_states)[:, :n_artic].T, vmin=-1., vmax=1.)
+                im_pred = axes[1, 1].imshow(np.array(pred_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
+                im1 = axes[2, 0].imshow(ep_states[:, -env.goal_dim: -env.goal_dim + n_artic].T, vmin=-1., vmax=1.)
+                im1 = axes[2, 1].imshow(ep_states[:, -env.goal_dim+n_artic: ].T, vmin=-1., vmax=1.)
+                diff_img = np.abs(ep_states[:, -env.goal_dim:].T - np.array(ep_states)[:, :-env.goal_dim].T)
+                diff_img_normed = env.normalize(diff_img.T, env.state_bound[:-env.goal_dim])
+                im2 = axes[3, 0].imshow(np.array(diff_img_normed[:, :n_artic]).T)
+                im2 = axes[3, 1].imshow(np.array(diff_img_normed[:, n_artic:n_artic+n_audio]).T)
                 if cb is None:
-                    cb = plt.colorbar(im2, ax=axes[3])
-                    cb1 = plt.colorbar(im1, ax=axes[2])
+                     cb = plt.colorbar(im2, ax=axes[3])
+                #     cb1 = plt.colorbar(im1, ax=axes[2])
                 plt.draw()
                 plt.pause(.001)
 
@@ -187,8 +214,8 @@ class ModelBased1StepBackProp:
                     # predict state if predicted actions will be applied
                     s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
                     actor_loss = torch.nn.MSELoss()(
-                        s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()][:, :15],
-                        s0_batch[:, -env.goal_dim:][:, :15].float().to(self.device))
+                        s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
+                        s0_batch[:, -env.goal_dim:].float().to(self.device)) + 0.01 * torch.mean((actions_predicted**2))
                     actor_loss.backward()
                     self.actor_optim.step()
 

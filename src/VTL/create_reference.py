@@ -134,7 +134,7 @@ def create_datatset(**kwargs):
 if __name__ == '__main__':
     kwargs = {
         "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions",
-        "sound_names": ['a', 'i', 'u'' o', 'e'],
+        "sound_names": ['a', 'i', 'u', 'o', 'e'],
         "num_samples_per_sound": 300
     }
     create_datatset(**kwargs)
