@@ -178,6 +178,7 @@ class ModelBased1StepBackProp:
 
                 fname = video_dir + '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
                 env.dump_episode(fname)
+                fig.savefig(fname+".png")
 
 
             if self.replay_buffer.size() > self.minibatch_size:
