@@ -215,7 +215,8 @@ class ModelBased1StepBackProp:
                     s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
                     actor_loss = torch.nn.MSELoss()(
                         s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
-                        s0_batch[:, -env.goal_dim:].float().to(self.device)) + 0.01 * torch.mean((actions_predicted**2))
+                        s0_batch[:, -env.goal_dim:].float().to(self.device))
+                    action_penalty = 0.01 * torch.mean((actions_predicted**2))
                     actor_loss.backward()
                     self.actor_optim.step()
 
