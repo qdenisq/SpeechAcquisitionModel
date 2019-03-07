@@ -5,10 +5,11 @@
     "audio_dim": 64,
 
     "reference_fnames": [
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl"
-
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_o.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_e.pkl"
     ],
-
 
     "vtl_dir": "C:/Study/SpeechAcquisitionModel/src/VTL",
     "state_parameters_selected": [
@@ -35,8 +36,7 @@
     "linear_layers_size": [
       1024,
       512,
-      256,
-      128
+      256
     ],
     "seed": 0
   },
@@ -47,8 +47,7 @@
     "linear_layers_size": [
       1024,
       512,
-      256,
-      128
+      256
     ],
     "lstm_layers_size": [
       1024,

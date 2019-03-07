@@ -157,8 +157,6 @@ class ModelBased1StepBackProp:
 
 
                 ep_states = env.normalize(np.array(ep_states), env.state_bound)
-                vmax = env.get_current_reference()[3:, :].max()
-                vmin = env.get_current_reference()[3:, :].min()
                 im0 = axes[0, 0].imshow(np.array(ep_states)[:, :n_artic].T, vmin=-1., vmax=1.)
                 im0 = axes[0, 1].imshow(np.array(ep_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
                 # im_pred = axes[1].imshow(np.array(ep_states_pred)[:, -n_audio:].T, vmin=vmin, vmax=vmax)
@@ -166,13 +164,14 @@ class ModelBased1StepBackProp:
                 im_pred = axes[1, 1].imshow(np.array(pred_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
                 im1 = axes[2, 0].imshow(ep_states[:, -env.goal_dim: -env.goal_dim + n_artic].T, vmin=-1., vmax=1.)
                 im1 = axes[2, 1].imshow(ep_states[:, -env.goal_dim+n_artic: ].T, vmin=-1., vmax=1.)
-                diff_img = np.abs(ep_states[:, -env.goal_dim:].T - np.array(ep_states)[:, :-env.goal_dim].T)
-                diff_img_normed = env.normalize(diff_img.T, env.state_bound[:-env.goal_dim])
-                im2 = axes[3, 0].imshow(np.array(diff_img_normed[:, :n_artic]).T)
-                im2 = axes[3, 1].imshow(np.array(diff_img_normed[:, n_artic:n_artic+n_audio]).T)
+                diff_img = np.abs(np.array([ep_states[i+1, -env.goal_dim:] - np.array(ep_states)[i, :-env.goal_dim] for i in range(len(ep_states)-1)]))
+                # diff_img_normed = env.normalize(diff_img.T, env.state_bound[:-env.goal_dim])
+                diff_img_normed = diff_img
+                im2 = axes[3, 0].imshow(np.array(diff_img_normed[:, :n_artic].T))
+                im2 = axes[3, 1].imshow(np.array(diff_img_normed[:, n_artic:n_artic+n_audio].T))
                 if cb is None:
-                     cb = plt.colorbar(im2, ax=axes[3])
-                #     cb1 = plt.colorbar(im1, ax=axes[2])
+                     cb = plt.colorbar(im0, ax=axes[0, 1])
+                     # cb1 = plt.colorbar(im1, ax=axes[2, 1])
                 plt.draw()
                 plt.pause(.001)
 
