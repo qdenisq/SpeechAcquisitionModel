@@ -1,12 +1,12 @@
 import src.speech_classification.utils as utils
 from src.speech_classification.audio_processing import AudioPreprocessorFbank, SpeechCommandsDataCollector
-import torch as torch
+import torch.nn.functional as F
+import torch.nn as nn
+import torch
 
 import os
 import datetime
 
-import torch.nn as nn
-import torch.nn.functional as F
 
 from python_speech_features import mfcc
 import scipy.io.wavfile as wav
@@ -87,13 +87,18 @@ class LstmNet(nn.Module):
         self.__n_classes = model_settings['label_count']
         self.__n_hidden_cells = model_settings['hidden_reccurent_cells_count']
 
+        self.__bn1 = nn.BatchNorm1d(self.__n_window_height)
+        self.__compress_layer = nn.Linear(self.__n_hidden_cells, 10)
         self.__lstm = nn.LSTM(self.__n_window_height, self.__n_hidden_cells, batch_first=True)
         self.__output_layer = nn.Linear(self.__n_hidden_cells, self.__n_classes)
 
     def forward(self, x, seq_lens, hidden=None):
         # if hidden is None:
         #     hidden = torch.zeros(x.size(0), self.n_hidden)
-
+        orig_shape = x.shape
+        x = x.view(-1, self.__n_window_height)
+        x = self.__bn1(x)
+        x = x.view(orig_shape)
         x, hidden = self.__lstm(x, hidden)
         lstm_out = x
         last_elements = seq_lens - 1
@@ -152,7 +157,7 @@ if __name__ == '__main__':
                                             validation_percentage=10
                                             )
     net = LstmNet(model_settings)
-    optimizer = torch.optim.RMSprop(net.parameters(), lr=0.001)
+    optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 
     # configure training procedure
     n_train_steps = 500

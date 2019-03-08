@@ -66,12 +66,12 @@ class ModelBased1StepBackProp:
         :return scores: list of scores for each episode (list)
         """
 
-        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.1)
+        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.01)
         scores = []
         train_step_i = 0
 
         # Share a X axis with each column of subplots
-        fig, axes = plt.subplots(4, 2, figsize=(6, 10))
+        fig, axes = plt.subplots(4, 2, figsize=(10, 10))
         cb=None
         plt.ion()
         plt.show()
@@ -104,6 +104,7 @@ class ModelBased1StepBackProp:
 
             self.agent.eval()
             self.model_dynamics.eval()
+            step = 0
             while True:
                 state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
                 action = self.agent(state_tensor).detach().cpu().numpy().squeeze()
@@ -133,10 +134,11 @@ class ModelBased1StepBackProp:
                 if np.any(done):
                     break
                 state = next_state
+                step += 1
             scores.append(score)
 
             if episode % 10 == 0 and episode > 1:
-                n_audio = 26
+                n_audio = 64
                 n_artic = 15
                 #show fully predicted rollout given s0  and list of actions
                 pred_states = []
@@ -147,8 +149,7 @@ class ModelBased1StepBackProp:
 
                     state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
                     next_state_pred, _ = self.model_dynamics(state_tensor,
-                                                             torch.from_numpy(a).float().to(self.device).view(1,
-                                                                                                                   -1))
+                                                             torch.from_numpy(a).float().to(self.device).view(1, -1))
                     next_state_pred = env.denormalize(next_state_pred.detach().cpu().numpy().squeeze(),
                                                       env.state_bound[:-env.goal_dim])
                     state = np.concatenate((next_state_pred, ep_states[idx][-env.goal_dim:]))
@@ -158,22 +159,41 @@ class ModelBased1StepBackProp:
 
                 ep_states = env.normalize(np.array(ep_states), env.state_bound)
                 im0 = axes[0, 0].imshow(np.array(ep_states)[:, :n_artic].T, vmin=-1., vmax=1.)
+                axes[0, 0].set_title('rollout_artic')
+
                 im0 = axes[0, 1].imshow(np.array(ep_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
+                axes[0, 1].set_title('rollout_acoustic')
                 # im_pred = axes[1].imshow(np.array(ep_states_pred)[:, -n_audio:].T, vmin=vmin, vmax=vmax)
+
                 im_pred = axes[1, 0].imshow(np.array(pred_states)[:, :n_artic].T, vmin=-1., vmax=1.)
+                axes[1, 0].set_title('pred_rollout_artic')
+
                 im_pred = axes[1, 1].imshow(np.array(pred_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
+                axes[1, 1].set_title('pred_rollout_acoustic')
+
                 im1 = axes[2, 0].imshow(ep_states[:, -env.goal_dim: -env.goal_dim + n_artic].T, vmin=-1., vmax=1.)
+                axes[2, 0].set_title('reference_artic')
+
                 im1 = axes[2, 1].imshow(ep_states[:, -env.goal_dim+n_artic: ].T, vmin=-1., vmax=1.)
+                axes[2, 1].set_title('reference_acoustic')
+
                 diff_img = np.abs(np.array([ep_states[i+1, -env.goal_dim:] - np.array(ep_states)[i, :-env.goal_dim] for i in range(len(ep_states)-1)]))
                 # diff_img_normed = env.normalize(diff_img.T, env.state_bound[:-env.goal_dim])
                 diff_img_normed = diff_img
                 im2 = axes[3, 0].imshow(np.array(diff_img_normed[:, :n_artic].T))
+                axes[3, 0].set_title('error_artic')
+
                 im2 = axes[3, 1].imshow(np.array(diff_img_normed[:, n_artic:n_artic+n_audio].T))
+                axes[3, 1].set_title('error_acoustic')
+
                 if cb is None:
-                     cb = plt.colorbar(im0, ax=axes[0, 1])
-                     # cb1 = plt.colorbar(im1, ax=axes[2, 1])
-                plt.draw()
-                plt.pause(.001)
+                    cb = plt.colorbar(im0, ax=axes[0, 1])
+                    plt.colorbar(im_pred, ax=axes[1, 1])
+                    plt.colorbar(im1, ax=axes[2, 1])
+                    plt.colorbar(im2, ax=axes[3, 1])
+                    plt.tight_layout()
+                # plt.draw()
+                # plt.pause(.001)
 
                 fname = video_dir + '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
                 env.dump_episode(fname)
@@ -194,7 +214,7 @@ class ModelBased1StepBackProp:
 
                     self.model_dynamics_optim.zero_grad()
                     s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
-                    md_loss = torch.nn.MSELoss()(s1_pred, s1_batch[:, :-env.goal_dim].float().to(self.device))
+                    md_loss = torch.nn.SmoothL1Loss()(s1_pred, s1_batch[:, :-env.goal_dim].float().to(self.device))
                     md_loss.backward()
                     self.model_dynamics_optim.step()
 
@@ -213,10 +233,11 @@ class ModelBased1StepBackProp:
                     actions_predicted = self.agent(s0_batch.float().to(self.device))
                     # predict state if predicted actions will be applied
                     s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
-                    actor_loss = torch.nn.MSELoss()(
+                    actor_loss = torch.nn.SmoothL1Loss()(
                         s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
                         s0_batch[:, -env.goal_dim:].float().to(self.device))
-                    action_penalty = 0.01 * torch.mean((actions_predicted**2))
+                    # action_penalty = 0.01 * torch.mean((actions_predicted**2))
+                    # actor_loss += action_penalty
                     actor_loss.backward()
                     self.actor_optim.step()
 
@@ -225,11 +246,12 @@ class ModelBased1StepBackProp:
                     # policy_loss_out = np.mean(
                     #     np.sum(np.square(expected_actions_normed - actions_normed.detach().numpy()), axis=1), axis=0)
 
-                print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} |".format(episode,
+                print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}".format(episode,
                                                                                                                               train_step_i,
                                                                                                                               md_loss.detach().cpu().numpy(),
                                                                                                                               actor_loss.detach().cpu().numpy(),
-                                                                                                                              score))
+                                                                                                                              score,
+                                                                                                                              step))
 
         print("Training finished. Result score: ", score)
         return scores

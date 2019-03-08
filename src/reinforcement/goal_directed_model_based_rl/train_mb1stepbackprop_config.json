@@ -1,8 +1,8 @@
 {
   "env": {
-    "device": "cuda",
+    "device": "cpu",
     "seed": 1234,
-    "preproc_net_fname": "C:/Study/SpeechAcquisitionModel/models/speech_classification/simple_lstm_01_10_2019_05_01_PM_acc_0.9961.pt",
+    "preproc_net_fname": "C:/Study/SpeechAcquisitionModel/models/speech_classification/simple_lstm_03_08_2019_01_19_PM_acc_0.8203.pt",
     "audio_dim": 64,
     "reference_fnames": [
       "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions/a_i.pkl"

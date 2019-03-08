@@ -3,6 +3,7 @@ import numpy as np
 import random
 import pickle
 
+from src.speech_classification.pytorch_conv_lstm import LstmNet
 from src.VTL.vtl_environment import VTLEnv
 from src.speech_classification.audio_processing import AudioPreprocessorFbank
 
@@ -25,7 +26,7 @@ class VTLEnvPreprocAudio(VTLEnv):
         else:
             self.preproc_net = None
             self.audio_dim = self.preproc.get_dim()
-            self.audio_bound = [(-0.15, 0.15)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
+            self.audio_bound = [(-0.01, 0.01)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
 
         self.state_dim += self.audio_dim
         self.state_bound.extend(self.audio_bound)
@@ -93,10 +94,10 @@ class VTLEnvPreprocAudioWithReference(VTLEnvPreprocAudio):
         self.current_reference_idx = 0
 
     def reset(self, state_to_reset=None, **kwargs):
+        self.current_reference_idx = random.randint(0, len(self.references) - 1)
         goal = self.references[self.current_reference_idx][0]
         state_to_reset = state_to_reset if state_to_reset else goal
         state_out = super(VTLEnvPreprocAudioWithReference, self).reset(state_to_reset)
-        self.current_reference_idx = random.randint(0, len(self.references) - 1)
         return np.concatenate((state_out, goal))
 
     def step(self, action, render=True):

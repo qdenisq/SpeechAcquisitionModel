@@ -350,12 +350,15 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         input_size = self.__state_dim + self.__action_dim
         self.__bn1 = torch.nn.BatchNorm1d(input_size)
 
+        self.drop = torch.nn.modules.Dropout(p=0.1)
+
         self.linears = ModuleList([Linear(input_size, self.__linears_size[0])])
         self.linears.extend(
             [Linear(self.__linears_size[i - 1], self.__linears_size[i]) for i in range(1, len(self.__linears_size))])
 
         self.goal = Linear(self.__linears_size[-1], kwargs['goal_dim'])
         self.state = Linear(self.__linears_size[-1], kwargs['state_dim'])
+
 
         self.relu = ReLU()
         self.tanh = Tanh()
@@ -367,16 +370,18 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         original_dim = x.shape
         x = self.__bn1(x.view(-1, original_dim[-1]))
         x = x.view(original_dim)
+        x = self.drop(x)
+
 
         for linear in self.linears:
             x = self.relu(linear(x))
 
         # predict state
-        states_delta = self.state(x)
-        out_states = states[:, :self.__state_dim] + states_delta
+        states_delta = self.tanh(self.state(x))
+        out_states = self.tanh(states[:, :self.__state_dim] + states_delta)
 
         # predict goal
-        goals_delta = self.goal(x)
-        out_goals = states[:, self.__state_dim:] + goals_delta
+        goals_delta = self.tanh(self.goal(x))
+        out_goals = self.tanh(states[:, self.__state_dim:] + goals_delta)
         return out_states, out_goals
 

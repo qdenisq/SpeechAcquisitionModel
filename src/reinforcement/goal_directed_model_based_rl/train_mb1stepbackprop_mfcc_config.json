@@ -3,7 +3,7 @@
     "device": "cuda",
     "seed": 1234,
     "audio_dim": 64,
-
+    "preproc_net_fname": "C:/Study/SpeechAcquisitionModel/models/speech_classification/simple_lstm_03_08_2019_01_19_PM_acc_0.8203.pt",
     "reference_fnames": [
       "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl",
       "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u.pkl",
@@ -31,7 +31,7 @@
     }
   },
   "agent": {
-    "input_dim": 82,
+    "input_dim": 158,
     "action_dim": 15,
     "linear_layers_size": [
       1024,
@@ -41,8 +41,8 @@
     "seed": 0
   },
   "model_dynamics": {
-    "goal_dim": 41,
-    "state_dim": 41,
+    "goal_dim": 79,
+    "state_dim": 79,
     "action_dim": 15,
     "linear_layers_size": [
       1024,
@@ -62,13 +62,13 @@
     "learning_rate_eps": 1e-5,
     "actor_lr": 0.001,
     "critic_lr": 0.001,
-    "model_dynamics_lr": 0.001,
+    "model_dynamics_lr": 0.0005,
     "minibatch_size": 200,
     "rollouts_per_update": 10,
     "virtual_rollouts_per_update": 10,
     "num_epochs_actor": 10,
     "num_epochs_critic": 10,
-    "num_epochs_model_dynamics": 10,
+    "num_epochs_model_dynamics": 1,
     "clip_grad": 1,
     "buffer_size": 10000,
     "buffer_trajectories": "yes",
