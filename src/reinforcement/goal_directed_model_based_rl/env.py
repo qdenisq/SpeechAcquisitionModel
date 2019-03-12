@@ -282,14 +282,17 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
             else:
                 unmasked_action[i] = reference_action[i]
 
-        goal = self.references[self.current_reference_idx][self.current_step + 1]
+        cur_goal = self.references[self.current_reference_idx][self.current_step + 1]
 
         state_out, _, _, _ = super(VTLEnvWithReferenceTransition, self).step(unmasked_action, render)
 
-        # diff = state_out - goal
+        diff = state_out - cur_goal
 
+
+        # update goal only after step, beacuse it changes current step
+        goal = self.references[self.current_reference_idx][self.current_step + 1]
         done = False
-        if self.current_step >= self.references[self.current_reference_idx].shape[0] - 1:
+        if self.current_step >= self.references[self.current_reference_idx].shape[0] - 2:
             done = True
         s_m_normed = self.normalize(np.array(state_out), np.array(self.original_state_bound[:self.original_goal_dim]))[
             self.state_mask[:self.original_goal_dim]]

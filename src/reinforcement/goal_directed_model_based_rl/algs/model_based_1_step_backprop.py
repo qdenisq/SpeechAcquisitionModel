@@ -187,7 +187,7 @@ class ModelBased1StepBackProp:
                 axes[3, 1].set_title('error_acoustic')
 
                 pred_err_img = np.abs(np.array(
-                    [ep_states[i, :-env.goal_dim] - np.array(pred_states)[i, :] for i in
+                    [ep_states[i, :-env.goal_dim] - np.array(pred_states)[i, :-env.goal_dim] for i in
                      range(len(ep_states) - 1)]))
                 # diff_img_normed = env.normalize(diff_img.T, env.state_bound[:-env.goal_dim])
                 im3 = axes[4, 0].imshow(np.array(pred_err_img[:, :n_artic].T))
