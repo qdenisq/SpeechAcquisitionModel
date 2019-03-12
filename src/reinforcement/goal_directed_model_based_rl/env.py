@@ -79,6 +79,7 @@ class VTLEnvPreprocAudioWithReference(VTLEnvPreprocAudio):
         for fname in self.reference_fnames:
             preprocessed = self.preproc(fname)[np.newaxis]
             if self.preproc_net:
+                self.preproc_net.eval()
                 preproc_audio = torch.from_numpy(preprocessed).float().to(self.device)
                 _, self._hidden, reference = self.preproc_net(preproc_audio,
                                                               seq_lens=np.array([preproc_audio.shape[1]]),
@@ -126,6 +127,7 @@ class VTLEnvWithReferenceTransition(VTLEnvPreprocAudio):
 
         self.reference_fnames = kwargs['reference_fnames']
         self.references = []
+        self.reference_actions = []
         for fname in self.reference_fnames:
             with open(fname, 'rb') as f:
                 ref = pickle.load(f)
@@ -133,19 +135,21 @@ class VTLEnvWithReferenceTransition(VTLEnvPreprocAudio):
             sr = 22050
             preprocessed = np.stack([self.preproc(audio[i, :], sr) for i in range(audio.shape[0])]).squeeze()
             if self.preproc_net:
+                self.preproc_net.eval()
                 preproc_audio = torch.from_numpy(preprocessed[np.newaxis]).float().to(self.device)
                 self._hidden = None
                 _, self._hidden, reference = self.preproc_net(preproc_audio,
                                                               seq_lens=np.array([preproc_audio.shape[1]]),
                                                               hidden=self._hidden)
                 reference = reference.detach().cpu().numpy().squeeze()
-                ref['goal_audio'] = reference
+                ref['goal_audio'] = np.concatenate((np.zeros((1, reference.shape[1])), reference))
+                # ref['goal_audio'] = reference
             else:
                 ref['goal_audio'] = preprocessed
             # stack tract, glottis and goal audio into goal and then slice in subclasses if needed
             goal_ref = np.concatenate((np.asarray(ref['tract_params']),
                                        np.asarray(ref['glottis_params']),
-                                       ref['goal_audio']), axis=-1)
+                                       ref['goal_audio'][:-1, :]), axis=-1)
 
             # audio_max = ref['goal_audio'][3:,:].max(axis=0)
             # audio_bound = list(zip(-2.*audio_max, 2*audio_max))
@@ -153,6 +157,7 @@ class VTLEnvWithReferenceTransition(VTLEnvPreprocAudio):
             # vtl_names = self.tract_param_names + self.glottis_param_names
             # self.state_bound[len(vtl_names): len(vtl_names) + self.audio_dim] = self.audio_bound
             self.references.append(goal_ref)
+            self.reference_actions.append(ref['action'])
 
         # add reference both tract_glottis and goal_audio in the state space
         self.goal_dim = self.state_dim
@@ -253,15 +258,21 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
 
     def reset(self, state_to_reset=None, **kwargs):
         state_out = super(VTLEnvWithReferenceTransitionMasked, self).reset(state_to_reset)
+
+
         # skip first 3 steps due to weird clicking sound in the beginning
         for i in range(3):
+            # self._hidden = None
             state_out, reward, done, info = self.step(np.zeros(self.action_dim))
+            # dif = self.references[self.current_reference_idx][i, 30:] - state_out[15:15+64]
             self.render()
+        # constistency = state_out[15: 64 + 15] - self.references[self.current_reference_idx][self.current_step - 1][30:]
+
         return state_out
 
     def step(self, action, render=True):
         cur_state = np.array(list(self.tract_params_out) + list(self.glottis_params_out))
-        reference_action = self.references[self.current_reference_idx][self.current_step + 1][:len(cur_state)] - cur_state
+        reference_action = self.reference_actions[self.current_reference_idx][self.current_step]
         j = 0
         unmasked_action = np.zeros(len(reference_action))
         for i in range(len(reference_action)):
@@ -274,6 +285,9 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         goal = self.references[self.current_reference_idx][self.current_step + 1]
 
         state_out, _, _, _ = super(VTLEnvWithReferenceTransition, self).step(unmasked_action, render)
+
+        # diff = state_out - goal
+
         done = False
         if self.current_step >= self.references[self.current_reference_idx].shape[0] - 1:
             done = True

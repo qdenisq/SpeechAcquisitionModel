@@ -71,7 +71,7 @@ class ModelBased1StepBackProp:
         train_step_i = 0
 
         # Share a X axis with each column of subplots
-        fig, axes = plt.subplots(4, 2, figsize=(10, 10))
+        fig, axes = plt.subplots(5, 2, figsize=(10, 10))
         cb=None
         plt.ion()
         plt.show()
@@ -186,11 +186,23 @@ class ModelBased1StepBackProp:
                 im2 = axes[3, 1].imshow(np.array(diff_img_normed[:, n_artic:n_artic+n_audio].T))
                 axes[3, 1].set_title('error_acoustic')
 
+                pred_err_img = np.abs(np.array(
+                    [ep_states[i, :-env.goal_dim] - np.array(pred_states)[i, :] for i in
+                     range(len(ep_states) - 1)]))
+                # diff_img_normed = env.normalize(diff_img.T, env.state_bound[:-env.goal_dim])
+                im3 = axes[4, 0].imshow(np.array(pred_err_img[:, :n_artic].T))
+                axes[4, 0].set_title('pred_error_artic')
+
+                im3 = axes[4, 1].imshow(np.array(pred_err_img[:, n_artic:n_artic + n_audio].T))
+                axes[4, 1].set_title('pred_error_acoustic')
+
+
                 if cb is None:
                     cb = plt.colorbar(im0, ax=axes[0, 1])
                     plt.colorbar(im_pred, ax=axes[1, 1])
                     plt.colorbar(im1, ax=axes[2, 1])
                     plt.colorbar(im2, ax=axes[3, 1])
+                    plt.colorbar(im3, ax=axes[4, 1])
                     plt.tight_layout()
                 # plt.draw()
                 # plt.pause(.001)
