@@ -57,6 +57,7 @@ class ModelBased1StepBackProp:
         self.replay_buffer = ReplayBuffer(kwargs['buffer_size'])
         self.buffer_trajectories = kwargs['buffer_trajectories']
         self.videos_dir=kwargs['videos_dir']
+        self.noise_gamma = 1.0
 
     def train(self, env, num_episodes):
         """
@@ -66,15 +67,10 @@ class ModelBased1StepBackProp:
         :return scores: list of scores for each episode (list)
         """
 
-        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.01)
+        action_noise = OrnsteinUhlenbeckActionNoise(mu=np.zeros(env.action_dim), sigma=0.05)
         scores = []
         train_step_i = 0
 
-        # Share a X axis with each column of subplots
-        fig, axes = plt.subplots(5, 2, figsize=(10, 10))
-        cb=None
-        plt.ion()
-        plt.show()
         dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
         # writer = tf.summary.FileWriter(settings['summary_dir'] + '/summary_md_' + dt, sess.graph)
         video_dir = self.videos_dir + '/video_mb1step_' + dt
@@ -108,7 +104,7 @@ class ModelBased1StepBackProp:
             while True:
                 state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
                 action = self.agent(state_tensor).detach().cpu().numpy().squeeze()
-                action = action + action_noise()
+                action = action + self.noise_gamma * action_noise()
                 ep_actions.append(action)
                 action_denorm = env.denormalize(action, env.action_bound)
                 next_state, reward, done, _ = env.step(action_denorm)
@@ -128,7 +124,7 @@ class ModelBased1StepBackProp:
                                  torch.from_numpy(state).float().to(self.device)[-env.goal_dim:])
 
                 misses.append(miss[:].max().detach().cpu().numpy())
-                if len(misses) >= 2 and np.all(np.array(misses[-2:]) > 0.1) and episode % 10 != 0:
+                if len(misses) >= 3 and np.all(np.array(misses[-2:]) > 0.1) and episode % 10 != 0:
                     break
 
                 if np.any(done):
@@ -137,10 +133,14 @@ class ModelBased1StepBackProp:
                 step += 1
             scores.append(score)
 
+            if episode % 10 == 0:
+                self.noise_gamma *= 0.99
+
             if episode % 10 == 0 and episode > 1:
-                n_audio = 64
-                n_artic = 15
-                #show fully predicted rollout given s0  and list of actions
+                n_audio = 26
+                n_artic = 24
+                n_artic_goal = 24
+                # show fully predicted rollout given s0  and list of actions
                 pred_states = []
                 state = state0
                 for idx, a in enumerate(ep_actions):
@@ -154,37 +154,53 @@ class ModelBased1StepBackProp:
                                                       env.state_bound[:-env.goal_dim])
                     state = np.concatenate((next_state_pred, ep_states[idx][-env.goal_dim:]))
 
+                # Share a X axis with each column of subplots
+                fig, axes = plt.subplots(5, 2, figsize=(10, 10))
+                cb = None
+                # plt.ion()
+                # plt.show()
 
 
 
                 ep_states = env.normalize(np.array(ep_states), env.state_bound)
                 im0 = axes[0, 0].imshow(np.array(ep_states)[:, :n_artic].T, vmin=-1., vmax=1.)
                 axes[0, 0].set_title('rollout_artic')
+                plt.colorbar(im0, ax=axes[0, 0])
 
                 im0 = axes[0, 1].imshow(np.array(ep_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
                 axes[0, 1].set_title('rollout_acoustic')
+                plt.colorbar(im0, ax=axes[0, 1])
                 # im_pred = axes[1].imshow(np.array(ep_states_pred)[:, -n_audio:].T, vmin=vmin, vmax=vmax)
 
                 im_pred = axes[1, 0].imshow(np.array(pred_states)[:, :n_artic].T, vmin=-1., vmax=1.)
                 axes[1, 0].set_title('pred_rollout_artic')
+                plt.colorbar(im_pred, ax=axes[1, 0])
 
                 im_pred = axes[1, 1].imshow(np.array(pred_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
                 axes[1, 1].set_title('pred_rollout_acoustic')
+                plt.colorbar(im_pred, ax=axes[1, 1])
 
-                im1 = axes[2, 0].imshow(ep_states[:, -env.goal_dim: -env.goal_dim + n_artic].T, vmin=-1., vmax=1.)
-                axes[2, 0].set_title('reference_artic')
+                if n_artic_goal > 0:
+                    im1 = axes[2, 0].imshow(ep_states[:, -env.goal_dim: -env.goal_dim + n_artic_goal].T, vmin=-1., vmax=1.)
+                    axes[2, 0].set_title('reference_artic')
+                    plt.colorbar(im1, ax=axes[2, 0])
 
-                im1 = axes[2, 1].imshow(ep_states[:, -env.goal_dim+n_artic: ].T, vmin=-1., vmax=1.)
+                im1 = axes[2, 1].imshow(ep_states[:, -env.goal_dim + n_artic_goal:].T, vmin=-1., vmax=1.)
                 axes[2, 1].set_title('reference_acoustic')
+                plt.colorbar(im1, ax=axes[2, 1])
 
-                diff_img = np.abs(np.array([ep_states[i+1, -env.goal_dim:] - np.array(ep_states)[i, :-env.goal_dim] for i in range(len(ep_states)-1)]))
+                diff_img = np.abs(np.array([ep_states[i, -env.goal_dim:] - np.array(ep_states)[i + 1, :-env.goal_dim][env.state_goal_mask] for i in range(len(ep_states)-1)]))
                 # diff_img_normed = env.normalize(diff_img.T, env.state_bound[:-env.goal_dim])
                 diff_img_normed = diff_img
-                im2 = axes[3, 0].imshow(np.array(diff_img_normed[:, :n_artic].T))
-                axes[3, 0].set_title('error_artic')
 
-                im2 = axes[3, 1].imshow(np.array(diff_img_normed[:, n_artic:n_artic+n_audio].T))
+                if n_artic_goal > 0:
+                    im2 = axes[3, 0].imshow(np.array(diff_img_normed[:, :n_artic_goal].T))
+                    axes[3, 0].set_title('error_artic')
+                    plt.colorbar(im2, ax=axes[3, 0])
+
+                im2 = axes[3, 1].imshow(np.array(diff_img_normed[:, -n_audio:].T))
                 axes[3, 1].set_title('error_acoustic')
+                plt.colorbar(im2, ax=axes[3, 1])
 
                 pred_err_img = np.abs(np.array(
                     [ep_states[i, :-env.goal_dim] - np.array(pred_states)[i, :-env.goal_dim] for i in
@@ -192,27 +208,28 @@ class ModelBased1StepBackProp:
                 # diff_img_normed = env.normalize(diff_img.T, env.state_bound[:-env.goal_dim])
                 im3 = axes[4, 0].imshow(np.array(pred_err_img[:, :n_artic].T))
                 axes[4, 0].set_title('pred_error_artic')
+                plt.colorbar(im3, ax=axes[4, 0])
 
                 im3 = axes[4, 1].imshow(np.array(pred_err_img[:, n_artic:n_artic + n_audio].T))
                 axes[4, 1].set_title('pred_error_acoustic')
+                plt.colorbar(im3, ax=axes[4, 1])
 
-
-                if cb is None:
-                    cb = plt.colorbar(im0, ax=axes[0, 1])
-                    plt.colorbar(im_pred, ax=axes[1, 1])
-                    plt.colorbar(im1, ax=axes[2, 1])
-                    plt.colorbar(im2, ax=axes[3, 1])
-                    plt.colorbar(im3, ax=axes[4, 1])
-                    plt.tight_layout()
+                # if cb is None:
+                # cb = plt.colorbar(im0, ax=axes[0, 1])
+                # plt.colorbar(im_pred, ax=axes[1, 1])
+                # plt.colorbar(im1, ax=axes[2, 1])
+                # plt.colorbar(im2, ax=axes[3, 1])
+                # plt.colorbar(im3, ax=axes[4, 1])
+                plt.tight_layout()
                 # plt.draw()
                 # plt.pause(.001)
 
                 fname = video_dir + '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
                 env.dump_episode(fname)
                 fig.savefig(fname+".png")
+                plt.close('all')
 
-
-            if self.replay_buffer.size() > self.minibatch_size:
+            if self.replay_buffer.size() > 2 * self.minibatch_size:
                 # train nets couple of times relative to the increase of replay buffer
                 n_train_steps = round(
                     self.replay_buffer.size() / self.minibatch_size * self.num_epochs_model_dynamics + 1)
