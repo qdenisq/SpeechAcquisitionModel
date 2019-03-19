@@ -17,6 +17,19 @@ from src.speech_classification.pytorch_conv_lstm import LstmNet
 def train(*args, **kwargs):
     print(kwargs)
 
+    dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
+    # writer = tf.summary.FileWriter(settings['summary_dir'] + '/summary_md_' + dt, sess.graph)
+    video_dir = kwargs['mbbackprop']['videos_dir'] + '/video_mb1step_' + dt
+    try:
+        os.makedirs(video_dir)
+    except:
+        print("directory '{}' already exists")
+    json_kwargs = json.dumps((args, kwargs))
+    with open(video_dir + "/config.json", 'w') as json_file:
+        json.dump(kwargs, json_file,  indent=4, separators=(',', ': '))
+
+
+
     device = 'cpu'
     kwargs['mbbackprop']['device'] = device
 
@@ -34,7 +47,7 @@ def train(*args, **kwargs):
     agent = SimpleDeterministicPolicy(**kwargs['agent']).to(device)
     md = SimpleDeterministicModelDynamicsDeltaPredict(**kwargs['model_dynamics']).to(device)
     alg = ModelBased1StepBackProp(agent=agent, model_dynamics=md, **kwargs['mbbackprop'])
-    scores = alg.train(env, 2000)
+    scores = alg.train(env, 2000, dir=video_dir)
 
     agent.eval()
     for i in range(1):

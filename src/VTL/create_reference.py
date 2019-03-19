@@ -132,12 +132,12 @@ def create_datatset(**kwargs):
 
 
 if __name__ == '__main__':
-    kwargs = {
-        "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions",
-        "sound_names": ['a', 'i', 'u', 'o', 'e'],
-        "num_samples_per_sound": 300
-    }
-    create_datatset(**kwargs)
+    # kwargs = {
+    #     "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions",
+    #     "sound_names": ['a', 'i', 'u', 'o', 'e'],
+    #     "num_samples_per_sound": 300
+    # }
+    # create_datatset(**kwargs)
 
 
 
@@ -150,9 +150,9 @@ if __name__ == '__main__':
 
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
 
-    name = 'a_o'
-    initial_state = env.get_cf('a')
-    end_state = env.get_cf('o')
+    name = 'u_i_2'
+    initial_state = env.get_cf('u')
+    end_state = env.get_cf('i')
 
     directory = 'references'
 

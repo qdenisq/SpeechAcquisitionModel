@@ -4,11 +4,33 @@ import os
 import numpy as np
 import pandas as pd
 import datetime
+import sys
 
 import torch
 from src.reinforcement.goal_directed_model_based_rl.replay_buffer import ReplayBuffer
 
 import matplotlib.pyplot as plt
+
+
+class Logger(object):
+    def __init__(self, fname):
+        self.terminal = sys.stdout
+        self.log_name = fname
+        self.log = open(fname, "a")
+
+    def write(self, message):
+        self.terminal.write(message)
+        self.log.write(message)
+
+    def flush(self):
+        #this flush method is needed for python 3 compatibility.
+        #this handles the flush command by doing nothing.
+        #you might want to specify some extra behavior here.
+        self.log.close()
+        self.log = open(self.log_name, "a")
+        pass
+
+
 
 
 # Taken from https://github.com/openai/baselines/blob/master/baselines/ddpg/noise.py, which is
@@ -56,10 +78,11 @@ class ModelBased1StepBackProp:
 
         self.replay_buffer = ReplayBuffer(kwargs['buffer_size'])
         self.buffer_trajectories = kwargs['buffer_trajectories']
-        self.videos_dir=kwargs['videos_dir']
+        self.videos_dir = kwargs['videos_dir']
         self.noise_gamma = 1.0
+        self.noise_decay = kwargs['noise_decay']
 
-    def train(self, env, num_episodes):
+    def train(self, env, num_episodes, dir=None):
         """
         Train the agent to solve environment
         :param env: environment object (ReacherEnvironment)
@@ -74,11 +97,14 @@ class ModelBased1StepBackProp:
         dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
         # writer = tf.summary.FileWriter(settings['summary_dir'] + '/summary_md_' + dt, sess.graph)
         video_dir = self.videos_dir + '/video_mb1step_' + dt
+        if dir is not None:
+            video_dir = dir
         try:
             os.makedirs(video_dir)
         except:
             print("directory '{}' already exists")
 
+        sys.stdout = Logger(video_dir + "/log.txt")
 
         for episode in range(num_episodes):
             ep_states = []
@@ -124,7 +150,8 @@ class ModelBased1StepBackProp:
                                  torch.from_numpy(state).float().to(self.device)[-env.goal_dim:])
 
                 misses.append(miss[:].max().detach().cpu().numpy())
-                if len(misses) >= 3 and np.all(np.array(misses[-2:]) > 0.1) and episode % 10 != 0:
+                if len(misses) > 3 and np.all(np.array(misses[-3:]) > 0.1) and episode % 10 != 0:
+                    miss_max_idx = np.argmax(miss[:].detach().cpu().numpy())
                     break
 
                 if np.any(done):
@@ -134,7 +161,7 @@ class ModelBased1StepBackProp:
             scores.append(score)
 
             if episode % 10 == 0:
-                self.noise_gamma *= 0.99
+                self.noise_gamma *= self.noise_decay
 
             if episode % 10 == 0 and episode > 1:
                 n_audio = 26
@@ -229,6 +256,8 @@ class ModelBased1StepBackProp:
                 fig.savefig(fname+".png")
                 plt.close('all')
 
+                sys.stdout.flush()
+
             if self.replay_buffer.size() > 2 * self.minibatch_size:
                 # train nets couple of times relative to the increase of replay buffer
                 n_train_steps = round(
@@ -243,7 +272,7 @@ class ModelBased1StepBackProp:
 
                     self.model_dynamics_optim.zero_grad()
                     s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
-                    md_loss = torch.nn.SmoothL1Loss()(s1_pred, s1_batch[:, :-env.goal_dim].float().to(self.device))
+                    md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred, s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
                     md_loss.backward()
                     self.model_dynamics_optim.step()
 
@@ -262,9 +291,9 @@ class ModelBased1StepBackProp:
                     actions_predicted = self.agent(s0_batch.float().to(self.device))
                     # predict state if predicted actions will be applied
                     s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
-                    actor_loss = torch.nn.SmoothL1Loss()(
+                    actor_loss = torch.nn.SmoothL1Loss(reduction="sum")(
                         s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
-                        s0_batch[:, -env.goal_dim:].float().to(self.device))
+                        s0_batch[:, -env.goal_dim:].float().to(self.device)) / self.minibatch_size
                     # action_penalty = 0.01 * torch.mean((actions_predicted**2))
                     # actor_loss += action_penalty
                     actor_loss.backward()
@@ -275,12 +304,13 @@ class ModelBased1StepBackProp:
                     # policy_loss_out = np.mean(
                     #     np.sum(np.square(expected_actions_normed - actions_normed.detach().numpy()), axis=1), axis=0)
 
-                print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}".format(episode,
+                print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}| miss_max_idx {}".format(episode,
                                                                                                                               train_step_i,
                                                                                                                               md_loss.detach().cpu().numpy(),
                                                                                                                               actor_loss.detach().cpu().numpy(),
                                                                                                                               score,
-                                                                                                                              step))
+                                                                                                                              step,
+                                                                                                                              miss_max_idx))
 
         print("Training finished. Result score: ", score)
         return scores
