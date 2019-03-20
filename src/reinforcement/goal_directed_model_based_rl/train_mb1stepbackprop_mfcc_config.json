@@ -8,15 +8,21 @@
       "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i.pkl",
       "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_1.pkl",
       "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl",
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u.pkl",
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u_1.pkl",
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u_2.pkl",
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_o.pkl",
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_o_1.pkl",
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_o_2.pkl",
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/u_i.pkl",
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/u_i_1.pkl",
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/u_i_2.pkl"
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_O.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_O_1.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_O_2.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/O_a.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/O_a_1.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/O_a_2.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/O_i.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/O_i_1.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/O_i_2.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_O.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_O_1.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_O_2.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_a.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_a_1.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_a_2.pkl"
     ],
 
     "vtl_dir": "C:/Study/SpeechAcquisitionModel/src/VTL",
@@ -24,7 +30,7 @@
       "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "audio"
     ],
     "goal_parameters_selected": [
-      "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "audio"
+      "JX", "JA", "LP", "LD", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "audio"
     ],
     "action_parameters_selected": [
       "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3"
@@ -39,7 +45,7 @@
     }
   },
   "agent": {
-    "input_dim": 100,
+    "input_dim": 95,
     "action_dim": 24,
     "linear_layers_size": [
       512,
@@ -50,7 +56,7 @@
     "seed": 0
   },
   "model_dynamics": {
-    "goal_dim": 50,
+    "goal_dim": 45,
     "state_dim": 50,
     "action_dim": 24,
     "linear_layers_size": [

@@ -344,6 +344,7 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         self.__acoustic_state_dim = kwargs['goal_dim']
         self.__action_dim = kwargs['action_dim']
         self.__state_dim = kwargs['state_dim']
+        self.__acoustic_dim = 26
         self.__linears_size = kwargs['linear_layers_size']
 
         # input_size = self.__acoustic_state_dim + self.__state_dim + self.__action_dim
@@ -352,12 +353,16 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
 
         self.drop = torch.nn.modules.Dropout(p=0.1)
 
+        self.artic_state_0 = Linear(self.__state_dim + self.__action_dim - self.__acoustic_dim, 64)
+        self.artic_state_1 = Linear(64, self.__state_dim - self.__acoustic_dim)
+
         self.linears = ModuleList([Linear(input_size, self.__linears_size[0])])
         self.linears.extend(
             [Linear(self.__linears_size[i - 1], self.__linears_size[i]) for i in range(1, len(self.__linears_size))])
 
         self.goal = Linear(self.__linears_size[-1], kwargs['goal_dim'])
-        self.state = Linear(self.__linears_size[-1], kwargs['state_dim'])
+        self.acoustic_state = Linear(self.__linears_size[-1], self.__acoustic_dim)
+        self.state = Linear(self.__state_dim, self.__state_dim)
 
 
         self.relu = ReLU()
@@ -372,12 +377,19 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         x = x.view(original_dim)
         x = self.drop(x)
 
+        # artic
+        artic_x = x[:, :self.__state_dim - self.__acoustic_dim]
+        actions_x = x[:, -self.__action_dim:]
+        artic_state_delta = self.artic_state_1(self.relu(self.artic_state_0(torch.cat((artic_x, actions_x), -1))))
 
+        # acoustic
         for linear in self.linears:
             x = self.relu(linear(x))
 
         # predict state
-        states_delta = self.tanh(self.state(x))
+        acoustic_state_delta = self.acoustic_state(x)
+
+        states_delta = self.tanh(torch.cat((artic_state_delta, acoustic_state_delta), -1))
         out_states = self.tanh(states[:, :self.__state_dim] + states_delta)
 
         # predict goal

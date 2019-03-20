@@ -24,7 +24,6 @@ def train(*args, **kwargs):
         os.makedirs(video_dir)
     except:
         print("directory '{}' already exists")
-    json_kwargs = json.dumps((args, kwargs))
     with open(video_dir + "/config.json", 'w') as json_file:
         json.dump(kwargs, json_file,  indent=4, separators=(',', ': '))
 

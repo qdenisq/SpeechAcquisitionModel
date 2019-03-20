@@ -127,6 +127,7 @@ class ModelBased1StepBackProp:
             self.agent.eval()
             self.model_dynamics.eval()
             step = 0
+            miss_max_idx = -1
             while True:
                 state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
                 action = self.agent(state_tensor).detach().cpu().numpy().squeeze()
@@ -166,7 +167,7 @@ class ModelBased1StepBackProp:
             if episode % 10 == 0 and episode > 1:
                 n_audio = 26
                 n_artic = 24
-                n_artic_goal = 24
+                n_artic_goal = 19
                 # show fully predicted rollout given s0  and list of actions
                 pred_states = []
                 state = state0

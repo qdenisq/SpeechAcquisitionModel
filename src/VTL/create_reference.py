@@ -77,6 +77,8 @@ def create_reference(env, ep_duration, timestep, initial_state=None, end_state=N
                      "tract_params": states[:, :24],
                      "glottis_params": states[:, 24:],
                      "action": actions}, f, protocol=0)
+    env.dump_episode(os.path.join(directory, name))
+    # with open(os.path.join(directory, name + '.wav'), 'wb') as f:
     return audios, states, actions
 
 
@@ -150,9 +152,9 @@ if __name__ == '__main__':
 
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
 
-    name = 'u_i_2'
-    initial_state = env.get_cf('u')
-    end_state = env.get_cf('i')
+    name = 'i_O_2'
+    initial_state = env.get_cf('i')
+    end_state = env.get_cf('O')
 
     directory = 'references'
 
