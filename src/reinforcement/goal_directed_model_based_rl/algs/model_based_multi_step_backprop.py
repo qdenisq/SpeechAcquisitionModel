@@ -307,7 +307,7 @@ class ModelBasedMultiStepBackProp:
                 init_state = torch.from_numpy(np.array(init_states)).float().to(self.device).view(self.minibatch_size, -1)
                 state = init_state
                 refs = np.array(refs)
-                refs = torch.from_numpy(refs).float().to(self.device).view(self.minibatch_size, -1)
+                refs = torch.from_numpy(refs).float().to(self.device)
 
                 misses = deque(maxlen=3)
                 for _ in range(n_train_steps):
@@ -315,8 +315,11 @@ class ModelBasedMultiStepBackProp:
 
 
                     action = self.agent(state)
-                    next_state_pred, _ = self.model_dynamics(state_tensor, action)
-                    next_state_ref = refs[:, cur_steps, :]
+                    next_state_pred, _ = self.model_dynamics(state, action)
+                    mask = torch.zeros(refs.shape).to(self.device)
+                    for l in range(self.minibatch_size):
+                        mask[l, cur_steps[l], :] = 1
+                    next_state_ref = refs[mask.byte()].view(self.minibatch_size, -1)
                     next_state_pred_full = torch.cat((next_state_pred, next_state_ref), -1)
 
                     actor_loss = torch.nn.SmoothL1Loss(reduction="sum")(
@@ -327,6 +330,7 @@ class ModelBasedMultiStepBackProp:
                     actor_loss.backward()
                     self.actor_optim.step()
 
+                    state = next_state_pred_full
 
                     miss = torch.abs(next_state_pred_full[:, :-env.goal_dim][
                                          torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
@@ -335,7 +339,7 @@ class ModelBasedMultiStepBackProp:
                     misses.append(max_miss.detach().cpu().numpy().squeeze())
                     misses_arr = np.array(misses)
                     for j in range(self.minibatch_size):
-                        if misses_arr.shape[0] > 2 and np.all(misses_arr[:, j] > 0.1):
+                        if (misses_arr.shape[0] > 2 and np.all(misses_arr[:, j] > 0.1)) or cur_steps[j] >  refs.shape[1] - 2:
                             # substitute collapsed trajectory with new one
                             misses_arr[:, j] = 0.
                             state[j, :] = init_state[j, :]
