@@ -212,7 +212,7 @@ class VTLEnv(object):
             output.mux(packet)
 
         output.close()
-        cmd = 'ffmpeg -y -i {}.wav  -r 30 -i {}.mp4  -filter:a aresample=async=1 -c:a flac -c:v copy {}.mkv'.format(
+        cmd = 'ffmpeg -y -i {}.wav  -r 30 -i {}.mp4  -filter:a aresample=async=1 -c:v copy {}_v.mp4'.format(
             fname, fname, fname)
         with open(os.devnull, 'w') as devnull:
             subprocess.call(cmd, shell=False, stdout=devnull, stderr=devnull)  # "Muxing Done

@@ -389,7 +389,8 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         # predict state
         acoustic_state_delta = self.acoustic_state(x)
 
-        states_delta = self.tanh(torch.cat((artic_state_delta, acoustic_state_delta), -1))
+        states_delta = torch.cat((artic_state_delta, acoustic_state_delta), -1)
+        # states_delta = self.tanh(torch.cat((artic_state_delta, acoustic_state_delta), -1))
         out_states = self.tanh(states[:, :self.__state_dim] + states_delta)
 
         # predict goal

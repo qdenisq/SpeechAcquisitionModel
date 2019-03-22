@@ -7,6 +7,7 @@ import datetime
 import sys
 
 import torch
+from collections import deque
 from src.reinforcement.goal_directed_model_based_rl.replay_buffer import ReplayBuffer
 
 import matplotlib.pyplot as plt
@@ -57,7 +58,7 @@ class OrnsteinUhlenbeckActionNoise:
         return 'OrnsteinUhlenbeckActionNoise(mu={}, sigma={})'.format(self.mu, self.sigma)
 
 
-class ModelBased1StepBackProp:
+class ModelBasedMultiStepBackProp:
     def __init__(self, agent=None, model_dynamics=None, **kwargs):
         self.agent = agent
 
@@ -120,7 +121,8 @@ class ModelBased1StepBackProp:
             ep_states_pred.append(state[:-env.goal_dim])
             state = env.normalize(state, env.state_bound)
 
-            # axes[0].cla()
+            ep_states_normed = []
+            ep_states_normed.append(state)
 
             score = 0.
 
@@ -142,6 +144,7 @@ class ModelBased1StepBackProp:
                 ep_states.append(next_state)
                 ep_states_pred.append(next_state_pred)
                 next_state = env.normalize(next_state, env.state_bound)
+                ep_states_normed.append(next_state)
                 env.render()
                 if episode % 10 != 0:
                     self.replay_buffer.add((state, action, next_state))
@@ -160,6 +163,9 @@ class ModelBased1StepBackProp:
                 state = next_state
                 step += 1
             scores.append(score)
+
+            # if episode % 10 != 0:
+            #     self.replay_buffer.add(zip(ep_states_normed[:-1], ep_actions, ep_states_normed[1:]))
 
             if episode % 10 == 0:
                 self.noise_gamma *= self.noise_decay
@@ -281,38 +287,71 @@ class ModelBased1StepBackProp:
                 ##############################################################
                 # train policy
                 ##############################################################
+
                 n_train_steps = round(
                     self.replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
                 self.agent.train()
                 self.model_dynamics.eval()
+
+                init_states = []
+                refs = []
+                for _ in range(self.minibatch_size):
+                    state = env.reset()
+                    ref = env.get_current_reference()
+                    init_states.append(state)
+                    refs.append(ref)
+                initital_cur_step = env.current_step
+                cur_step = env.current_step
+                cur_steps = [cur_step]*self.minibatch_size
+
+                init_state = torch.from_numpy(np.array(init_states)).float().to(self.device).view(self.minibatch_size, -1)
+                state = init_state
+                refs = np.array(refs)
+                refs = torch.from_numpy(refs).float().to(self.device).view(self.minibatch_size, -1)
+
+                misses = deque(maxlen=3)
                 for _ in range(n_train_steps):
-                    # train_step_i += 1
-                    s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
+
+
+
+                    action = self.agent(state)
+                    next_state_pred, _ = self.model_dynamics(state_tensor, action)
+                    next_state_ref = refs[:, cur_steps, :]
+                    next_state_pred_full = torch.cat((next_state_pred, next_state_ref), -1)
+
+                    actor_loss = torch.nn.SmoothL1Loss(reduction="sum")(
+                        next_state_pred_full[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
+                        state[:, -env.goal_dim:]) / self.minibatch_size
 
                     self.actor_optim.zero_grad()
-                    actions_predicted = self.agent(s0_batch.float().to(self.device))
-                    # predict state if predicted actions will be applied
-                    s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
-                    actor_loss = torch.nn.SmoothL1Loss(reduction="sum")(
-                        s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
-                        s0_batch[:, -env.goal_dim:].float().to(self.device)) / self.minibatch_size
-                    # action_penalty = 0.01 * torch.mean((actions_predicted**2))
-                    # actor_loss += action_penalty
                     actor_loss.backward()
                     self.actor_optim.step()
 
-                    # expected_actions_normed = normalize(denormalize(target_batch_normed - g0_batch_normed, g_bound),
-                    #                                     a_bound)
-                    # policy_loss_out = np.mean(
-                    #     np.sum(np.square(expected_actions_normed - actions_normed.detach().numpy()), axis=1), axis=0)
+
+                    miss = torch.abs(next_state_pred_full[:, :-env.goal_dim][
+                                         torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
+                                     state[:, -env.goal_dim:])
+                    max_miss, _ = torch.max(miss, -1)
+                    misses.append(max_miss.detach().cpu().numpy().squeeze())
+                    misses_arr = np.array(misses)
+                    for j in range(self.minibatch_size):
+                        if misses_arr.shape[0] > 2 and np.all(misses_arr[:, j] > 0.1):
+                            # substitute collapsed trajectory with new one
+                            misses_arr[:, j] = 0.
+                            state[j, :] = init_state[j, :]
+                            cur_steps[j] = initital_cur_step
+                    misses.clear()
+                    for k in range(misses_arr.shape[0]):
+                        misses.append(misses_arr[k, :])
+
 
                 print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}| miss_max_idx {}".format(episode,
-                                                                                                                              train_step_i,
-                                                                                                                              md_loss.detach().cpu().numpy(),
-                                                                                                                              actor_loss.detach().cpu().numpy(),
-                                                                                                                              score,
-                                                                                                                              step,
-                                                                                                                              miss_max_idx))
+                                                                                                                                                        train_step_i,
+                                                                                                                                                        md_loss.detach().cpu().numpy(),
+                                                                                                                                                        actor_loss.detach().cpu().numpy(),
+                                                                                                                                                        score,
+                                                                                                                                                        step,
+                                                                                                                                                        miss_max_idx))
 
         print("Training finished. Result score: ", score)
         return scores

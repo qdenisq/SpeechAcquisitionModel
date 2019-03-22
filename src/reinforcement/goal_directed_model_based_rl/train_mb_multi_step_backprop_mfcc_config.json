@@ -78,7 +78,7 @@
     "actor_lr": 0.001,
     "critic_lr": 0.001,
     "model_dynamics_lr": 0.001,
-    "minibatch_size": 256,
+    "minibatch_size": 25,
     "rollouts_per_update": 10,
     "virtual_rollouts_per_update": 10,
     "num_epochs_actor": 5,
