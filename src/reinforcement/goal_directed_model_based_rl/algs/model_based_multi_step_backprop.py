@@ -107,6 +107,22 @@ class ModelBasedMultiStepBackProp:
 
         sys.stdout = Logger(video_dir + "/log.txt")
 
+        init_states = []
+        refs = []
+        for _ in range(self.minibatch_size):
+            state = env.reset()
+
+            state = env.normalize(state, env.state_bound)
+            ref = env.get_current_reference()
+            init_states.append(state)
+            refs.append(ref)
+        init_state = torch.from_numpy(np.array(init_states)).float().to(self.device).view(self.minibatch_size, -1)
+        initital_cur_step = env.current_step
+
+        refs = np.array(refs)
+        refs = env.normalize(refs, env.goal_bound)
+        refs = torch.from_numpy(refs).float().to(self.device)
+
         for episode in range(num_episodes):
             ep_states = []
             ep_states_pred = []
@@ -120,6 +136,8 @@ class ModelBasedMultiStepBackProp:
             ep_states.append(state)
             ep_states_pred.append(state[:-env.goal_dim])
             state = env.normalize(state, env.state_bound)
+
+
 
             ep_states_normed = []
             ep_states_normed.append(state)
@@ -174,7 +192,7 @@ class ModelBasedMultiStepBackProp:
                 n_audio = 26
                 n_artic = 24
 
-                n_artic_goal = 4
+                n_artic_goal = 12
                 # show fully predicted rollout given s0  and list of actions
                 pred_states = []
                 state = state0
@@ -282,6 +300,7 @@ class ModelBasedMultiStepBackProp:
                     s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
                     md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred, s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
                     md_loss.backward()
+                    torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
                     self.model_dynamics_optim.step()
 
                 ##############################################################
@@ -290,56 +309,42 @@ class ModelBasedMultiStepBackProp:
 
                 n_train_steps = round(
                     self.replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
+                n_train_steps = 20
                 self.agent.train()
                 self.model_dynamics.eval()
 
-                init_states = []
-                refs = []
-                for _ in range(self.minibatch_size):
-                    state = env.reset()
-                    ref = env.get_current_reference()
-                    init_states.append(state)
-                    refs.append(ref)
-                initital_cur_step = env.current_step
-                cur_step = env.current_step
-                cur_steps = [cur_step]*self.minibatch_size
+                cur_step = initital_cur_step
+                cur_steps = np.array([cur_step]*self.minibatch_size)
 
-                init_state = torch.from_numpy(np.array(init_states)).float().to(self.device).view(self.minibatch_size, -1)
                 state = init_state
-                refs = np.array(refs)
-                refs = torch.from_numpy(refs).float().to(self.device)
-
                 misses = deque(maxlen=3)
                 for _ in range(n_train_steps):
 
-
-
                     action = self.agent(state)
                     next_state_pred, _ = self.model_dynamics(state, action)
-                    mask = torch.zeros(refs.shape).to(self.device)
-                    for l in range(self.minibatch_size):
-                        mask[l, cur_steps[l], :] = 1
-                    next_state_ref = refs[mask.byte()].view(self.minibatch_size, -1)
+                    next_state_ref = torch.cat([refs[l, cur_steps[l] + 1, :] for l in range(self.minibatch_size)]).view(self.minibatch_size, -1)
                     next_state_pred_full = torch.cat((next_state_pred, next_state_ref), -1)
 
                     actor_loss = torch.nn.SmoothL1Loss(reduction="sum")(
-                        next_state_pred_full[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
+                        next_state_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
                         state[:, -env.goal_dim:]) / self.minibatch_size
 
                     self.actor_optim.zero_grad()
-                    actor_loss.backward()
+                    actor_loss.backward(retain_graph=True)
+                    torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
                     self.actor_optim.step()
 
                     state = next_state_pred_full
+                    cur_steps += 1
 
-                    miss = torch.abs(next_state_pred_full[:, :-env.goal_dim][
-                                         torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
+                    miss = torch.abs(next_state_pred_full[:, :-env.goal_dim][:,
+                                     torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
                                      state[:, -env.goal_dim:])
                     max_miss, _ = torch.max(miss, -1)
                     misses.append(max_miss.detach().cpu().numpy().squeeze())
                     misses_arr = np.array(misses)
                     for j in range(self.minibatch_size):
-                        if (misses_arr.shape[0] > 2 and np.all(misses_arr[:, j] > 0.1)) or cur_steps[j] >  refs.shape[1] - 2:
+                        if (misses_arr.shape[0] > 2 and np.all(misses_arr[:, j] > 0.1)) or cur_steps[j] > refs.shape[1] - 2:
                             # substitute collapsed trajectory with new one
                             misses_arr[:, j] = 0.
                             state[j, :] = init_state[j, :]
@@ -348,6 +353,7 @@ class ModelBasedMultiStepBackProp:
                     for k in range(misses_arr.shape[0]):
                         misses.append(misses_arr[k, :])
 
+                print(np.mean(cur_steps), end='; ')
 
                 print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}| miss_max_idx {}".format(episode,
                                                                                                                                                         train_step_i,

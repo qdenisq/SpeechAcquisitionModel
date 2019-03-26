@@ -30,7 +30,7 @@
       "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "audio"
     ],
     "goal_parameters_selected": [
-      "JX", "JA", "LP", "LD", "audio"
+      "JX", "JA", "LP", "LD", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "audio"
     ],
     "action_parameters_selected": [
       "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3"
@@ -45,7 +45,7 @@
     }
   },
   "agent": {
-    "input_dim": 80,
+    "input_dim": 88,
     "action_dim": 24,
     "linear_layers_size": [
       512,
@@ -56,7 +56,7 @@
     "seed": 0
   },
   "model_dynamics": {
-    "goal_dim": 30,
+    "goal_dim": 38,
     "state_dim": 50,
     "action_dim": 24,
     "linear_layers_size": [
@@ -78,7 +78,7 @@
     "actor_lr": 0.001,
     "critic_lr": 0.001,
     "model_dynamics_lr": 0.001,
-    "minibatch_size": 25,
+    "minibatch_size": 256,
     "rollouts_per_update": 10,
     "virtual_rollouts_per_update": 10,
     "num_epochs_actor": 5,

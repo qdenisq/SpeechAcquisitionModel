@@ -167,8 +167,8 @@ class ModelBased1StepBackProp:
             if episode % 10 == 0 and episode > 1:
                 n_audio = 26
                 n_artic = 24
+                n_artic_goal = 12
 
-                n_artic_goal = 4
                 # show fully predicted rollout given s0  and list of actions
                 pred_states = []
                 state = state0
@@ -276,6 +276,7 @@ class ModelBased1StepBackProp:
                     s1_pred, _ = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
                     md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred, s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
                     md_loss.backward()
+                    torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
                     self.model_dynamics_optim.step()
 
                 ##############################################################
@@ -299,6 +300,7 @@ class ModelBased1StepBackProp:
                     # action_penalty = 0.01 * torch.mean((actions_predicted**2))
                     # actor_loss += action_penalty
                     actor_loss.backward()
+                    torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
                     self.actor_optim.step()
 
                     # expected_actions_normed = normalize(denormalize(target_batch_normed - g0_batch_normed, g_bound),
