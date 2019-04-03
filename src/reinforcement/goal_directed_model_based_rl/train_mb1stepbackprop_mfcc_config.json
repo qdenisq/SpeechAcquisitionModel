@@ -3,6 +3,7 @@
     "device": "cuda",
     "seed": 1234,
     "audio_dim": 64,
+    "preproc_net_fname": "C:/Study/SpeechAcquisitionModel/models/speech_classification/simple_lstm_03_27_2019_04_54_PM_acc_0.8398.pt",
 
     "reference_fnames": [
       "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i.pkl",
@@ -30,7 +31,7 @@
       "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "audio"
     ],
     "goal_parameters_selected": [
-      "JX", "JA", "LP", "LD", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "audio"
+      "JX", "JA", "LP", "LD", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TS1", "TS2", "TS3", "TS4", "audio"
     ],
     "action_parameters_selected": [
       "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3"
@@ -45,7 +46,7 @@
     }
   },
   "agent": {
-    "input_dim": 88,
+    "input_dim": 166,
     "action_dim": 24,
     "linear_layers_size": [
       512,
@@ -56,8 +57,8 @@
     "seed": 0
   },
   "model_dynamics": {
-    "goal_dim": 38,
-    "state_dim": 50,
+    "goal_dim": 78,
+    "state_dim": 88,
     "action_dim": 24,
     "linear_layers_size": [
       512,

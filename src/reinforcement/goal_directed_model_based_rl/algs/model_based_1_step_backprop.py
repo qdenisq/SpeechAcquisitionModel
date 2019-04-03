@@ -165,9 +165,9 @@ class ModelBased1StepBackProp:
                 self.noise_gamma *= self.noise_decay
 
             if episode % 10 == 0 and episode > 1:
-                n_audio = 26
+                n_audio = 64
                 n_artic = 24
-                n_artic_goal = 12
+                n_artic_goal = 14
 
                 # show fully predicted rollout given s0  and list of actions
                 pred_states = []

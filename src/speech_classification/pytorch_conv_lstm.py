@@ -86,11 +86,12 @@ class LstmNet(nn.Module):
         self.__n_window_height = model_settings['dct_coefficient_count']
         self.__n_classes = model_settings['label_count']
         self.__n_hidden_cells = model_settings['hidden_reccurent_cells_count']
-
+        self.__dropout = nn.Dropout(p=0.2)
         self.__bn1 = nn.BatchNorm1d(self.__n_window_height)
         self.__compress_layer = nn.Linear(self.__n_hidden_cells, 10)
         self.__lstm = nn.LSTM(self.__n_window_height, self.__n_hidden_cells, batch_first=True)
-        self.__output_layer = nn.Linear(self.__n_hidden_cells, self.__n_classes)
+        self.__output_layer = nn.Linear(self.__n_hidden_cells, 256)
+        self.__output_layer_1 = nn.Linear(256, self.__n_classes)
 
     def forward(self, x, seq_lens, hidden=None):
         # if hidden is None:
@@ -98,13 +99,15 @@ class LstmNet(nn.Module):
         orig_shape = x.shape
         x = x.view(-1, self.__n_window_height)
         x = self.__bn1(x)
+        x = self.__dropout(x)
         x = x.view(orig_shape)
         x, hidden = self.__lstm(x, hidden)
         lstm_out = x
         last_elements = seq_lens - 1
         # adjust x to the actual seq length for every sequence
         x_1 = x[np.arange(0, len(seq_lens)), last_elements, :]
-        x = self.__output_layer(x_1)
+        x = torch.nn.ReLU()(self.__output_layer(x_1))
+        x = self.__output_layer_1(x)
         return x, hidden, lstm_out
 
 
@@ -132,9 +135,13 @@ if __name__ == '__main__':
                                     'u_a', 'u_i', 'u_u', 'u_o', 'u_e',
                                     'o_a', 'o_i', 'o_u', 'o_o', 'o_e',
                                     'e_a', 'e_i', 'e_u', 'e_o', 'e_e']
+
+    wanted_words_combined = wanted_words_tanh_transition
+
+
     model_settings = {
         'dct_coefficient_count': 26,
-        'label_count': len(wanted_words_tanh_transition) + 2,
+        'label_count': len(wanted_words_combined) + 2,
         'hidden_reccurent_cells_count': 64,
         'winlen': 0.04,
         'winstep': 0.04
@@ -151,8 +158,8 @@ if __name__ == '__main__':
 
     preproc = AudioPreprocessorFbank(model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
     data_iter = SpeechCommandsDataCollector(preproc,
-                                            data_dir=r'C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions/02_25_2019_03_29_PM_08',
-                                            wanted_words=wanted_words_tanh_transition,
+                                            data_dir=r'C:\Study\SpeechAcquisitionModel\data\raw\Simple_transitions\02_25_2019_03_29_PM_08',
+                                            wanted_words=wanted_words_combined,
                                             testing_percentage=10,
                                             validation_percentage=10
                                             )
@@ -160,7 +167,7 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 
     # configure training procedure
-    n_train_steps = 500
+    n_train_steps = 1000
     n_mini_batch_size = 256
 
     for i in range(n_train_steps):
