@@ -5,8 +5,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change beforePath="$PROJECT_DIR$/src/speech_classification/.ipynb_checkpoints/speech_classification_results-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/.ipynb_checkpoints/speech_classification_results-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/speech_classification/speech_classification_results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/speech_classification_results.ipynb" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -256,7 +254,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds" extendedState="6">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="x" value="960" />
     <option name="width" value="960" />
     <option name="height" value="1200" />
@@ -694,7 +692,7 @@
     </todo-panel>
   </component>
   <component name="ToolWindowManager">
-    <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
+    <frame x="-8" y="-8" width="1936" height="1176" extended-state="7" />
     <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.26923078" />
