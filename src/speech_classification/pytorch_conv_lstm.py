@@ -105,10 +105,10 @@ class LstmNet(nn.Module):
         lstm_out = x
         last_elements = seq_lens - 1
         # adjust x to the actual seq length for every sequence
-        x_1 = x[np.arange(0, len(seq_lens)), last_elements, :]
-        x = torch.nn.ReLU()(self.__output_layer(x_1))
-        x = self.__output_layer_1(x)
-        return x, hidden, lstm_out
+        x = torch.nn.ReLU()(self.__output_layer(lstm_out))
+        pred_full = self.__output_layer_1(x)
+        x = pred_full[np.arange(0, len(seq_lens)), last_elements, :]
+        return x, hidden, lstm_out, pred_full
 
 
 def accuracy(out, labels):
@@ -184,7 +184,7 @@ if __name__ == '__main__':
         # zero grad
         optimizer.zero_grad()
 
-        pred, hidden, _ = net(data, seq_lengths)
+        pred, hidden, _, _ = net(data, seq_lengths)
         loss = torch.nn.CrossEntropyLoss()(pred, labels)
         loss.backward()
         optimizer.step()
@@ -203,7 +203,7 @@ if __name__ == '__main__':
             # zero grad
             optimizer.zero_grad()
 
-            pred, hidden, _ = net(data, seq_lengths)
+            pred, hidden, _, _ = net(data, seq_lengths)
             validation_loss = torch.nn.CrossEntropyLoss()(pred.detach(), labels.detach())
             acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
             print("Validation loss: {:.4f}| accuracy: {:.4f}|".format(validation_loss.detach(), acc))
@@ -229,7 +229,7 @@ if __name__ == '__main__':
     # zero grad
     optimizer.zero_grad()
 
-    pred, hidden, _ = net(data, seq_lengths)
+    pred, hidden, _, _ = net(data, seq_lengths)
     test_loss = torch.nn.CrossEntropyLoss()(pred, labels)
     acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
     print("Test loss: {:.4f}| accuracy: {:.4f}|".format(test_loss.detach(), acc))
