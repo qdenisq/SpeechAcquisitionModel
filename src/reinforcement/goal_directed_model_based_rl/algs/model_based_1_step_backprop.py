@@ -128,6 +128,7 @@ class ModelBased1StepBackProp:
             self.model_dynamics.eval()
             step = 0
             miss_max_idx = -1
+            terminated = False
             while True:
                 state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
                 action = self.agent(state_tensor).detach().cpu().numpy().squeeze()
@@ -146,28 +147,35 @@ class ModelBased1StepBackProp:
                 if episode % 10 != 0:
                     self.replay_buffer.add((state, action, next_state))
 
-                score += reward
                 miss = torch.abs(torch.from_numpy(next_state).float().to(self.device)[:-env.goal_dim][torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()] -
                                  torch.from_numpy(state).float().to(self.device)[-env.goal_dim:])
 
                 misses.append(miss[:].max().detach().cpu().numpy())
-                if len(misses) > 3 and np.all(np.array(misses[-3:]) > 0.1) and episode % 10 != 0:
+
+                if len(misses) > 3 and np.all(np.array(misses[-3:]) > 0.1) and not terminated:
+                    terminated = True
+                    res_step = step
+                    miss_max_idx = np.argmax(miss[:].detach().cpu().numpy())
+                elif not terminated:
+                    score += reward
+                if len(misses) > 3 and np.all(np.array(misses[-3:]) > 0.1) and (episode % 10 != 0 or self.replay_buffer.size() < 2 * self.minibatch_size):
                     miss_max_idx = np.argmax(miss[:].detach().cpu().numpy())
                     break
-
                 if np.any(done):
+
                     break
                 state = next_state
                 step += 1
             scores.append(score)
-
+            if not terminated:
+                res_step = step
             if episode % 10 == 0:
                 self.noise_gamma *= self.noise_decay
 
-            if episode % 10 == 0 and episode > 1:
-                n_audio = 64
+            if episode % 10 == 0 and episode > 1 and self.replay_buffer.size() > 2 * self.minibatch_size:
+                n_audio = 26
                 n_artic = 24
-                n_artic_goal = 14
+                n_artic_goal = 24
 
                 # show fully predicted rollout given s0  and list of actions
                 pred_states = []
@@ -313,7 +321,7 @@ class ModelBased1StepBackProp:
                                                                                                                               md_loss.detach().cpu().numpy(),
                                                                                                                               actor_loss.detach().cpu().numpy(),
                                                                                                                               score,
-                                                                                                                              step,
+                                                                                                                              res_step,
                                                                                                                               miss_max_idx))
 
         print("Training finished. Result score: ", score)

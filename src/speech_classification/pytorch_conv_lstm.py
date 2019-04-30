@@ -89,7 +89,7 @@ class LstmNet(nn.Module):
         self.__dropout = nn.Dropout(p=0.2)
         self.__bn1 = nn.BatchNorm1d(self.__n_window_height)
         self.__compress_layer = nn.Linear(self.__n_hidden_cells, 10)
-        self.__lstm = nn.LSTM(self.__n_window_height, self.__n_hidden_cells, batch_first=True)
+        self.__lstm = nn.LSTM(self.__n_window_height, self.__n_hidden_cells, batch_first=True, bidirectional=False)
         self.__output_layer = nn.Linear(self.__n_hidden_cells, 256)
         self.__output_layer_1 = nn.Linear(256, self.__n_classes)
 
@@ -108,6 +108,27 @@ class LstmNet(nn.Module):
         x = torch.nn.ReLU()(self.__output_layer(lstm_out))
         pred_full = self.__output_layer_1(x)
         x = pred_full[np.arange(0, len(seq_lens)), last_elements, :]
+        return x, hidden, lstm_out, pred_full
+
+
+class LstmNetEnsemble(nn.Module):
+    def __init__(self, model_settings):
+        super(LstmNetEnsemble, self).__init__()
+        self.__n_window_height = model_settings['dct_coefficient_count']
+        self.__n_classes = model_settings['label_count']
+        self.__n_hidden_cells = model_settings['hidden_reccurent_cells_count']
+        self.__num_nets = model_settings['num_nets']
+
+        self.nets = nn.ModuleList([LstmNet(model_settings) for _ in range(self.__num_nets)])
+
+    def forward(self, x, seq_lens, hidden=None, average=False):
+        #
+        x, hidden, lstm_out, pred_full = zip(*[net(x, seq_lens, hidden) for net in self.nets])
+        if average:
+            x = x.mean(dim=0)
+            hidden = hidden.mean(dim=0)
+            lstm_out = lstm_out.mean(dim=0)
+            pred_full = pred_full.mean(dim=0)
         return x, hidden, lstm_out, pred_full
 
 
@@ -142,9 +163,10 @@ if __name__ == '__main__':
     model_settings = {
         'dct_coefficient_count': 26,
         'label_count': len(wanted_words_combined) + 2,
-        'hidden_reccurent_cells_count': 64,
+        'hidden_reccurent_cells_count': 128,
         'winlen': 0.04,
-        'winstep': 0.04
+        'winstep': 0.04,
+        'num_nets': 5
     }
 
     save_dir = r'C:\Study\SpeechAcquisitionModel\models\speech_classification'
@@ -158,12 +180,12 @@ if __name__ == '__main__':
 
     preproc = AudioPreprocessorFbank(model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
     data_iter = SpeechCommandsDataCollector(preproc,
-                                            data_dir=r'C:\Study\SpeechAcquisitionModel\data\raw\Simple_transitions\02_25_2019_03_29_PM_08',
+                                            data_dir=r'C:\Study\Speech_command_classification\speech_dataset',
                                             wanted_words=wanted_words_combined,
                                             testing_percentage=10,
                                             validation_percentage=10
                                             )
-    net = LstmNet(model_settings)
+    net = LstmNetEnsemble(model_settings)
     optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 
     # configure training procedure
@@ -176,21 +198,31 @@ if __name__ == '__main__':
         data = d['x']
         labels = d['y']
         seq_lengths = d['seq_len']
+        max_seq_len = seq_lengths[0]
+        seq_len = np.random.randint(1, max_seq_len)
+        seq_lengths = np.array([seq_len] * len(seq_lengths))
+        data = data[:, :seq_len, :]
+
+
 
         data = torch.from_numpy(data).float()
         labels = torch.from_numpy(labels).long()
         # seq_lengths = torch.from_numpy(seq_lengths)
 
         # zero grad
-        optimizer.zero_grad()
+
 
         pred, hidden, _, _ = net(data, seq_lengths)
-        loss = torch.nn.CrossEntropyLoss()(pred, labels)
-        loss.backward()
-        optimizer.step()
+        for p in pred:
+            optimizer.zero_grad()
+            # pred = torch.stack(pred)
+            # extend labels by number of nets
+            loss = torch.nn.CrossEntropyLoss()(p, labels)
+            loss.backward()
+            optimizer.step()
 
-        acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
-        print("|train_step: {}| loss: {:.4f}| accuracy: {:.4f}|".format(i, loss.detach(), acc))
+            acc = accuracy(p.detach().numpy(), labels.detach().numpy())
+            print("|train_step: {}| loss: {:.4f}| accuracy: {:.4f}|".format(i, loss.detach(), acc))
         # validate each 100 train steps
         if i % 100 == 0:
             d = data_iter.get_data(n_mini_batch_size, 0, 'validation')
@@ -204,6 +236,9 @@ if __name__ == '__main__':
             optimizer.zero_grad()
 
             pred, hidden, _, _ = net(data, seq_lengths)
+
+            pred = torch.stack(pred).mean(dim=0)
+
             validation_loss = torch.nn.CrossEntropyLoss()(pred.detach(), labels.detach())
             acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
             print("Validation loss: {:.4f}| accuracy: {:.4f}|".format(validation_loss.detach(), acc))
