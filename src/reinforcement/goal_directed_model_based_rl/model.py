@@ -102,8 +102,8 @@ class SimpleStochasticActorCritic(Module):
             x = self.relu(x)
         mu = self.tanh(self.mu(x))
 
-        # log_var = - 3. - self.relu(self.log_var(x))
-        log_var = - 5. - self.relu(self.log_var_const)
+        log_var = - 3. - self.relu(self.log_var(x))
+        # log_var = -3. - self.relu(self.log_var_const)
         sigmas = log_var.exp().sqrt() + 1.0e-5
         dists = Normal(mu, sigmas)
         if action is None:

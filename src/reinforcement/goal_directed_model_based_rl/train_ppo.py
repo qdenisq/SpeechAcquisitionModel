@@ -32,8 +32,8 @@ def train(*args, **kwargs):
     kwargs['agent']['action_dim'] = action_dim
 
     agent = SimpleStochasticActorCritic(**kwargs['agent']).to(device)
-    alg = PPO(agent=agent, **kwargs['ppo'])
-    scores = alg.train(env, 200)
+    alg = PPO(agent=agent, videos_dir=kwargs['train']['videos_dir'], **kwargs['ppo'])
+    scores = alg.train(env, 2000)
 
     agent.eval()
     for i in range(1):
@@ -64,7 +64,7 @@ def train(*args, **kwargs):
 
 
 if __name__ == '__main__':
-    with open('train_ppo_config_tract_goal_only.json') as data_file:
+    with open('train_ppo_config.json') as data_file:
         kwargs = json.load(data_file)
     pprint(kwargs)
     train(**kwargs)

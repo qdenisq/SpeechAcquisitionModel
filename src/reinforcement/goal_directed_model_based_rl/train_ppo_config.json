@@ -2,21 +2,29 @@
   "env": {
     "device": "cuda",
     "seed": 1234,
-    "preproc_net_fname": "C:/Study/SpeechAcquisitionModel/models/speech_classification/simple_lstm_01_10_2019_05_01_PM_acc_0.9961.pt",
     "audio_dim": 64,
-    "reference_fnames": [
-      "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions/a_i.pkl"
-    ],
-    "vtl_dir": "C:/Study/SpeechAcquisitionModel/src/VTL",
-    "state_parameters_selected": ["audio", "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "f0", "pressure", "lower_rest_displacement", "upper_rest_displacement", "ary_area", "aspiration_strength"],
-    "goal_parameters_selected": ["audio", "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "f0", "pressure", "lower_rest_displacement", "upper_rest_displacement", "ary_area", "aspiration_strength"],
-    "action_parameters_selected": ["HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "f0", "pressure", "lower_rest_displacement", "upper_rest_displacement", "ary_area", "aspiration_strength"],
+     "reference_fnames": [
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_1.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl"
 
-    "timestep": 20,
+    ],
+
+    "vtl_dir": "C:/Study/SpeechAcquisitionModel/src/VTL",
+    "state_parameters_selected": [
+      "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "audio"
+    ],
+    "goal_parameters_selected": [
+     "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "audio"
+    ],
+    "action_parameters_selected": [
+      "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3"
+    ],
+    "max_episode_duration": 1000,
+    "timestep": 40,
     "preprocessing_params": {
-      "numcep": 12,
-      "winlen": 0.02,
-      "winstep": 0.02,
+      "nfilt": 26,
+      "winlen": 0.04,
+      "winstep": 0.04,
       "sample_rate": 22050
     }
   },
@@ -32,24 +40,23 @@
     "lambda": 0.0,
     "epsilon": 0.2,
     "beta": 0.0,
-    "learning_rate_eps": 1e-5,
+    "learning_rate_eps": 1e-7,
     "actor_lr": 0.0003,
     "critic_lr": 0.0003,
-    "minibatch_size": 256,
+    "minibatch_size": 64,
     "rollouts_per_update": 10,
     "num_epochs_actor": 10,
     "num_epochs_critic": 10,
-    "clip_grad": 5
+    "clip_grad": 1
   },
   "data_fname": "C:/Study/SpeechAcquisitionModel/data/raw/VTL_random_rollouts/01_11_2019_05_42_PM_47/01_11_2019_05_42_PM_47.pd",
   "buffer_size": 10000,
   "save_dir": "C:/Study/SpeechAcquisitionModel/models/rnn_md",
   "episode_length": 1000,
-  "timestep": 20,
   "model_dynamics_params": {
-    "goal_dim": 64,
-    "state_dim": 30,
-    "action_dim": 30,
+    "goal_dim": 26,
+    "state_dim": 24,
+    "action_dim": 24,
     "lstm_layers_size": [
       1024,
       512
@@ -74,7 +81,9 @@
     "num_steps": 3000,
     "minibatch_size": 50,
     "learning_rate": 0.001,
-    "learning_rate_eps": 1e-5,
-    "updates_per_episode": 20
+    "learning_rate_eps": 1e-7,
+    "updates_per_episode": 20,
+    "videos_dir": "C:/Study/SpeechAcquisitionModel/reports/videos"
+
   }
 }

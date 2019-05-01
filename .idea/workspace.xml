@@ -7,12 +7,11 @@
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/speech_classification/.ipynb_checkpoints/speech_classification_results-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/.ipynb_checkpoints/speech_classification_results-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/speech_classification/notebook.tex" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/notebook.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/speech_classification/speech_classification_results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/speech_classification_results.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config.json" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -27,31 +26,31 @@
     <session id="1686499638">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="15" />
+          <entry key="project.closed" value="17" />
           <entry key="project.open.time.0" value="4" />
-          <entry key="project.open.time.3" value="2" />
-          <entry key="project.open.time.4" value="11" />
-          <entry key="project.open.time.5" value="7" />
+          <entry key="project.open.time.3" value="3" />
+          <entry key="project.open.time.4" value="12" />
+          <entry key="project.open.time.5" value="8" />
           <entry key="project.open.time.6" value="1" />
           <entry key="project.open.time.7" value="2" />
-          <entry key="project.opened" value="27" />
+          <entry key="project.opened" value="30" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="ipynb" value="10" />
-          <entry key="json" value="41" />
-          <entry key="py" value="219" />
+          <entry key="ipynb" value="17" />
+          <entry key="json" value="42" />
+          <entry key="py" value="220" />
           <entry key="pyi" value="1" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="IPNB" value="10" />
-          <entry key="JSON" value="41" />
+          <entry key="IPNB" value="17" />
+          <entry key="JSON" value="42" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="219" />
+          <entry key="Python" value="220" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
@@ -59,16 +58,16 @@
         <counts>
           <entry key="Python Console" value="51" />
           <entry key="dummy" value="4" />
-          <entry key="json" value="1444" />
-          <entry key="py" value="34270" />
+          <entry key="json" value="1497" />
+          <entry key="py" value="34785" />
           <entry key="txt" value="376" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JSON" value="1444" />
+          <entry key="JSON" value="1497" />
           <entry key="PLAIN_TEXT" value="380" />
-          <entry key="Python" value="34321" />
+          <entry key="Python" value="34836" />
         </counts>
       </usages-collector>
     </session>
@@ -76,19 +75,10 @@
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
       <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/codecs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6160">
-              <caret line="308" selection-start-line="308" selection-end-line="308" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1400">
-              <caret line="92" column="1" selection-start-line="92" selection-start-column="1" selection-end-line="92" selection-end-column="1" />
+            <state relative-caret-position="400">
+              <caret line="44" column="18" selection-start-line="44" selection-start-column="18" selection-end-line="44" selection-end-column="18" />
             </state>
           </provider>
         </entry>
@@ -96,8 +86,8 @@
       <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="380">
-              <caret line="162" column="25" selection-start-line="160" selection-start-column="15" selection-end-line="162" selection-end-column="25" />
+            <state relative-caret-position="454">
+              <caret line="180" column="32" lean-forward="true" selection-start-line="180" selection-start-column="32" selection-end-line="180" selection-end-column="32" />
             </state>
           </provider>
         </entry>
@@ -105,7 +95,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-780">
+            <state relative-caret-position="1174">
+              <caret line="109" column="37" selection-start-line="109" selection-start-column="37" selection-end-line="109" selection-end-column="37" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -114,14 +105,10 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config.json">
-          <provider selected="true" editor-type-id="text-editor" />
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-386">
+            <state relative-caret-position="511">
+              <caret line="35" selection-start-line="35" selection-end-line="35" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -130,7 +117,25 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/reports/score_plot.ipynb">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="280">
+              <caret line="107" column="34" selection-start-line="107" selection-start-column="34" selection-end-line="107" selection-end-column="34" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="380">
+              <caret line="43" column="23" selection-start-line="43" selection-start-column="23" selection-end-line="43" selection-end-column="23" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/reports/score_plot-Copy2.ipynb">
           <provider selected="true" editor-type-id="ipnb-editor">
             <state>
               <selected id="0" />
@@ -141,7 +146,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="394">
+            <state relative-caret-position="6080">
               <caret line="311" column="43" selection-start-line="311" selection-start-column="43" selection-end-line="311" selection-end-column="43" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
@@ -153,8 +158,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1160">
-              <caret line="74" column="55" selection-start-line="74" selection-start-column="55" selection-end-line="74" selection-end-column="55" />
+            <state relative-caret-position="254">
+              <caret line="46" column="31" selection-start-line="46" selection-start-column="31" selection-end-line="46" selection-end-column="31" />
             </state>
           </provider>
         </entry>
@@ -204,17 +209,13 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/reinforcement/model_dynamics/rnn_md.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_model_dynamics_with_lstmhc_goal.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/__init__.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/pytorch_train_lstmhc_goal.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/md_train.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model_based_ppo.py" />
-        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config.json" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config_tract_goal_only.json" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/plot_rewards_temp.py" />
-        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo.py" />
-        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_ppo.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbbackprop.json" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/rnn_md_train.py" />
@@ -242,7 +243,6 @@
         <option value="$PROJECT_DIR$/src/VTL/create_reference.py" />
         <option value="$PROJECT_DIR$/reports/repropts_visualization.ipynb" />
         <option value="$PROJECT_DIR$/src/VTL/vtl_environment.py" />
-        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb_multi_step_backprop.py" />
         <option value="$PROJECT_DIR$/src/speech_classification/audio_processing.py" />
@@ -251,9 +251,14 @@
         <option value="$PROJECT_DIR$/src/som/som.ipynb" />
         <option value="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" />
         <option value="$PROJECT_DIR$/src/speech_classification/speech_classification_results.ipynb" />
-        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config.json" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py" />
         <option value="$PROJECT_DIR$/reports/score_plot.ipynb" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config.json" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" />
+        <option value="$PROJECT_DIR$/reports/score_plot-Copy2.ipynb" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config.json" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop.py" />
       </list>
     </option>
@@ -268,6 +273,7 @@
       <foldersAlwaysOnTop value="true" />
     </navigator>
     <panes>
+      <pane id="Scope" />
       <pane id="ProjectPane">
         <subPane>
           <expand>
@@ -411,7 +417,6 @@
           <select />
         </subPane>
       </pane>
-      <pane id="Scope" />
     </panes>
   </component>
   <component name="PropertiesComponent">
@@ -494,27 +499,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="" />
       <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="create_reference" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SpeechAcquisitionModel" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/VTL" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/VTL/create_reference.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -607,6 +591,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="train_ppo" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="SpeechAcquisitionModel" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="SpeechAcquisitionModel" type="Python.Ipnb" factoryName="Jupyter Notebook">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -626,18 +631,18 @@
     <list>
       <item itemvalue="Jupyter Notebook.SpeechAcquisitionModel" />
       <item itemvalue="Python.train_mb1stepbackprop" />
-      <item itemvalue="Python.create_reference" />
       <item itemvalue="Python.train_mb_multi_step_backprop" />
       <item itemvalue="Python.pytorch_conv_lstm" />
       <item itemvalue="Python.model_based_1_step_backprop" />
+      <item itemvalue="Python.train_ppo" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.train_mb1stepbackprop" />
+        <item itemvalue="Python.train_ppo" />
         <item itemvalue="Python.pytorch_conv_lstm" />
         <item itemvalue="Python.train_mb_multi_step_backprop" />
         <item itemvalue="Python.model_based_1_step_backprop" />
-        <item itemvalue="Python.create_reference" />
       </list>
     </recent_temporary>
   </component>
@@ -699,12 +704,12 @@
     <frame x="-8" y="-8" width="1936" height="1176" extended-state="6" />
     <editor active="true" />
     <layout>
-      <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.2507903" />
+      <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.2507903" />
       <window_info id="Structure" order="1" weight="0.24960339" />
       <window_info id="Favorites" order="2" side_tool="true" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Find" order="1" />
-      <window_info anchor="bottom" id="Run" order="2" visible="true" weight="0.34611696" />
+      <window_info active="true" anchor="bottom" id="Run" order="2" visible="true" weight="0.34611696" />
       <window_info anchor="bottom" id="Debug" order="3" weight="0.37488016" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
       <window_info anchor="bottom" id="Inspection" order="5" weight="0.4" />
@@ -970,6 +975,26 @@
           <line>202</line>
           <option name="timeStamp" value="598" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py</url>
+          <line>172</line>
+          <option name="timeStamp" value="599" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py</url>
+          <line>188</line>
+          <option name="timeStamp" value="600" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py</url>
+          <line>146</line>
+          <option name="timeStamp" value="602" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py</url>
+          <line>145</line>
+          <option name="timeStamp" value="603" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -991,6 +1016,11 @@
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>rewards.detach().cpu().numpy()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>list(zip(*[net(x, seq_lens, hidden) for net in self.nets]))</expression-string>
         <language-id>Python</language-id>
@@ -1033,11 +1063,6 @@
       </expression>
       <expression>
         <expression-string>next_state_ref.max()</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>torch.cat([refs[l, cur_steps[l], :] for l in range(self.minibatch_size)], 0)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -1096,12 +1121,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/som/utils.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/speech_classification/test_conv_rnn.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/som/NeuralModel.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -1276,16 +1295,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="7100">
-          <caret line="358" column="79" selection-start-line="358" selection-start-column="23" selection-end-line="358" selection-end-column="79" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3800">
@@ -1325,16 +1334,9 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="460">
-          <caret line="36" column="33" selection-start-line="36" selection-start-column="33" selection-end-line="36" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="394">
+        <state relative-caret-position="6080">
           <caret line="311" column="43" selection-start-line="311" selection-start-column="43" selection-end-line="311" selection-end-column="43" />
           <folding>
             <element signature="e#0#12#0" expanded="true" />
@@ -1342,24 +1344,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py">
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_test.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-780">
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config.json">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-386">
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="460">
+          <caret line="36" column="33" selection-start-line="36" selection-start-column="33" selection-end-line="36" selection-end-column="33" />
         </state>
       </provider>
     </entry>
@@ -1370,24 +1358,72 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config.json">
+    <entry file="file://$PROJECT_DIR$/reports/score_plot-Copy1.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1400">
-          <caret line="92" column="1" selection-start-line="92" selection-start-column="1" selection-end-line="92" selection-end-column="1" />
+        <state relative-caret-position="511">
+          <caret line="35" selection-start-line="35" selection-end-line="35" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1174">
+          <caret line="109" column="37" selection-start-line="109" selection-start-column="37" selection-end-line="109" selection-end-column="37" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="380">
+          <caret line="43" column="23" selection-start-line="43" selection-start-column="23" selection-end-line="43" selection-end-column="23" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="280">
+          <caret line="107" column="34" selection-start-line="107" selection-start-column="34" selection-end-line="107" selection-end-column="34" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1160">
-          <caret line="74" column="55" selection-start-line="74" selection-start-column="55" selection-end-line="74" selection-end-column="55" />
+        <state relative-caret-position="254">
+          <caret line="46" column="31" selection-start-line="46" selection-start-column="31" selection-end-line="46" selection-end-column="31" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/reports/score_plot-Copy2.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="400">
+          <caret line="44" column="18" selection-start-line="44" selection-start-column="18" selection-end-line="44" selection-end-column="18" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="380">
-          <caret line="162" column="25" selection-start-line="160" selection-start-column="15" selection-end-line="162" selection-end-column="25" />
+        <state relative-caret-position="454">
+          <caret line="180" column="32" lean-forward="true" selection-start-line="180" selection-start-column="32" selection-end-line="180" selection-end-column="32" />
         </state>
       </provider>
     </entry>
