@@ -331,14 +331,16 @@ class VTLEnvWithReferenceTransitionMaskedEntropyScore(VTLEnvWithReferenceTransit
         ref = self.references[self.current_reference_idx]
 
         self.ensemble_classifier.eval()
+        self.ensemble_hidden = None
         preproc_audio = torch.from_numpy(np.array(ref[3:])[:, -self.audio_dim:]).float().to(self.device).view(1, len(ref)-3, -1)
         x, self.ensemble_hidden, lstm_out, pred_full = self.ensemble_classifier(preproc_audio,
                                                                                 seq_lens=np.array(
                                                                                     [preproc_audio.shape[1]]),
                                                                                 hidden=self.ensemble_hidden)
-        pred_full = torch.stack(pred_full).squeeze()[:, -1, :]
+        pred_full = torch.stack(pred_full).squeeze()[:, :, :]
         softmax = (torch.nn.Softmax(dim=-1)(pred_full)).mean(dim=0).squeeze()
-        _, self.ref_class = softmax.max(0)
+        _, self.ref_class = softmax[-1, :].max(0)
+        self.ensemble_hidden = None
         return state_out
 
     def step(self, action, render=True):

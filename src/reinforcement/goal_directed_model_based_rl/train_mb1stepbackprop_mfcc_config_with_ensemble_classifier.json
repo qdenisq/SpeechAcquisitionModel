@@ -4,9 +4,9 @@
     "seed": 1234,
     "audio_dim": 64,
 
-    "ensemble_speech_classifier": "C:/Study/SpeechAcquisitionModel/models/speech_classification/simple_lstm_05_03_2019_03_36_PM_acc_0.9609.pt",
+    "ensemble_speech_classifier": "C:/Study/SpeechAcquisitionModel/models/speech_classification/simple_lstm_05_03_2019_06_49_PM_acc_0.7734.pt",
     "reference_fnames": [
-      "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_1.pkl",
+      "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_a_1.pkl",
       "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl"
 
     ],
