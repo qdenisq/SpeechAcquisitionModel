@@ -131,9 +131,7 @@ class VTLEnvWithReferenceTransition(VTLEnvPreprocAudio):
         for fname in self.reference_fnames:
             with open(fname, 'rb') as f:
                 ref = pickle.load(f)
-            # audio = np.array(ref['audio'])
-            audio = np.int16(np.array(ref['audio'])* (2 ** 15 - 1))
-
+            audio = np.array(ref['audio'])
             sr = 22050
             preprocessed = np.stack([self.preproc(audio[i, :], sr) for i in range(audio.shape[0])]).squeeze()
             if self.preproc_net:

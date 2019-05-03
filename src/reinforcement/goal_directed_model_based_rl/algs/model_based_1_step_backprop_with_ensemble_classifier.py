@@ -258,13 +258,13 @@ class ModelBased1StepBackPropWithEnsembleClassifier:
                 axes[4, 1].set_title('pred_error_acoustic')
                 plt.colorbar(im3, ax=axes[4, 1])
 
-                im4 = axes[5, 0].imshow(np.array(probs).T, vmin=0., vmax=1.)
+                im4 = axes[5, 0].imshow(np.array(probs).T, vmin=0., vmax=np.array(probs).T.max())
                 # axes[5, 1].ylim((0, 1.0))
                 axes[5, 0].set_title('pred_prob')
                 plt.colorbar(im4, ax=axes[5, 0])
 
                 im4 = axes[5, 1].plot(np.array(entropies))
-                axes[5, 1].set_ylim(bottom=0, top=np.array(entropies).max())
+                axes[5, 1].set_ylim(bottom=0, top=np.array(entropies).max()+2)
                 axes[5, 1].set_title('pred_entropy')
                 # plt.colorbar(im4, ax=axes[4, 1])
 
