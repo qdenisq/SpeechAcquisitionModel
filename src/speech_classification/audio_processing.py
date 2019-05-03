@@ -552,6 +552,7 @@ class AudioPreprocessorFbank(object):
 
     def __from_file(self, fname):
         rate, input = wav.read(fname)
+        input = input / (2 ** 15 - 1)
         out = self.__from_array(input, sr=rate)
         return out
 

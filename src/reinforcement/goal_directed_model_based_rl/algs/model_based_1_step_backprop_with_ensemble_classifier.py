@@ -264,7 +264,7 @@ class ModelBased1StepBackPropWithEnsembleClassifier:
                 plt.colorbar(im4, ax=axes[5, 0])
 
                 im4 = axes[5, 1].plot(np.array(entropies))
-                axes[5, 1].set_ylim(bottom=0)
+                axes[5, 1].set_ylim(bottom=0, top=np.array(entropies).max())
                 axes[5, 1].set_title('pred_entropy')
                 # plt.colorbar(im4, ax=axes[4, 1])
 

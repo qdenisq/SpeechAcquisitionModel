@@ -180,7 +180,7 @@ if __name__ == '__main__':
     best_acc = 0.0
     lowest_loss = 100.0
 
-    preproc = AudioPreprocessorFbank(model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
+    preproc = AudioPreprocessorFbank(nfilt=model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
     data_iter = SpeechCommandsDataCollector(preproc,
                                             data_dir=r'C:\Study\Speech_command_classification\speech_dataset',
                                             wanted_words=wanted_words_combined,
