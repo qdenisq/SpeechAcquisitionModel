@@ -3,7 +3,7 @@ import numpy as np
 import random
 import pickle
 
-from src.speech_classification.pytorch_conv_lstm import LstmNet
+from src.speech_classification.pytorch_conv_lstm import LstmNet, LstmNetEnsemble
 from src.VTL.vtl_environment import VTLEnv
 from src.speech_classification.audio_processing import AudioPreprocessorFbank
 
@@ -310,6 +310,100 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         return state_out, reward, done, info
 
     def _reward(self, state, goal, action):
+        res = np.exp(-1. * 50.0 * np.mean((state[self.state_goal_mask] - goal) ** 2))
+        return res
+
+    def get_current_reference(self):
+        return self.references[self.current_reference_idx][:, self.goal_mask]
+
+
+class VTLEnvWithReferenceTransitionMaskedEntropyScore(VTLEnvWithReferenceTransitionMasked):
+    def __init__(self, lib_path, speaker_fname, **kwargs):
+        super(VTLEnvWithReferenceTransitionMaskedEntropyScore, self).__init__(lib_path, speaker_fname, **kwargs)
+        self.device = kwargs['device']
+        self.ensemble_classifier = torch.load(kwargs['ensemble_speech_classifier']).to(self.device)
+        self.ensemble_hidden = None
+        self.ref_class = None
+
+    def reset(self, state_to_reset=None, **kwargs):
+        state_out = super(VTLEnvWithReferenceTransitionMaskedEntropyScore, self).reset(state_to_reset)
+
+        ref = self.references[self.current_reference_idx]
+
+        self.ensemble_classifier.eval()
+        preproc_audio = torch.from_numpy(np.array(ref[3:])[:, -self.audio_dim:]).float().to(self.device).view(1, len(ref)-3, -1)
+        x, self.ensemble_hidden, lstm_out, pred_full = self.ensemble_classifier(preproc_audio,
+                                                                                seq_lens=np.array(
+                                                                                    [preproc_audio.shape[1]]),
+                                                                                hidden=self.ensemble_hidden)
+        pred_full = torch.stack(pred_full).squeeze()[:, -1, :]
+        softmax = (torch.nn.Softmax(dim=-1)(pred_full)).mean(dim=0).squeeze()
+        _, self.ref_class = softmax.max(0)
+        return state_out
+
+    def step(self, action, render=True):
+        # cur_state = np.array(list(self.tract_params_out) + list(self.glottis_params_out))
+        # goal = self.references[self.current_reference_idx][self.current_step + 1]
+        # action_desired = goal - cur_state
+        reference_action = self.reference_actions[self.current_reference_idx][self.current_step ]
+        j = 0
+        unmasked_action = np.zeros(len(reference_action))
+        for i in range(len(reference_action)):
+            if self.action_mask[i]:
+                unmasked_action[i] = action[j]
+                j += 1
+            else:
+                unmasked_action[i] = reference_action[i]
+
+        cur_goal = self.references[self.current_reference_idx][self.current_step + 1]
+
+        state_out, _, _, _ = super(VTLEnvWithReferenceTransition, self).step(unmasked_action, render)
+
+        #sound
+        self.ensemble_classifier.eval()
+        preproc_audio = torch.from_numpy(np.array(state_out[-self.audio_dim:])).float().to(self.device).view(1, 1, -1)
+        x, self.ensemble_hidden, lstm_out, pred_full = self.ensemble_classifier(preproc_audio,
+                                                                                seq_lens=np.array([preproc_audio.shape[1]]),
+                                                                                hidden=self.ensemble_hidden)
+        pred_full = torch.stack(pred_full)
+        log_softmax = (torch.nn.LogSoftmax(dim=-1)(pred_full)).mean(dim=0).squeeze()
+        softmax = (torch.nn.Softmax(dim=-1)(pred_full)).mean(dim=0).squeeze()
+        entropy = -1 * (log_softmax * softmax).sum(dim=0)
+        prob = softmax
+
+        # if self.ref_class is not None:
+        #     prob = softmax[self.ref_class]
+        # else:
+        #     prob = torch.Tensor([0])
+
+        diff = state_out - cur_goal
+        diff_1 = state_out - self.references[self.current_reference_idx][self.current_step + 1]
+
+        # update goal only after step, beacuse it changes current step
+        goal = self.references[self.current_reference_idx][self.current_step + 1]
+        done = False
+        if self.current_step >= self.references[self.current_reference_idx].shape[0] - 2:
+            done = True
+            self.ensemble_hidden = None
+        s_m_normed = self.normalize(np.array(state_out), np.array(self.original_state_bound[:self.original_goal_dim]))[
+            self.state_mask[:self.original_goal_dim]]
+        g_m_normed = self.normalize(np.array(goal)[self.goal_mask],
+                                    np.array(self.original_state_bound[:self.original_goal_dim])[self.goal_mask])
+        reward = self._reward(s_m_normed, g_m_normed, action)
+
+        reward = (prob, entropy)
+
+        state_out = np.concatenate((state_out, goal))
+        state_out = state_out[self.state_mask]
+        info = None
+        return state_out, reward, done, info
+
+    def _reward(self, state, goal, action):
+
+        # extract
+
+
+
         res = np.exp(-1. * 50.0 * np.mean((state[self.state_goal_mask] - goal) ** 2))
         return res
 

@@ -123,7 +123,9 @@ class LstmNetEnsemble(nn.Module):
 
     def forward(self, x, seq_lens, hidden=None, average=False):
         #
-        x, hidden, lstm_out, pred_full = zip(*[net(x, seq_lens, hidden) for net in self.nets])
+        if hidden is None:
+            hidden = [None] * len(self.nets)
+        x, hidden, lstm_out, pred_full = zip(*[self.nets[i](x, seq_lens, hidden[i]) for i in range(len(self.nets))])
         if average:
             x = x.mean(dim=0)
             hidden = hidden.mean(dim=0)
@@ -166,7 +168,7 @@ if __name__ == '__main__':
         'hidden_reccurent_cells_count': 128,
         'winlen': 0.04,
         'winstep': 0.04,
-        'num_nets': 5
+        'num_nets': 20
     }
 
     save_dir = r'C:\Study\SpeechAcquisitionModel\models\speech_classification'
@@ -196,9 +198,11 @@ if __name__ == '__main__':
         # collect data
         d = data_iter.get_data(n_mini_batch_size, 0, 'training')
         data = d['x']
+        # cut first 2 steps
+        data = d['x'][:,2:,:]
         labels = d['y']
         seq_lengths = d['seq_len']
-        max_seq_len = seq_lengths[0]
+        max_seq_len = seq_lengths[0]-2
         seq_len = np.random.randint(1, max_seq_len)
         seq_lengths = np.array([seq_len] * len(seq_lengths))
         data = data[:, :seq_len, :]
@@ -211,7 +215,8 @@ if __name__ == '__main__':
 
         # zero grad
 
-
+        losses = []
+        accs = []
         pred, hidden, _, _ = net(data, seq_lengths)
         for p in pred:
             optimizer.zero_grad()
@@ -221,14 +226,17 @@ if __name__ == '__main__':
             loss.backward()
             optimizer.step()
 
+            losses.append(loss.detach())
+
             acc = accuracy(p.detach().numpy(), labels.detach().numpy())
-            print("|train_step: {}| loss: {:.4f}| accuracy: {:.4f}|".format(i, loss.detach(), acc))
+            accs.append(acc)
+        print("|train_step: {}| loss: {:.4f} std:{:.4f}| accuracy: {:.4f} std:{:.4f}|".format(i, np.mean(losses), np.std(losses), np.mean(accs), np.std(accs)))
         # validate each 100 train steps
         if i % 100 == 0:
             d = data_iter.get_data(n_mini_batch_size, 0, 'validation')
-            data = d['x']
+            data = d['x'][:, 2:, :]
             labels = d['y']
-            seq_lengths = d['seq_len']
+            seq_lengths = d['seq_len'] - 2
 
             data = torch.from_numpy(data).float()
             labels = torch.from_numpy(labels).long()
