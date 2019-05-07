@@ -5,11 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_mfcc_config_with_ensemble_classifier.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_with_ensemble_classifier_scorer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop_with_ensemble_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop_with_ensemble_classifier.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config_with_ensemble_classifier.json" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config_with_ensemble_classifier.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/speech_classification/speech_classification_results.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/speech_classification_results.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -24,21 +25,21 @@
     <session id="1686499638">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="18" />
-          <entry key="project.open.time.0" value="5" />
+          <entry key="project.closed" value="19" />
+          <entry key="project.open.time.0" value="6" />
           <entry key="project.open.time.3" value="3" />
           <entry key="project.open.time.4" value="12" />
           <entry key="project.open.time.5" value="8" />
           <entry key="project.open.time.6" value="1" />
           <entry key="project.open.time.7" value="2" />
-          <entry key="project.opened" value="31" />
+          <entry key="project.opened" value="32" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
           <entry key="ipynb" value="20" />
-          <entry key="json" value="44" />
-          <entry key="py" value="238" />
+          <entry key="json" value="45" />
+          <entry key="py" value="245" />
           <entry key="pyi" value="1" />
           <entry key="txt" value="1" />
         </counts>
@@ -46,9 +47,9 @@
       <usages-collector id="statistics.file.types.open">
         <counts>
           <entry key="IPNB" value="20" />
-          <entry key="JSON" value="44" />
+          <entry key="JSON" value="45" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="238" />
+          <entry key="Python" value="245" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
@@ -56,16 +57,16 @@
         <counts>
           <entry key="Python Console" value="51" />
           <entry key="dummy" value="4" />
-          <entry key="json" value="1541" />
-          <entry key="py" value="36718" />
+          <entry key="json" value="1569" />
+          <entry key="py" value="37501" />
           <entry key="txt" value="403" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JSON" value="1541" />
+          <entry key="JSON" value="1569" />
           <entry key="PLAIN_TEXT" value="407" />
-          <entry key="Python" value="36769" />
+          <entry key="Python" value="37552" />
         </counts>
       </usages-collector>
     </session>
@@ -75,22 +76,10 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="441">
-              <caret line="137" column="39" selection-start-line="137" selection-start-column="39" selection-end-line="137" selection-end-column="39" />
+            <state relative-caret-position="381">
+              <caret line="343" column="24" selection-start-line="343" selection-start-column="24" selection-end-line="343" selection-end-column="24" />
               <folding>
                 <element signature="e#0#12#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/VTL/create_reference.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="330">
-              <caret line="79" column="11" selection-start-line="79" selection-start-column="11" selection-end-line="79" selection-end-column="11" />
-              <folding>
-                <element signature="e#0#9#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -106,53 +95,87 @@
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="700">
+              <caret line="133" column="45" selection-start-line="119" selection-start-column="8" selection-end-line="133" selection-end-column="45" />
+              <folding>
+                <element signature="e#0#47#0" expanded="true" />
+                <marker date="1557039490390" expanded="true" signature="4543:4548" ph="..." />
+                <marker date="1557039490390" expanded="true" signature="4988:4993" ph="..." />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop_with_ensemble_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="960">
-              <caret line="272" column="54" selection-start-line="272" selection-start-column="54" selection-end-line="272" selection-end-column="54" />
+            <state relative-caret-position="299">
+              <caret line="63" column="40" selection-start-line="63" selection-start-column="40" selection-end-line="63" selection-end-column="40" />
+              <folding>
+                <element signature="e#0#11#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config_with_ensemble_classifier.json">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="240">
-              <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+            <state relative-caret-position="191">
+              <caret line="197" column="59" selection-start-line="197" selection-start-column="59" selection-end-line="197" selection-end-column="59" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/speech_classification/audio_processing.py">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_with_ensemble_classifier_scorer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="524">
-              <caret line="556" selection-start-line="556" selection-end-line="556" />
+            <state relative-caret-position="201">
+              <caret line="48" selection-start-line="48" selection-end-line="48" />
               <folding>
-                <element signature="e#0#38#0" expanded="true" />
+                <element signature="e#0#11#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/autograd/__init__.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="341">
-              <caret line="202" selection-start-line="202" selection-end-line="202" />
-              <folding>
-                <element signature="e#0#47#0" expanded="true" />
-                <marker date="1556880861224" expanded="true" signature="4543:4548" ph="..." />
-              </folding>
+            <state relative-caret-position="201">
+              <caret line="83" selection-start-line="83" selection-end-line="83" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop.py">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/tensor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="155">
-              <caret line="47" column="16" selection-start-line="47" selection-start-column="16" selection-end-line="47" selection-end-column="16" />
+            <state relative-caret-position="209">
+              <caret line="101" selection-start-line="101" selection-end-line="101" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_mfcc_config_with_ensemble_classifier.json">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="294">
+              <caret line="66" column="24" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="454">
+              <caret line="422" column="58" selection-start-line="422" selection-start-column="58" selection-end-line="422" selection-end-column="58" />
+              <folding>
+                <element signature="e#0#41#0" expanded="true" />
+              </folding>
             </state>
           </provider>
         </entry>
@@ -193,9 +216,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/md_train.py" />
-        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model_based_ppo.py" />
-        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config_tract_goal_only.json" />
         <option value="$PROJECT_DIR$/src/reinforcement/vtl_reference_guided/plot_rewards_temp.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_ppo.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mbbackprop.json" />
@@ -233,17 +253,20 @@
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_ppo_config.json" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py" />
-        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" />
         <option value="$PROJECT_DIR$/reports/score_plot-Copy2.ipynb" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config.json" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_with_ensemble_classifier_scorer.py" />
-        <option value="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" />
         <option value="$PROJECT_DIR$/src/speech_classification/audio_processing.py" />
         <option value="$PROJECT_DIR$/src/speech_classification/speech_classification_results.ipynb" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop_with_ensemble_classifier.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config_with_ensemble_classifier.json" />
+        <option value="$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_with_ensemble_classifier_scorer.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_mfcc_config_with_ensemble_classifier.json" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py" />
       </list>
     </option>
   </component>
@@ -301,6 +324,72 @@
               <item name="goal_directed_model_based_rl" type="462c0819:PsiDirectoryNode" />
               <item name="algs" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="speech_classification" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Study" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Study" type="462c0819:PsiDirectoryNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Study" type="462c0819:PsiDirectoryNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Study" type="462c0819:PsiDirectoryNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Study" type="462c0819:PsiDirectoryNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+              <item name="goal_directed_model_based_rl" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Study" type="462c0819:PsiDirectoryNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="reinforcement" type="462c0819:PsiDirectoryNode" />
+              <item name="goal_directed_model_based_rl" type="462c0819:PsiDirectoryNode" />
+              <item name="algs" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -312,17 +401,17 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl\algs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\vtl_reference_guided" />
+      <recent name="C:\Study\SpeechAcquisitionModel\VTL" />
+      <recent name="C:\Study\SpeechAcquisitionModel\reinforcement" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl\algs" />
       <recent name="C:\Study\SpeechAcquisitionModel\notebooks" />
       <recent name="C:\Study\SpeechAcquisitionModel\src" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl\algs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\vtl_reference_guided" />
-      <recent name="C:\Study\SpeechAcquisitionModel\VTL" />
-      <recent name="C:\Study\SpeechAcquisitionModel\reinforcement" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -337,7 +426,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.train_mb1stepbackprop_with_ensemble_classifier_scorer">
+  <component name="RunManager" selected="Python.train_multi_stepbackprop_with_ensemble_classifier_scorer">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -458,7 +547,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="train_mb_multi_step_backprop" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="train_multi_stepbackprop_with_ensemble_classifier_scorer" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -470,7 +559,7 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb_multi_step_backprop.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_with_ensemble_classifier_scorer.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -519,18 +608,18 @@
     <list>
       <item itemvalue="Jupyter Notebook.SpeechAcquisitionModel" />
       <item itemvalue="Python.train_mb1stepbackprop" />
-      <item itemvalue="Python.train_mb_multi_step_backprop" />
       <item itemvalue="Python.pytorch_conv_lstm" />
       <item itemvalue="Python.train_ppo" />
       <item itemvalue="Python.train_mb1stepbackprop_with_ensemble_classifier_scorer" />
+      <item itemvalue="Python.train_multi_stepbackprop_with_ensemble_classifier_scorer" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.train_mb1stepbackprop_with_ensemble_classifier_scorer" />
+        <item itemvalue="Python.train_multi_stepbackprop_with_ensemble_classifier_scorer" />
         <item itemvalue="Python.pytorch_conv_lstm" />
+        <item itemvalue="Python.train_mb1stepbackprop_with_ensemble_classifier_scorer" />
         <item itemvalue="Python.train_mb1stepbackprop" />
         <item itemvalue="Python.train_ppo" />
-        <item itemvalue="Python.train_mb_multi_step_backprop" />
       </list>
     </recent_temporary>
   </component>
@@ -670,12 +759,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py</url>
-          <line>245</line>
+          <line>246</line>
           <option name="timeStamp" value="365" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py</url>
-          <line>249</line>
+          <line>250</line>
           <option name="timeStamp" value="368" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -854,16 +943,6 @@
           <option name="timeStamp" value="594" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py</url>
-          <line>211</line>
-          <option name="timeStamp" value="597" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py</url>
-          <line>206</line>
-          <option name="timeStamp" value="598" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py</url>
           <line>172</line>
           <option name="timeStamp" value="599" />
@@ -885,33 +964,13 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py</url>
-          <line>224</line>
+          <line>225</line>
           <option name="timeStamp" value="604" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py</url>
-          <line>220</line>
+          <line>221</line>
           <option name="timeStamp" value="605" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py</url>
-          <line>343</line>
-          <option name="timeStamp" value="622" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py</url>
-          <line>141</line>
-          <option name="timeStamp" value="628" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py</url>
-          <line>140</line>
-          <option name="timeStamp" value="629" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py</url>
-          <line>135</line>
-          <option name="timeStamp" value="630" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -935,48 +994,47 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
       <expression>
+        <expression-string>md_loss.sum(dim=[1,2])</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.stack(out_states).mean(dim=0)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.stack(out_states).mean(dim=-1)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.stack(out_states).mean(axis=-1)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.stack(out_states).eamn(axis=-1)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.stack(out_states)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.mean(out_states)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
         <expression-string>self.get_sequential_data_sample(r'C:/Study/SpeechAcquisitionModel/src/VTL/references/i_a_1.wav')</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
       <expression>
         <expression-string>self.preproc(r'C:/Study/SpeechAcquisitionModel/src/VTL/references/i_a_1.wav')</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.preproc(np.int16(audio.reshape(-1, 1).squeeze() * (2 ** 15 - 1)), sr)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>wav_int = np.int16(audio.reshape(-1, 1).squeeze() * (2 ** 15 - 1))
-self.preproc(wav_int, sr)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.preproc(audio.reshape(-1, 1).squeeze(), sr)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.preproc(audio.reshape(-1, 1), sr)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.preproc(audio.reshape(1, -1), sr)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.preproc(audio.view(1, -1), sr)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>self.preproc(audio.view(-1, 1), sr)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -1035,21 +1093,6 @@ self.preproc(wav_int, sr)</expression-string>
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/reports/videos/video_mb1step_03_19_2019_02_22_PM/config.json" />
-    <entry file="file://$PROJECT_DIR$/reports/videos/video_mb1step_03_19_2019_02_23_PM/config.json" />
-    <entry file="file://$PROJECT_DIR$/reports/videos/video_mb1step_03_19_2019_02_25_PM/config.json" />
-    <entry file="file://$PROJECT_DIR$/src/som/neural_map.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="6780">
-          <caret line="341" column="2" selection-start-line="341" selection-start-column="2" selection-end-line="341" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/../LANL-Earthquake/src/validation/train_single_model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-2126" />
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/reports/repropts_visualization.ipynb" />
     <entry file="file://$PROJECT_DIR$/src/som/neural_mapping.py">
       <provider selected="true" editor-type-id="text-editor" />
@@ -1172,16 +1215,6 @@ self.preproc(wav_int, sr)</expression-string>
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="700">
           <caret line="35" selection-start-line="35" selection-end-line="35" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2080">
-          <caret line="107" column="34" selection-start-line="107" selection-start-column="34" selection-end-line="107" selection-end-column="34" />
         </state>
       </provider>
     </entry>
@@ -1208,20 +1241,12 @@ self.preproc(wav_int, sr)</expression-string>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/speech_classification/test_conv_rnn.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-1500">
-          <folding>
-            <element signature="e#0#12#0" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-1500" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/speech_classification/convRNN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-3780">
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-3780" />
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_test.py">
@@ -1290,39 +1315,12 @@ self.preproc(wav_int, sr)</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="155">
-          <caret line="47" column="16" selection-start-line="47" selection-start-column="16" selection-end-line="47" selection-end-column="16" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/VTL/utils.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1204">
           <caret line="74" column="37" selection-start-line="74" selection-start-column="37" selection-end-line="74" selection-end-column="37" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/VTL/create_reference.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="330">
-          <caret line="79" column="11" selection-start-line="79" selection-start-column="11" selection-end-line="79" selection-end-column="11" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/speech_classification/audio_processing.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="524">
-          <caret line="556" selection-start-line="556" selection-end-line="556" />
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
           </folding>
         </state>
       </provider>
@@ -1334,14 +1332,37 @@ self.preproc(wav_int, sr)</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
+    <entry file="file://$PROJECT_DIR$/src/VTL/create_reference.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="341">
-          <caret line="202" selection-start-line="202" selection-end-line="202" />
+        <state relative-caret-position="1320">
+          <caret line="79" column="11" selection-start-line="79" selection-start-column="11" selection-end-line="79" selection-end-column="11" />
           <folding>
-            <element signature="e#0#47#0" expanded="true" />
-            <marker date="1556880861224" expanded="true" signature="4543:4548" ph="..." />
+            <element signature="e#0#9#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config_with_ensemble_classifier.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="240">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/speech_classification/audio_processing.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="10640">
+          <caret line="556" selection-start-line="556" selection-end-line="556" />
+          <folding>
+            <element signature="e#0#38#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="680">
+          <caret line="47" column="16" selection-start-line="47" selection-start-column="16" selection-end-line="47" selection-end-column="16" />
         </state>
       </provider>
     </entry>
@@ -1352,27 +1373,83 @@ self.preproc(wav_int, sr)</expression-string>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py">
+    <entry file="file://$PROJECT_DIR$/src/speech_classification/pytorch_conv_lstm.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="441">
-          <caret line="137" column="39" selection-start-line="137" selection-start-column="39" selection-end-line="137" selection-end-column="39" />
+        <state relative-caret-position="700">
+          <caret line="133" column="45" selection-start-line="119" selection-start-column="8" selection-end-line="133" selection-end-column="45" />
           <folding>
-            <element signature="e#0#12#0" expanded="true" />
+            <element signature="e#0#47#0" expanded="true" />
+            <marker date="1557039490390" expanded="true" signature="4543:4548" ph="..." />
+            <marker date="1557039490390" expanded="true" signature="4988:4993" ph="..." />
           </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop_with_ensemble_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="960">
-          <caret line="272" column="54" selection-start-line="272" selection-start-column="54" selection-end-line="272" selection-end-column="54" />
+        <state relative-caret-position="299">
+          <caret line="63" column="40" selection-start-line="63" selection-start-column="40" selection-end-line="63" selection-end-column="40" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config_with_ensemble_classifier.json">
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/env.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="240">
-          <caret line="12" lean-forward="true" selection-start-line="12" selection-end-line="12" />
+        <state relative-caret-position="381">
+          <caret line="343" column="24" selection-start-line="343" selection-start-column="24" selection-end-line="343" selection-end-column="24" />
+          <folding>
+            <element signature="e#0#12#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="454">
+          <caret line="422" column="58" selection-start-line="422" selection-start-column="58" selection-end-line="422" selection-end-column="58" />
+          <folding>
+            <element signature="e#0#41#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/autograd/__init__.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="83" selection-start-line="83" selection-end-line="83" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/tensor.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="209">
+          <caret line="101" selection-start-line="101" selection-end-line="101" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_with_ensemble_classifier_scorer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="201">
+          <caret line="48" selection-start-line="48" selection-end-line="48" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_mfcc_config_with_ensemble_classifier.json">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="294">
+          <caret line="66" column="24" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="191">
+          <caret line="197" column="59" selection-start-line="197" selection-start-column="59" selection-end-line="197" selection-end-column="59" />
         </state>
       </provider>
     </entry>

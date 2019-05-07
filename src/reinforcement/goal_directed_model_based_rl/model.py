@@ -398,3 +398,28 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         out_goals = self.tanh(states[:, self.__state_dim:] + goals_delta)
         return out_states, out_goals
 
+
+class EnsembleDeterministicModelDynamicsDeltaPredict(Module):
+    def __init__(self, **kwargs):
+        super(EnsembleDeterministicModelDynamicsDeltaPredict, self).__init__()
+        self.__acoustic_state_dim = kwargs['goal_dim']
+        self.__action_dim = kwargs['action_dim']
+        self.__state_dim = kwargs['state_dim']
+        self.__acoustic_dim = 26
+        self.__num_nets = kwargs['num_nets']
+
+        self.nets = ModuleList([SimpleDeterministicModelDynamicsDeltaPredict(**kwargs) for _ in range(self.__num_nets)])
+
+    def forward(self, states, actions):
+        #
+        out_states, out_goals = zip(*[self.nets[i](states, actions) for i in range(len(self.nets))])
+
+        out_states = torch.stack(out_states)
+
+        mean_out_states = out_states.mean(dim=0)
+
+        std_out_states = out_states.std(dim=0)
+
+        return mean_out_states, std_out_states, out_states
+
+
