@@ -5,6 +5,7 @@ import numpy as np
 import pandas as pd
 import datetime
 import sys
+from torch.distributions import Normal
 
 import torch
 from src.reinforcement.goal_directed_model_based_rl.replay_buffer import ReplayBuffer
@@ -106,6 +107,24 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
 
         sys.stdout = Logger(video_dir + "/log.txt")
 
+        init_states = []
+        refs = []
+        for _ in range(self.minibatch_size):
+            state = env.reset()
+
+            state = env.normalize(state, env.state_bound)
+            ref = env.get_current_reference()
+            init_states.append(state)
+            refs.append(ref)
+        init_state = torch.from_numpy(np.array(init_states)).float().to(self.device).view(self.minibatch_size, -1)
+        initital_cur_step = env.current_step
+
+        refs = np.array(refs)
+        refs = env.normalize(refs, env.goal_bound)
+        refs = torch.from_numpy(refs).float().to(self.device)
+
+
+
         for episode in range(num_episodes):
             ep_states = []
             ep_states_pred = []
@@ -203,7 +222,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                     state_std = next_state_pred_std.detach().cpu().numpy().squeeze()
 
                 # Share a X axis with each column of subplots
-                fig, axes = plt.subplots(7, 2, figsize=(15, 20))
+                fig, axes = plt.subplots(7, 2, figsize=(10, 20))
                 cb = None
                 # plt.ion()
                 # plt.show()
@@ -228,11 +247,11 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                 axes[1, 1].set_title('pred_rollout_acoustic')
                 plt.colorbar(im_pred, ax=axes[1, 1])
 
-                im_pred = axes[2, 0].imshow(np.array(pred_states_std)[:, :n_artic].T)
+                im_pred = axes[2, 0].imshow(np.array(pred_states_std)[:, :n_artic].T, vmax=1.)
                 axes[2, 0].set_title('pred_rollout_artic_std')
                 plt.colorbar(im_pred, ax=axes[2, 0])
 
-                im_pred = axes[2, 1].imshow(np.array(pred_states_std)[:, n_artic: n_artic+n_audio].T)
+                im_pred = axes[2, 1].imshow(np.array(pred_states_std)[:, n_artic: n_artic+n_audio].T, vmax=1.)
                 axes[2, 1].set_title('pred_rollout_acoustic_std')
                 plt.colorbar(im_pred, ax=axes[2, 1])
 
@@ -321,36 +340,69 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                 ##############################################################
                 # train policy
                 ##############################################################
+
+
+
+                if episode < 170:
+                    print(
+                        "|episode: {}| train step: {}| model_dynamics loss: {:.8f}| score:{:.2f} | steps {}| miss_max_idx {}".format(
+                            episode,
+                            train_step_i,
+                            md_loss.detach().cpu().numpy(),
+                            score,
+                            res_step,
+                            miss_max_idx))
+                    continue
+
                 n_train_steps = round(
                     self.replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
                 self.agent.train()
                 self.model_dynamics.eval()
-                for _ in range(n_train_steps):
-                    # train_step_i += 1
-                    s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
 
+                n_train_steps = 5
+
+                for _ in range(n_train_steps):
+
+                    cur_state = init_state
+                    init_step = initital_cur_step
+
+                    actor_loss = torch.Tensor([0.])
+
+                    for i in range(init_step, refs.shape[1] - 1):
+
+                        action = self.agent(cur_state.to(self.device))
+
+                        # predict state if predicted actions will be applied
+                        next_state_pred, next_state_pred_std, _ = self.model_dynamics(cur_state.float().to(self.device), action)
+
+                        next_state_pred_sampled = Normal(next_state_pred, next_state_pred_std).rsample()
+                        next_state_density = Normal(next_state_pred, next_state_pred_std).log_prob(next_state_pred)
+
+                        if next_state_pred_std.mean() > 0.3:
+                            break
+                        # calc prob of next state
+
+                        next_state_ref = refs[:, i+1, :]
+                        next_state_pred_full = torch.cat((next_state_pred_sampled, next_state_ref), -1)
+
+                        loss = torch.nn.SmoothL1Loss(reduce=False)(
+                            next_state_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
+                            cur_state[:, -env.goal_dim:])
+                        loss = loss.sum() / self.minibatch_size
+                        actor_loss += loss
+                        cur_state = next_state_pred_full
+
+                    actor_loss = actor_loss / (refs.shape[1] - 1 - init_step)
                     self.actor_optim.zero_grad()
-                    actions_predicted = self.agent(s0_batch.float().to(self.device))
-                    # predict state if predicted actions will be applied
-                    s1_pred, _, _ = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
-                    actor_loss = torch.nn.SmoothL1Loss(reduction="sum")(
-                        s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
-                        s0_batch[:, -env.goal_dim:].float().to(self.device)) / self.minibatch_size
-                    # action_penalty = 0.01 * torch.mean((actions_predicted**2))
-                    # actor_loss += action_penalty
                     actor_loss.backward()
                     torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
                     self.actor_optim.step()
 
-                    # expected_actions_normed = normalize(denormalize(target_batch_normed - g0_batch_normed, g_bound),
-                    #                                     a_bound)
-                    # policy_loss_out = np.mean(
-                    #     np.sum(np.square(expected_actions_normed - actions_normed.detach().numpy()), axis=1), axis=0)
 
                 print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}| miss_max_idx {}".format(episode,
                                                                                                                               train_step_i,
                                                                                                                               md_loss.detach().cpu().numpy(),
-                                                                                                                              actor_loss.detach().cpu().numpy(),
+                                                                                                                              actor_loss.detach().cpu().numpy().squeeze(),
                                                                                                                               score,
                                                                                                                               res_step,
                                                                                                                               miss_max_idx))
