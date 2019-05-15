@@ -278,7 +278,7 @@ class ModelBased1StepBackPropWithEnsembleClassifier:
                 # plt.draw()
                 # plt.pause(.001)
 
-                fname = video_dir + '/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+                fname = video_dir + '/episode_' + str(episode) + '_' +  str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
                 env.dump_episode(fname)
                 fig.savefig(fname+".png")
                 plt.close('all')

@@ -399,6 +399,11 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         return out_states, out_goals
 
 
+def init_weights_high_gain(m, gain=1):
+    if type(m) == Linear:
+        xavier_uniform_(m.weight, gain=gain)
+
+
 class EnsembleDeterministicModelDynamicsDeltaPredict(Module):
     def __init__(self, **kwargs):
         super(EnsembleDeterministicModelDynamicsDeltaPredict, self).__init__()
@@ -409,6 +414,8 @@ class EnsembleDeterministicModelDynamicsDeltaPredict(Module):
         self.__num_nets = kwargs['num_nets']
 
         self.nets = ModuleList([SimpleDeterministicModelDynamicsDeltaPredict(**kwargs) for _ in range(self.__num_nets)])
+
+        self.apply(init_weights_high_gain)
 
     def forward(self, states, actions):
         #
