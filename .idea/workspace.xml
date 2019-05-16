@@ -6,7 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop_with_ensemble_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop_with_ensemble_classifier.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" afterDir="false" />
     </list>
@@ -37,7 +36,7 @@
         <counts>
           <entry key="ipynb" value="21" />
           <entry key="json" value="46" />
-          <entry key="py" value="260" />
+          <entry key="py" value="261" />
           <entry key="pyi" value="1" />
           <entry key="txt" value="1" />
         </counts>
@@ -47,7 +46,7 @@
           <entry key="IPNB" value="21" />
           <entry key="JSON" value="46" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="260" />
+          <entry key="Python" value="261" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
@@ -55,41 +54,29 @@
         <counts>
           <entry key="Python Console" value="51" />
           <entry key="dummy" value="4" />
-          <entry key="json" value="1592" />
-          <entry key="py" value="39209" />
+          <entry key="json" value="1598" />
+          <entry key="py" value="39721" />
           <entry key="txt" value="403" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.edit">
         <counts>
-          <entry key="JSON" value="1592" />
+          <entry key="JSON" value="1598" />
           <entry key="PLAIN_TEXT" value="407" />
-          <entry key="Python" value="39260" />
+          <entry key="Python" value="39772" />
         </counts>
       </usages-collector>
     </session>
   </component>
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
-              <caret line="366" column="74" selection-start-line="366" selection-start-column="74" selection-end-line="366" selection-end-column="74" />
+            <state relative-caret-position="222">
+              <caret line="426" column="52" selection-start-line="426" selection-start-column="52" selection-end-line="426" selection-end-column="52" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
-              </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../udacity_p2_continious_control/src/models.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="835">
-              <caret line="54" column="21" selection-start-line="54" selection-start-column="21" selection-end-line="54" selection-end-column="21" />
-              <folding>
-                <element signature="e#0#41#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -98,8 +85,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_with_ensemble_classifier_scorer.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="960">
-              <caret line="48" selection-start-line="48" selection-end-line="48" />
+            <state relative-caret-position="116">
+              <caret line="57" column="50" selection-start-line="57" selection-start-column="50" selection-end-line="57" selection-end-column="50" />
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
@@ -107,20 +94,20 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_mfcc_config_with_ensemble_classifier.json">
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/tensor.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="300">
-              <caret line="66" column="24" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
+            <state relative-caret-position="512">
+              <caret line="101" selection-start-line="101" selection-end-line="101" />
             </state>
           </provider>
         </entry>
       </file>
       <file pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config_with_ensemble_classifier.json">
+        <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_mfcc_config_with_ensemble_classifier.json">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-384">
-              <caret line="12" selection-start-line="12" selection-end-line="12" />
+            <state relative-caret-position="521">
+              <caret line="66" column="24" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
             </state>
           </provider>
         </entry>
@@ -149,8 +136,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="276">
-              <caret line="421" column="16" selection-start-line="421" selection-start-column="16" selection-end-line="421" selection-end-column="16" />
+            <state relative-caret-position="2516">
+              <caret line="398" column="36" selection-start-line="398" selection-start-column="36" selection-end-line="398" selection-end-column="36" />
               <folding>
                 <element signature="e#0#41#0" expanded="true" />
               </folding>
@@ -243,8 +230,8 @@
         <option value="$PROJECT_DIR$/reports/score_plot.ipynb" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop_with_ensemble_classifier.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py" />
-        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_mfcc_config_with_ensemble_classifier.json" />
+        <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py" />
       </list>
     </option>
   </component>
@@ -960,12 +947,12 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py</url>
-          <line>366</line>
+          <line>375</line>
           <option name="timeStamp" value="666" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py</url>
-          <line>364</line>
+          <line>366</line>
           <option name="timeStamp" value="667" />
         </line-breakpoint>
       </breakpoints>
@@ -989,6 +976,16 @@
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>torch.mean(last_prob)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>s1_pred_log_prob.sum(dim=-1)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>actor_loss * s1_pred_log_prob.unsqueeze(1)</expression-string>
         <language-id>Python</language-id>
@@ -1026,11 +1023,6 @@
       </expression>
       <expression>
         <expression-string>s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>s1_batch[:, :-env.goal_dim].float().to(self.device)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -1380,13 +1372,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/tensor.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1860">
-          <caret line="101" selection-start-line="101" selection-end-line="101" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="3720">
@@ -1404,16 +1389,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/../udacity_p2_continious_control/src/models.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="835">
-          <caret line="54" column="21" selection-start-line="54" selection-start-column="21" selection-end-line="54" selection-end-column="21" />
-          <folding>
-            <element signature="e#0#41#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop_with_ensemble_classifier.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="219">
@@ -1424,13 +1399,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config_with_ensemble_classifier.json">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-384">
-          <caret line="12" selection-start-line="12" selection-end-line="12" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_with_ensemble_classifier_scorer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="500">
@@ -1438,40 +1406,64 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/tensor.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="276">
-          <caret line="421" column="16" selection-start-line="421" selection-start-column="16" selection-end-line="421" selection-end-column="16" />
+        <state relative-caret-position="512">
+          <caret line="101" selection-start-line="101" selection-end-line="101" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_with_ensemble_classifier_scorer.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="116">
+          <caret line="57" column="50" selection-start-line="57" selection-start-column="50" selection-end-line="57" selection-end-column="50" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../udacity_p2_continious_control/src/models.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1080">
+          <caret line="54" column="21" selection-start-line="54" selection-start-column="21" selection-end-line="54" selection-end-column="21" />
           <folding>
             <element signature="e#0#41#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_with_ensemble_classifier_scorer.py">
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="960">
-          <caret line="48" selection-start-line="48" selection-end-line="48" />
+        <state relative-caret-position="2516">
+          <caret line="398" column="36" selection-start-line="398" selection-start-column="36" selection-end-line="398" selection-end-column="36" />
           <folding>
-            <element signature="e#0#11#0" expanded="true" />
+            <element signature="e#0#41#0" expanded="true" />
           </folding>
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py">
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_mfcc_config_with_ensemble_classifier.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="185">
-          <caret line="366" column="74" selection-start-line="366" selection-start-column="74" selection-end-line="366" selection-end-column="74" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
+        <state relative-caret-position="-684">
+          <caret line="12" selection-start-line="12" selection-end-line="12" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_mfcc_config_with_ensemble_classifier.json">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="300">
+        <state relative-caret-position="521">
           <caret line="66" column="24" selection-start-line="66" selection-start-column="24" selection-end-line="66" selection-end-column="24" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="222">
+          <caret line="426" column="52" selection-start-line="426" selection-start-column="52" selection-end-line="426" selection-end-column="52" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>

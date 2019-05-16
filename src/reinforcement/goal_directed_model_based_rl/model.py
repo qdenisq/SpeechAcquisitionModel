@@ -399,7 +399,7 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         return out_states, out_goals
 
 
-def init_weights_high_gain(m, gain=1):
+def init_weights_high_gain(m, gain=3):
     if type(m) == Linear:
         xavier_uniform_(m.weight, gain=gain)
 

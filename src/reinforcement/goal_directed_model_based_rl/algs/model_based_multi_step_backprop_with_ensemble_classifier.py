@@ -345,32 +345,41 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                 # train policy
                 ##############################################################
 
-                n_train_steps = round(
-                    self.replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
-                self.agent.train()
-                self.model_dynamics.eval()
-                for _ in range(n_train_steps):
-                    # train_step_i += 1
-                    s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
-
-                    self.actor_optim.zero_grad()
-                    actions_predicted = self.agent(s0_batch.float().to(self.device))
-                    # predict state if predicted actions will be applied
-                    s1_pred, s1_pred_std, s1_pred_ensmble = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
-                    # s1_pred = s1_pred_ensmble[0,:,:]
-                    actor_loss = torch.nn.SmoothL1Loss(reduction='none')(
-                        s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
-                        s0_batch[:, -env.goal_dim:].float().to(self.device))
-
-                    s1_pred_log_prob = Normal(s1_pred, s1_pred_std).log_prob(s1_pred).sum(dim=-1).exp()
-                    s1_pred_log_prob = torch.clamp(s1_pred_log_prob, max=1.0).detach()
-                    actor_loss = actor_loss * s1_pred_log_prob.unsqueeze(1)
-                    actor_loss = actor_loss.sum() / self.minibatch_size
-                    # action_penalty = 0.01 * torch.mean((actions_predicted**2))
-                    # actor_loss += action_penalty
-                    actor_loss.backward()
-                    torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
-                    self.actor_optim.step()
+                # n_train_steps = round(
+                #     self.replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
+                # self.agent.train()
+                # self.model_dynamics.eval()
+                #
+                # s1_pred_log_probs = []
+                # for _ in range(n_train_steps):
+                #     # train_step_i += 1
+                #     s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
+                #
+                #     self.actor_optim.zero_grad()
+                #     actions_predicted = self.agent(s0_batch.float().to(self.device))
+                #     # predict state if predicted actions will be applied
+                #     s1_pred, s1_pred_std, s1_pred_ensmble = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
+                #     # s1_pred = s1_pred_ensmble[0,:,:]
+                #     actor_loss = torch.nn.SmoothL1Loss(reduction='none')(
+                #         s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
+                #         s0_batch[:, -env.goal_dim:].float().to(self.device))
+                #
+                #     # s1_pred_log_prob = Normal(s1_pred, s1_pred_std).log_prob(s1_pred).sum(dim=-1).exp()
+                #
+                #     # TODO find tha way to scale density probability function
+                #     s1_pred_log_prob = (Normal(s1_pred, s1_pred_std).cdf(s1_pred + 5e-2) - Normal(s1_pred, s1_pred_std).cdf(s1_pred - 5e-2)).cumprod(dim=-1)
+                #
+                #
+                #
+                #     s1_pred_log_probs.append(s1_pred_log_prob.detach().cpu().numpy())
+                #     s1_pred_log_prob = torch.clamp(s1_pred_log_prob, max=1.0).detach()
+                #     actor_loss = actor_loss * s1_pred_log_prob.unsqueeze(1)
+                #     actor_loss = actor_loss.sum() / self.minibatch_size
+                #     # action_penalty = 0.01 * torch.mean((actions_predicted**2))
+                #     # actor_loss += action_penalty
+                #     actor_loss.backward()
+                #     torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
+                #     self.actor_optim.step()
 
                 # if episode < 50:
                 #     print(
@@ -382,77 +391,83 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                 #             res_step,
                 #             miss_max_idx))
                 #     continue
-                #
-                # n_train_steps = round(
-                #     self.replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
-                # self.agent.train()
-                # self.model_dynamics.eval()
-                #
-                # n_train_steps = 1
-                #
-                # for _ in range(n_train_steps):
-                #
-                #     cur_state = init_state
-                #     init_step = initital_cur_step
-                #
-                #     actor_loss = torch.Tensor([0.]*self.minibatch_size)
-                #
-                #     last_prob = torch.ones([self.minibatch_size])
-                #
-                #     for i in range(init_step, refs.shape[1] - 1):
-                #
-                #
-                #         action = self.agent(cur_state.to(self.device))
-                #
-                #         # predict state if predicted actions will be applied
-                #         next_state_pred, next_state_pred_std, _ = self.model_dynamics(cur_state.float().to(self.device), action)
-                #
-                #         next_state_pred_std = torch.clamp(next_state_pred_std, min=0.00001)
-                #         next_state_pred_sampled = Normal(next_state_pred, next_state_pred_std).rsample()
-                #         next_state_pred_sampled = torch.clamp(next_state_pred_sampled, min=-1.0, max=1.0)
-                #         next_state_log_prob = torch.clamp(Normal(next_state_pred, next_state_pred_std).log_prob(next_state_pred).sum(dim=-1), max=0. )
-                #         last_prob = last_prob * next_state_log_prob.exp().detach()
-                #         # if next_state_pred_std.mean() > 0.3:
-                #         #     break
-                #         # calc prob of next state
-                #
-                #         next_state_ref = refs[:, i+1, :]
-                #         next_state_pred_full = torch.cat((next_state_pred_sampled, next_state_ref), -1)
-                #
-                #         loss = torch.nn.SmoothL1Loss(reduction='none')(
-                #             next_state_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
-                #             cur_state[:, -env.goal_dim:]).mean(dim=-1) * last_prob
-                #
-                #         # loss = loss.mean()
-                #         # print(action.mean())
-                #         # print(next_state_pred.mean())
-                #         # print(next_state_pred_std.mean())
-                #         # print(loss)
-                #         # self.actor_optim.zero_grad()
-                #         # loss.backward()
-                #         # torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
-                #         # self.actor_optim.step()
-                #
-                #         # if torch.isnan(loss):
-                #         #     k = 123
-                #         actor_loss += loss
-                #         cur_state = next_state_pred_full.detach()
-                #
-                #
-                #     actor_loss = actor_loss.mean()
-                #     self.actor_optim.zero_grad()
-                #     actor_loss.backward()
-                #     torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
-                #     self.actor_optim.step()
+
+                n_train_steps = round(
+                    self.replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
+                self.agent.train()
+                self.model_dynamics.eval()
+
+                n_train_steps = n_train_steps
+                s1_pred_log_probs = []
+                avg_length = []
+                for _ in range(n_train_steps):
+
+                    cur_state = init_state
+                    init_step = initital_cur_step
+
+                    actor_loss = torch.Tensor([0.])
+
+                    last_prob = torch.ones([self.minibatch_size, 1])
+
+                    for i in range(init_step, refs.shape[1] - 1):
 
 
-                print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}| miss_max_idx {}".format(episode,
+                        action = self.agent(cur_state.to(self.device))
+
+                        # predict state if predicted actions will be applied
+                        next_state_pred, next_state_pred_std, _ = self.model_dynamics(cur_state.float().to(self.device), action)
+
+                        # next_state_pred_std = torch.clamp(next_state_pred_std, min=0.00001)
+                        next_state_pred_dist = Normal(next_state_pred, next_state_pred_std)
+                        # next_state_pred_sampled = torch.clamp(next_state_pred_sampled, min=-1.0, max=1.0)
+                        next_state_pred_prob = (next_state_pred_dist.cdf(next_state_pred + 5e-2)
+                                            - next_state_pred_dist.cdf(next_state_pred - 5e-2)).cumprod(dim=-1)
+                        last_prob = last_prob * next_state_pred_prob.detach()
+                        s1_pred_log_probs.append(last_prob.detach().cpu().numpy())
+                        if torch.mean(last_prob) < 5e-1:
+
+                            break
+
+                        next_state_ref = refs[:, i+1, :]
+                        next_state_pred_full = torch.cat((next_state_pred, next_state_ref), -1)
+
+                        loss = torch.nn.SmoothL1Loss(reduction='none')(
+                            next_state_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
+                            cur_state[:, -env.goal_dim:]) * last_prob
+
+                        loss = loss.sum() / self.minibatch_size
+                        # print(action.mean())
+                        # print(next_state_pred.mean())
+                        # print(next_state_pred_std.mean())
+                        # print(loss)
+                        # self.actor_optim.zero_grad()
+                        # loss.backward()
+                        # torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
+                        # self.actor_optim.step()
+
+                        # if torch.isnan(loss):
+                        #     k = 123
+                        actor_loss += loss
+                        cur_state = next_state_pred_full.detach()
+
+                    avg_length.append(i)
+
+                    # actor_loss = actor_loss.mean()
+                    if torch.min(actor_loss) > 1e-10:
+                        self.actor_optim.zero_grad()
+                        actor_loss.backward()
+                        torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
+                        self.actor_optim.step()
+
+                print(str(np.mean(np.array(avg_length))) + "   ", end='')
+                print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}| miss_max_idx {} | md_prob_mean {:.2f}".format(episode,
                                                                                                                               train_step_i,
                                                                                                                               md_loss.detach().cpu().numpy(),
                                                                                                                               actor_loss.detach().cpu().numpy().squeeze(),
                                                                                                                               score,
                                                                                                                               res_step,
-                                                                                                                              miss_max_idx))
+                                                                                                                              miss_max_idx,
+                                                                                                                                np.mean(np.array(s1_pred_log_probs))))
 
         print("Training finished. Result score: ", score)
         return scores
