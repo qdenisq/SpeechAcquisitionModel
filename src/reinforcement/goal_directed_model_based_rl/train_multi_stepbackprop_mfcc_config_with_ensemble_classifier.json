@@ -16,7 +16,7 @@
       "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "audio"
     ],
     "goal_parameters_selected": [
-      "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3", "audio"
+      "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "audio"
     ],
     "action_parameters_selected": [
       "HX", "HY", "JX", "JA", "LP", "LD", "VS", "VO", "WC", "TCX", "TCY", "TTX", "TTY", "TBX", "TBY", "TRX", "TRY", "TS1", "TS2", "TS3", "TS4", "MA1", "MA2", "MA3"
@@ -31,7 +31,7 @@
     }
   },
   "agent": {
-    "input_dim": 100,
+    "input_dim": 89,
     "action_dim": 24,
     "linear_layers_size": [
       512,
@@ -43,7 +43,7 @@
   },
   "model_dynamics": {
     "num_nets": 10,
-    "goal_dim": 50,
+    "goal_dim": 39,
     "state_dim": 50,
     "action_dim": 24,
     "linear_layers_size": [

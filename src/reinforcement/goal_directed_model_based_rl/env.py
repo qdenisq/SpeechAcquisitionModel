@@ -26,7 +26,7 @@ class VTLEnvPreprocAudio(VTLEnv):
         else:
             self.preproc_net = None
             self.audio_dim = self.preproc.get_dim()
-            self.audio_bound = [(-0.015, 0.015)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
+            self.audio_bound = [(-0.01, 0.01)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
 
         self.state_dim += self.audio_dim
         self.state_bound.extend(self.audio_bound)

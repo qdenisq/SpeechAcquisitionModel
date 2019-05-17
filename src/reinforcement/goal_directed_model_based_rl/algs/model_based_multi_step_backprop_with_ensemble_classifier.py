@@ -199,7 +199,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
             if episode % 10 == 0 and episode > 1 and self.replay_buffer.size() > 2 * self.minibatch_size:
                 n_audio = 26
                 n_artic = 24
-                n_artic_goal = 24
+                n_artic_goal = 13
 
                 # show fully predicted rollout given s0  and list of actions
                 pred_states = []
