@@ -32,8 +32,6 @@ class Logger(object):
         pass
 
 
-
-
 # Taken from https://github.com/openai/baselines/blob/master/baselines/ddpg/noise.py, which is
 # based on http://math.stackexchange.com/questions/1287634/implementing-ornstein-uhlenbeck-in-matlab
 class OrnsteinUhlenbeckActionNoise:
@@ -316,6 +314,13 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
 
                 sys.stdout.flush()
 
+            # save model
+            if episode % 50 == 0:
+                with open(video_dir + '/model_dynamics.pickle', 'wb') as f:
+                    torch.save(self.model_dynamics, f)
+                with open(video_dir + '/agent.pickle', 'wb') as f:
+                    torch.save(self.agent, f)
+
             if self.replay_buffer.size() > 2 * self.minibatch_size:
                 # train nets couple of times relative to the increase of replay buffer
                 n_train_steps = round(
@@ -421,11 +426,10 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                 #         next_state_pred_dist = Normal(next_state_pred, next_state_pred_std)
                 #         # next_state_pred_sampled = torch.clamp(next_state_pred_sampled, min=-1.0, max=1.0)
                 #         next_state_pred_prob = (next_state_pred_dist.cdf(next_state_pred + 5e-2)
-                #                             - next_state_pred_dist.cdf(next_state_pred - 5e-2)).cumprod(dim=-1)
-                #         last_prob = last_prob * next_state_pred_prob.detach()
+                #                             - next_state_pred_dist.cdf(next_state_pred - 5e-2)).cumprod(dim=-1)[:, -1]
+                #         last_prob = last_prob * next_state_pred_prob.detach().unsqueeze(1)
                 #         s1_pred_log_probs.append(last_prob.detach().cpu().numpy())
                 #         if torch.mean(last_prob) < 5e-1:
-                #
                 #             break
                 #
                 #         next_state_ref = refs[:, i+1, :]
@@ -460,8 +464,8 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                 #         torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
                 #         self.actor_optim.step()
                 #
-                # print(str(np.mean(np.array(avg_length))) + "   ", end='')
-                #
+                # print(f"| roll len{np.mean(np.array(avg_length)):.2f} ", end='')
+
 
                 print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}| miss_max_idx {} | md_prob_mean {:.2f}".format(episode,
                                                                                                                               train_step_i,
