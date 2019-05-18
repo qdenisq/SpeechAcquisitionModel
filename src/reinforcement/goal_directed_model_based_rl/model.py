@@ -353,8 +353,11 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
 
         self.drop = torch.nn.modules.Dropout(p=0.1)
 
-        self.artic_state_0 = Linear(self.__state_dim + self.__action_dim - self.__acoustic_dim, 64)
-        self.artic_state_1 = Linear(64, self.__state_dim - self.__acoustic_dim)
+        # self.artic_state_0 = Linear(self.__state_dim + self.__action_dim - self.__acoustic_dim, 64)
+        # self.artic_state_1 = Linear(64, self.__state_dim - self.__acoustic_dim)
+        self.artic_state_0 = Linear(self.__state_dim + self.__action_dim - self.__acoustic_dim, self.__state_dim - self.__acoustic_dim)
+        # self.artic_state_1 = Linear(64, )
+
 
         self.linears = ModuleList([Linear(input_size, self.__linears_size[0])])
         self.linears.extend(
@@ -380,7 +383,8 @@ class SimpleDeterministicModelDynamicsDeltaPredict(Module):
         # artic
         artic_x = x[:, :self.__state_dim - self.__acoustic_dim]
         actions_x = x[:, -self.__action_dim:]
-        artic_state_delta = self.artic_state_1(self.relu(self.artic_state_0(torch.cat((artic_x, actions_x), -1))))
+        # artic_state_delta = self.artic_state_1(self.relu(self.artic_state_0(torch.cat((artic_x, actions_x), -1))))
+        artic_state_delta = self.artic_state_0(torch.cat((artic_x, actions_x), -1))
 
         # acoustic
         for linear in self.linears:

@@ -81,6 +81,8 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
         self.noise_gamma = 1.0
         self.noise_decay = kwargs['noise_decay']
 
+        self.action_penalty = kwargs['action_penalty']
+
     def train(self, env, num_episodes, dir=None):
         """
         Train the agent to solve environment
@@ -199,7 +201,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
             if episode % 10 == 0 and episode > 1 and self.replay_buffer.size() > 2 * self.minibatch_size:
                 n_audio = 26
                 n_artic = 24
-                n_artic_goal = 13
+                n_artic_goal = 6
 
                 # show fully predicted rollout given s0  and list of actions
                 pred_states = []
@@ -380,8 +382,11 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                     s1_pred_log_prob = torch.clamp(s1_pred_log_prob, max=1.0).detach()
                     actor_loss = actor_loss * s1_pred_log_prob.unsqueeze(1)
                     actor_loss = actor_loss.sum() / self.minibatch_size
-                    # action_penalty = 0.01 * torch.mean((actions_predicted**2))
-                    # actor_loss += action_penalty
+
+                    # study this penalty
+                    action_penalty = self.action_penalty * torch.mean((actions_predicted**2))
+                    actor_loss += action_penalty
+
                     actor_loss.backward()
                     torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
                     self.actor_optim.step()
