@@ -258,14 +258,16 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         self.action_bound = np.array(self.action_bound)[np.array(self.action_mask)]
         self.goal_bound = np.array(self.goal_bound)[np.array(self.goal_mask)]
 
+        self.shift = kwargs['shift']
+
     def reset(self, state_to_reset=None, **kwargs):
         state_out = super(VTLEnvWithReferenceTransitionMasked, self).reset(state_to_reset)
 
 
         # skip first 3 steps due to weird clicking sound in the beginning
-        for i in range(3):
+        for i in range(self.shift):
             # self._hidden = None
-            reference_action = self.reference_actions[self.current_reference_idx][self.current_step ]
+            reference_action = self.reference_actions[self.current_reference_idx][self.current_step]
             state_out, reward, done, info = self.step(reference_action)
             # dif = self.references[self.current_reference_idx][i, 30:] - state_out[15:15+64]
             self.render()
@@ -297,7 +299,7 @@ class VTLEnvWithReferenceTransitionMasked(VTLEnvWithReferenceTransition):
         # update goal only after step, beacuse it changes current step
         goal = self.references[self.current_reference_idx][self.current_step + 1]
         done = False
-        if self.current_step >= self.references[self.current_reference_idx].shape[0] - 2:
+        if self.current_step >= self.references[self.current_reference_idx].shape[0] - self.shift + 1:
             done = True
         s_m_normed = self.normalize(np.array(state_out), np.array(self.original_state_bound[:self.original_goal_dim]))[
             self.state_mask[:self.original_goal_dim]]
@@ -325,6 +327,7 @@ class VTLEnvWithReferenceTransitionMaskedEntropyScore(VTLEnvWithReferenceTransit
         self.ensemble_hidden = None
         self.ref_class = None
 
+
     def reset(self, state_to_reset=None, **kwargs):
         state_out = super(VTLEnvWithReferenceTransitionMaskedEntropyScore, self).reset(state_to_reset)
 
@@ -332,7 +335,7 @@ class VTLEnvWithReferenceTransitionMaskedEntropyScore(VTLEnvWithReferenceTransit
 
         self.ensemble_classifier.eval()
         self.ensemble_hidden = None
-        preproc_audio = torch.from_numpy(np.array(ref[3:])[:, -self.audio_dim:]).float().to(self.device).view(1, len(ref)-3, -1)
+        preproc_audio = torch.from_numpy(np.array(ref[self.shift:])[:, -self.audio_dim:]).float().to(self.device).view(1, len(ref) - self.shift, -1)
         x, self.ensemble_hidden, lstm_out, pred_full = self.ensemble_classifier(preproc_audio,
                                                                                 seq_lens=np.array(
                                                                                     [preproc_audio.shape[1]]),
@@ -373,25 +376,16 @@ class VTLEnvWithReferenceTransitionMaskedEntropyScore(VTLEnvWithReferenceTransit
         entropy = -1 * (log_softmax * softmax).sum(dim=0)
         prob = softmax
 
-        # if self.ref_class is not None:
-        #     prob = softmax[self.ref_class]
-        # else:
-        #     prob = torch.Tensor([0])
-
-        diff = state_out - cur_goal
-        diff_1 = state_out - self.references[self.current_reference_idx][self.current_step + 1]
-
-        # update goal only after step, beacuse it changes current step
+       # update goal only after step, beacuse it changes current step
         goal = self.references[self.current_reference_idx][self.current_step + 1]
         done = False
-        if self.current_step >= self.references[self.current_reference_idx].shape[0] - 2:
+        if self.current_step >= self.references[self.current_reference_idx].shape[0] - self.shift + 1:
             done = True
             self.ensemble_hidden = None
         s_m_normed = self.normalize(np.array(state_out), np.array(self.original_state_bound[:self.original_goal_dim]))[
             self.state_mask[:self.original_goal_dim]]
         g_m_normed = self.normalize(np.array(goal)[self.goal_mask],
                                     np.array(self.original_state_bound[:self.original_goal_dim])[self.goal_mask])
-        reward = self._reward(s_m_normed, g_m_normed, action)
 
         reward = (prob, entropy)
 
@@ -403,11 +397,26 @@ class VTLEnvWithReferenceTransitionMaskedEntropyScore(VTLEnvWithReferenceTransit
     def _reward(self, state, goal, action):
 
         # extract
-
-
-
         res = np.exp(-1. * 50.0 * np.mean((state[self.state_goal_mask] - goal) ** 2))
         return res
 
     def get_current_reference(self):
-        return self.references[self.current_reference_idx][:, self.goal_mask]
+        return self.references[self.current_reference_idx][self.shift:, self.goal_mask]
+
+    def get_references(self, num_refs):
+        refs = np.array(random.choices(self.references, k=num_refs))
+        goals = refs[:, self.shift:, self.goal_mask]
+        init_states = np.concatenate((refs[:, self.shift-1, self.state_mask[:self.original_goal_dim]], goals[:, 0, :]), axis=-1)
+        ohe = None
+        return goals, ohe, init_states
+
+    def classify(self, x, hidden):
+        x, hidden, lstm_out, pred_full = self.ensemble_classifier(x,
+                                                                seq_lens=np.ones(x.shape[0]),
+                                                                hidden=hidden)
+        pred_full = torch.stack(pred_full)
+        log_softmax = (torch.nn.LogSoftmax(dim=-1)(pred_full)).mean(dim=0).squeeze()
+        softmax = (torch.nn.Softmax(dim=-1)(pred_full)).mean(dim=0).squeeze()
+        entropy = -1 * (log_softmax * softmax).sum(dim=0)
+        prob = softmax
+        return prob, entropy, hidden

@@ -3,6 +3,7 @@ from src.speech_classification.audio_processing import AudioPreprocessorFbank, S
 import torch.nn.functional as F
 import torch.nn as nn
 import torch
+import random
 
 import os
 import datetime
@@ -12,73 +13,6 @@ from python_speech_features import mfcc
 import scipy.io.wavfile as wav
 
 import numpy as np
-
-class ConvLstmNet(nn.Module):
-    def __init__(self, model_settings):
-        super(ConvLstmNet, self).__init__()
-        self.__n_window_height = model_settings['dct_coefficient_count']
-        self.__n_window_width = model_settings['window_size']
-        self.__n_window_sequence_length = model_settings['sequence_length']
-        self.__n_classes = model_settings['label_count']
-        self.__n_hidden_cells = model_settings['hidden_reccurent_cells_count']
-
-        self.__n_first_conv_filter_height = 21
-        self.__n_first_conv_filter_width = 9
-        self.__n_first_conv_depth = 1
-        self.__n_first_conv_channels = 64
-        k_size = (self.__n_first_conv_depth,
-                  self.__n_first_conv_filter_height,
-                  self.__n_first_conv_filter_width
-                  )
-        pad = (e // 2 for e in k_size)
-        padding = torch.nn.ReplicationPad3d(pad)
-        self.__first_conv = torch.nn.Conv3d(in_channels=1,
-                                            out_channels=self.__n_first_conv_channels,
-                                            kernel_size=k_size,
-                                            padding=padding,
-                                            stride=1)
-        self.__dropout_prob = 0.5
-        self.__first_dropout = torch.nn.Dropout(p=self.__dropout_prob)
-        self.__first_max_pool = torch.nn.MaxPool3d(kernel_size=(1, 2, 2, 1), stride=(1, 2, 2, 1))
-
-        self.__n_second_conv_filter_height = 10
-        self.__n_second_conv_filter_width = 4
-        self.__n_second_conv_filter_depth = 1
-        self.__n_second_conv_channels = 64
-        k_size = (self.__n_second_conv_depth,
-                  self.__n_second_conv_filter_height,
-                  self.__n_second_conv_filter_width
-                  )
-        pad = (e // 2 for e in k_size)
-        padding = torch.nn.ReplicationPad3d(pad)
-        self.__second_conv = torch.nn.Conv3d(in_channels=self.__n_first_conv_channels,
-                                             out_channels=self.__n_second_conv_channels,
-                                             kernel_size=k_size,
-                                             padding=padding,
-                                             stride=1)
-
-
-
-        self.__lstm = nn.LSTMCell(n_dim, n_hidden)
-        self.out = nn.Linear(n_hidden, n_out)
-
-    def forward(self, x, hidden=None):
-        # if hidden is None:
-        #     hidden = torch.zeros(x.size(0), self.n_hidden)
-
-        x = self.__first_conv(x)
-        x = torch.nn.ReLU(x)
-        x = self.__first_dropout(x)
-        x = self.__first_max_pool(x)
-
-        x = self.__second_conv(x)
-        x = torch.nn.ReLU(x)
-
-        x, hidden = self.l1(x, hidden)
-
-        x = self.out(x)
-        return x, hidden
-
 
 class LstmNet(nn.Module):
     def __init__(self, model_settings):
@@ -191,7 +125,7 @@ if __name__ == '__main__':
     optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 
     # configure training procedure
-    n_train_steps = 1000
+    n_train_steps = 5000
     n_mini_batch_size = 256
 
     for i in range(n_train_steps):
@@ -203,7 +137,7 @@ if __name__ == '__main__':
         labels = d['y']
         seq_lengths = d['seq_len']
         max_seq_len = seq_lengths[0]-2
-        seq_len = np.random.randint(1, max_seq_len)
+        seq_len = np.random.randint(10, max_seq_len)
         seq_lengths = np.array([seq_len] * len(seq_lengths))
         data = data[:, :seq_len, :]
 
@@ -218,18 +152,20 @@ if __name__ == '__main__':
         losses = []
         accs = []
         pred, hidden, _, _ = net(data, seq_lengths)
-        for p in pred:
-            optimizer.zero_grad()
-            # pred = torch.stack(pred)
-            # extend labels by number of nets
-            loss = torch.nn.CrossEntropyLoss()(p, labels)
-            loss.backward()
-            optimizer.step()
+        for e, p in enumerate(pred):
+            # train just a few nets on a single batch (this is similar to training each net with an individual seed)
+            if random.random() < 0.2 or (e == len(pred) - 1 and len(accs) == 0):
+                optimizer.zero_grad()
+                # pred = torch.stack(pred)
+                # extend labels by number of nets
+                loss = torch.nn.CrossEntropyLoss()(p, labels)
+                loss.backward()
+                optimizer.step()
 
-            losses.append(loss.detach())
+                losses.append(loss.detach())
 
-            acc = accuracy(p.detach().numpy(), labels.detach().numpy())
-            accs.append(acc)
+                acc = accuracy(p.detach().numpy(), labels.detach().numpy())
+                accs.append(acc)
         print("|train_step: {}| loss: {:.4f} std:{:.4f}| accuracy: {:.4f} std:{:.4f}|".format(i, np.mean(losses), np.std(losses), np.mean(accs), np.std(accs)))
         # validate each 100 train steps
         if i % 100 == 0:

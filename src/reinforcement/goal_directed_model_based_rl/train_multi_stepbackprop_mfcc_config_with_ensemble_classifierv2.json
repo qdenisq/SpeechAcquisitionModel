@@ -1,6 +1,6 @@
 {
   "env": {
-    "device": "cuda",
+    "device": "cpu",
     "seed": 1234,
     "audio_dim": 64,
     "shift": 3,
@@ -66,7 +66,7 @@
     "model_dynamics_lr": 0.001,
     "minibatch_size": 256,
     "rollouts_per_update": 10,
-    "virtual_rollouts_per_update": 10,
+    "virtual_rollouts_per_update": 150,
     "num_epochs_actor": 5,
     "num_epochs_critic": 10,
     "num_epochs_model_dynamics": 5,
