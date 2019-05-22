@@ -11,7 +11,11 @@ import torch
 from src.reinforcement.goal_directed_model_based_rl.replay_buffer import ReplayBuffer
 
 import matplotlib.pyplot as plt
-
+from matplotlib import rc
+rc('font',**{'family':'sans-serif','sans-serif':['Helvetica'], 'size': 10})
+## for Palatino and other serif fonts use:
+#rc('font',**{'family':'serif','serif':['Palatino']})
+rc('text', usetex=True)
 
 class Logger(object):
     def __init__(self, fname):
@@ -222,7 +226,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                     state_std = next_state_pred_std.detach().cpu().numpy().squeeze()
 
                 # Share a X axis with each column of subplots
-                fig, axes = plt.subplots(7, 2, figsize=(10, 20))
+                fig, axes = plt.subplots(7, 2, figsize=(5, 11))
                 cb = None
                 # plt.ion()
                 # plt.show()
@@ -231,37 +235,37 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
 
                 ep_states = env.normalize(np.array(ep_states), env.state_bound)
                 im0 = axes[0, 0].imshow(np.array(ep_states)[:, :n_artic].T, vmin=-1., vmax=1.)
-                axes[0, 0].set_title('rollout_artic')
+                axes[0, 0].set_title('rollout artic')
                 plt.colorbar(im0, ax=axes[0, 0])
 
                 im0 = axes[0, 1].imshow(np.array(ep_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
-                axes[0, 1].set_title('rollout_acoustic')
+                axes[0, 1].set_title('rollout acoustic')
                 plt.colorbar(im0, ax=axes[0, 1])
                 # im_pred = axes[1].imshow(np.array(ep_states_pred)[:, -n_audio:].T, vmin=vmin, vmax=vmax)
 
                 im_pred = axes[1, 0].imshow(np.array(pred_states)[:, :n_artic].T, vmin=-1., vmax=1.)
-                axes[1, 0].set_title('pred_rollout_artic')
+                axes[1, 0].set_title('pred rollout artic')
                 plt.colorbar(im_pred, ax=axes[1, 0])
 
                 im_pred = axes[1, 1].imshow(np.array(pred_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
-                axes[1, 1].set_title('pred_rollout_acoustic')
+                axes[1, 1].set_title('pred rollout acoustic')
                 plt.colorbar(im_pred, ax=axes[1, 1])
 
                 im_pred = axes[2, 0].imshow(np.array(pred_states_std)[:, :n_artic].T, vmax=1.)
-                axes[2, 0].set_title('pred_rollout_artic_std')
+                axes[2, 0].set_title('pred rollout artic std')
                 plt.colorbar(im_pred, ax=axes[2, 0])
 
                 im_pred = axes[2, 1].imshow(np.array(pred_states_std)[:, n_artic: n_artic+n_audio].T, vmax=1.)
-                axes[2, 1].set_title('pred_rollout_acoustic_std')
+                axes[2, 1].set_title('pred rollout acoustic std')
                 plt.colorbar(im_pred, ax=axes[2, 1])
 
                 if n_artic_goal > 0:
                     im1 = axes[3, 0].imshow(ep_states[:, -env.goal_dim: -env.goal_dim + n_artic_goal].T, vmin=-1., vmax=1.)
-                    axes[3, 0].set_title('reference_artic')
+                    axes[3, 0].set_title('reference artic')
                     plt.colorbar(im1, ax=axes[3, 0])
 
                 im1 = axes[3, 1].imshow(ep_states[:, -env.goal_dim + n_artic_goal:].T, vmin=-1., vmax=1.)
-                axes[3, 1].set_title('reference_acoustic')
+                axes[3, 1].set_title('reference acoustic')
                 plt.colorbar(im1, ax=axes[3, 1])
 
                 diff_img = np.abs(np.array([ep_states[i, -env.goal_dim:] - np.array(ep_states)[i + 1, :-env.goal_dim][env.state_goal_mask] for i in range(len(ep_states)-1)]))
@@ -270,11 +274,11 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
 
                 if n_artic_goal > 0:
                     im2 = axes[4, 0].imshow(np.array(diff_img_normed[:, :n_artic_goal].T))
-                    axes[4, 0].set_title('error_artic')
+                    axes[4, 0].set_title('error artic')
                     plt.colorbar(im2, ax=axes[4, 0])
 
                 im2 = axes[4, 1].imshow(np.array(diff_img_normed[:, -n_audio:].T))
-                axes[4, 1].set_title('error_acoustic')
+                axes[4, 1].set_title('error acoustic')
                 plt.colorbar(im2, ax=axes[4, 1])
 
                 pred_err_img = np.abs(np.array(
@@ -282,21 +286,21 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                      range(len(ep_states) - 1)]))
                 # diff_img_normed = env.normalize(diff_img.T, env.state_bound[:-env.goal_dim])
                 im3 = axes[5, 0].imshow(np.array(pred_err_img[:, :n_artic].T))
-                axes[5, 0].set_title('pred_error_artic')
+                axes[5, 0].set_title('pred error artic')
                 plt.colorbar(im3, ax=axes[5, 0])
 
                 im3 = axes[5, 1].imshow(np.array(pred_err_img[:, n_artic:n_artic + n_audio].T))
-                axes[5, 1].set_title('pred_error_acoustic')
+                axes[5, 1].set_title('pred error acoustic')
                 plt.colorbar(im3, ax=axes[5, 1])
 
                 im4 = axes[6, 0].imshow(np.array(probs).T, vmin=0., vmax=np.array(probs).T.max())
                 # axes[5, 1].ylim((0, 1.0))
-                axes[6, 0].set_title('pred_prob')
+                axes[6, 0].set_title('pred prob')
                 plt.colorbar(im4, ax=axes[6, 0])
 
                 im4 = axes[6, 1].plot(np.array(entropies))
                 axes[6, 1].set_ylim(bottom=0, top=np.array(entropies).max()+2)
-                axes[6, 1].set_title('pred_entropy')
+                axes[6, 1].set_title('pred entropy')
                 # plt.colorbar(im4, ax=axes[4, 1])
 
                 # if cb is None:
