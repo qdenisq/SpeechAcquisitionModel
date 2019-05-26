@@ -87,6 +87,8 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
 
         self.action_penalty = kwargs['action_penalty']
 
+        self.cdf_beta = kwargs['cdf_beta']
+
     def train(self, env, num_episodes, dir=None):
         """
         Train the agent to solve environment
@@ -194,6 +196,8 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                 pred_states_std = []
                 state = state0
                 state_std = np.zeros(env.state_dim - env.goal_dim)
+                pred_states_probs = []
+                pred_state_prob = 1.
                 for idx, a in enumerate(ep_actions):
                     state = env.normalize(state, env.state_bound)
 
@@ -202,13 +206,24 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                     state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
                     next_state_pred, next_state_pred_std, _ = self.model_dynamics(state_tensor,
                                                              torch.from_numpy(a).float().to(self.device).view(1, -1))
+
+                    next_state_distr = Normal(next_state_pred, next_state_pred_std)
+                    next_state_sampled_prob = (next_state_distr.cdf(next_state_pred + self.cdf_beta) - next_state_distr.cdf(
+                        next_state_pred - self.cdf_beta)).prod(dim=-1).detach().cpu().numpy().squeeze()
+                    pred_state_prob *= next_state_sampled_prob
+                    pred_states_probs.append(pred_state_prob)
+
                     next_state_pred = env.denormalize(next_state_pred.detach().cpu().numpy().squeeze(),
                                                       env.state_bound[:-env.goal_dim])
                     state = np.concatenate((next_state_pred, ep_states[idx][-env.goal_dim:]))
                     state_std = next_state_pred_std.detach().cpu().numpy().squeeze()
 
+
+
+
+
                 # Share a X axis with each column of subplots
-                fig, axes = plt.subplots(7, 2, figsize=(5, 11))
+                fig, axes = plt.subplots(8, 2, figsize=(5, 13))
                 cb = None
                 # plt.ion()
                 # plt.show()
@@ -285,6 +300,9 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                 axes[6, 1].set_title('pred entropy')
                 # plt.colorbar(im4, ax=axes[4, 1])
 
+                axes[7, 1].plot(np.array(pred_states_probs))
+                axes[7, 1].set_ylim(bottom=0, top=1.2)
+                axes[7, 1].set_title('pred state probability')
                 # if cb is None:
                 # cb = plt.colorbar(im0, ax=axes[0, 1])
                 # plt.colorbar(im_pred, ax=axes[1, 1])
@@ -321,18 +339,21 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                     train_step_i += 1
                     s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
 
-                    self.model_dynamics_optim.zero_grad()
+
                     s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
                     md_loss = torch.nn.SmoothL1Loss(reduce=False)(s1_pred_ensemble,
                                                                      s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
-                    md_loss = md_loss.sum() / self.minibatch_size
+
+
+                    for md_idx in range(md_loss.shape[0]):
+                        single_md_loss = md_loss[md_idx, :, :].sum() / self.minibatch_size
 
                     # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
 
-
-                    md_loss.backward()
-                    torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
-                    self.model_dynamics_optim.step()
+                        self.model_dynamics_optim.zero_grad()
+                        single_md_loss.backward(retain_graph=True)
+                        torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
+                        self.model_dynamics_optim.step()
 
                 ##############################################################
                 # train policy
@@ -408,8 +429,8 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                     next_state_distr = Normal(next_state_pred, next_state_pred_std)
                     # next_state_sampled = next_state_distr.sample()
                     next_state_sampled = next_state_pred
-                    next_state_sampled_prob = (next_state_distr.cdf(next_state_sampled + 5e-2) - next_state_distr.cdf(
-                        next_state_sampled - 5e-2)).cumprod(dim=-1)[:, -1]
+                    next_state_sampled_prob = (next_state_distr.cdf(next_state_sampled + self.cdf_beta) - next_state_distr.cdf(
+                        next_state_sampled - self.cdf_beta)).prod(dim=-1)
                     state_probability = state_probability * next_state_sampled_prob
                     state_probabilities.append(state_probability)
                     next_state_ref = torch.from_numpy(refs[:, v_i + 1, :]).float().to(self.device)
@@ -424,7 +445,6 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                         replay_buffer.add((state[s_i].detach().cpu().numpy(),
                                            state_probability[s_i].detach().cpu().numpy(),
                                            0))
-
 
                 # train
                 n_train_steps = round(replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
@@ -447,10 +467,10 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
 
                     # s1_pred_log_prob = Normal(s1_pred, s1_pred_std).log_prob(s1_pred).sum(dim=-1).exp()
 
-                    s1_pred_prob = (Normal(s1_pred, s1_pred_std).cdf(s1_pred + 5e-2) - Normal(s1_pred, s1_pred_std).cdf(s1_pred - 5e-2)).cumprod(dim=-1)[:, -1]
+                    s1_pred_prob = (Normal(s1_pred, s1_pred_std).cdf(s1_pred + self.cdf_beta) - Normal(s1_pred, s1_pred_std).cdf(s1_pred - self.cdf_beta)).prod(dim=-1)
                     s1_pred_prob = s1_pred_prob * s0_prob
 
-                    s1_pred_log_probs.append(s1_pred_prob.detach().cpu().numpy())
+                    s1_pred_log_probs.append(s1_pred_prob.detach().cpu().numpy().squeeze())
                     actor_loss = actor_loss * s1_pred_prob.detach().unsqueeze(1)
                     actor_loss = actor_loss.sum() / self.minibatch_size
                     if torch.isnan(actor_loss):
@@ -476,7 +496,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
 
                 print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}| miss_max_idx {} | md_prob_mean {:.2f}".format(episode,
                                                                                                                               train_step_i,
-                                                                                                                              md_loss.detach().cpu().numpy(),
+                                                                                                                              np.mean(md_loss.detach().cpu().numpy()),
                                                                                                                               actor_loss.detach().cpu().numpy().squeeze(),
                                                                                                                               score,
                                                                                                                               res_step,

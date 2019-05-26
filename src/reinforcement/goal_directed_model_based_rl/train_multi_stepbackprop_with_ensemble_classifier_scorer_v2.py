@@ -19,7 +19,7 @@ def train(*args, **kwargs):
 
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
     # writer = tf.summary.FileWriter(settings['summary_dir'] + '/summary_md_' + dt, sess.graph)
-    video_dir = kwargs['mbbackprop']['videos_dir'] + '/video_ensemble_multi_step_' + dt
+    video_dir = kwargs['mbbackprop']['videos_dir'] + '/video_ensemble_multi_step_V2_' + dt
     try:
         os.makedirs(video_dir)
     except:

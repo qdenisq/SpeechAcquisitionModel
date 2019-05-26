@@ -84,6 +84,8 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
         self.videos_dir = kwargs['videos_dir']
         self.noise_gamma = 1.0
         self.noise_decay = kwargs['noise_decay']
+        self.cdf_beta = kwargs['cdf_beta']
+
 
         self.action_penalty = kwargs['action_penalty']
 
@@ -212,6 +214,8 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                 pred_states_std = []
                 state = state0
                 state_std = np.zeros(env.state_dim - env.goal_dim)
+                pred_states_probs = []
+                pred_state_prob = 1.
                 for idx, a in enumerate(ep_actions):
                     state = env.normalize(state, env.state_bound)
 
@@ -220,13 +224,21 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                     state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
                     next_state_pred, next_state_pred_std, _ = self.model_dynamics(state_tensor,
                                                              torch.from_numpy(a).float().to(self.device).view(1, -1))
+
+                    next_state_distr = Normal(next_state_pred, next_state_pred_std)
+                    next_state_sampled_prob = (
+                                next_state_distr.cdf(next_state_pred + self.cdf_beta) - next_state_distr.cdf(
+                            next_state_pred - self.cdf_beta)).prod(dim=-1).detach().cpu().numpy().squeeze()
+                    pred_state_prob *= next_state_sampled_prob
+                    pred_states_probs.append(pred_state_prob)
+
                     next_state_pred = env.denormalize(next_state_pred.detach().cpu().numpy().squeeze(),
                                                       env.state_bound[:-env.goal_dim])
                     state = np.concatenate((next_state_pred, ep_states[idx][-env.goal_dim:]))
                     state_std = next_state_pred_std.detach().cpu().numpy().squeeze()
 
                 # Share a X axis with each column of subplots
-                fig, axes = plt.subplots(7, 2, figsize=(5, 11))
+                fig, axes = plt.subplots(8, 2, figsize=(5, 13))
                 cb = None
                 # plt.ion()
                 # plt.show()
@@ -303,6 +315,10 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                 axes[6, 1].set_title('pred entropy')
                 # plt.colorbar(im4, ax=axes[4, 1])
 
+                axes[7, 1].plot(np.array(pred_states_probs))
+                axes[7, 1].set_ylim(bottom=0, top=1.2)
+                axes[7, 1].set_title('pred state probability')
+
                 # if cb is None:
                 # cb = plt.colorbar(im0, ax=axes[0, 1])
                 # plt.colorbar(im_pred, ax=axes[1, 1])
@@ -339,18 +355,35 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                     train_step_i += 1
                     s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
 
-                    self.model_dynamics_optim.zero_grad()
-                    s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
+                    # self.model_dynamics_optim.zero_grad()
+                    # s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
+                    # md_loss = torch.nn.SmoothL1Loss(reduce=False)(s1_pred_ensemble,
+                    #                                                  s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
+                    # md_loss = md_loss.sum() / self.minibatch_size
+                    #
+                    # # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
+                    #
+                    #
+                    # md_loss.backward()
+                    # torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
+                    # self.model_dynamics_optim.step()
+
+                    s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device),
+                                                                       a_batch.float().to(self.device))
                     md_loss = torch.nn.SmoothL1Loss(reduce=False)(s1_pred_ensemble,
-                                                                     s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
-                    md_loss = md_loss.sum() / self.minibatch_size
+                                                                  s1_batch[:, :-env.goal_dim].float().to(
+                                                                      self.device).repeat(s1_pred_ensemble.shape[0], 1,
+                                                                                          1))
 
-                    # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
+                    for md_idx in range(md_loss.shape[0]):
+                        single_md_loss = md_loss[md_idx, :, :].sum() / self.minibatch_size
 
+                        # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
 
-                    md_loss.backward()
-                    torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
-                    self.model_dynamics_optim.step()
+                        self.model_dynamics_optim.zero_grad()
+                        single_md_loss.backward(retain_graph=True)
+                        torch.nn.utils.clip_grad_norm_(self.model_dynamics.nets[md_idx].parameters(), self.clip_grad)
+                        self.model_dynamics_optim.step()
 
                 ##############################################################
                 # train policy
@@ -378,7 +411,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                     # s1_pred_log_prob = Normal(s1_pred, s1_pred_std).log_prob(s1_pred).sum(dim=-1).exp()
 
                     # TODO find tha way to scale density probability function
-                    s1_pred_log_prob = (Normal(s1_pred, s1_pred_std).cdf(s1_pred + 5e-2) - Normal(s1_pred, s1_pred_std).cdf(s1_pred - 5e-2)).cumprod(dim=-1)[:, -1]
+                    s1_pred_log_prob = (Normal(s1_pred, s1_pred_std).cdf(s1_pred + self.cdf_beta) - Normal(s1_pred, s1_pred_std).cdf(s1_pred - self.cdf_beta)).prod(dim=-1)
 
 
 
@@ -388,7 +421,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                     actor_loss = actor_loss.sum() / self.minibatch_size
 
                     # study this penalty
-                    action_penalty = self.action_penalty * torch.mean((actions_predicted**2))
+                    action_penalty = self.action_penalty * torch.mean(torch.abs(actions_predicted))
                     actor_loss += action_penalty
 
                     actor_loss.backward()
@@ -478,7 +511,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
 
                 print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}| miss_max_idx {} | md_prob_mean {:.2f}".format(episode,
                                                                                                                               train_step_i,
-                                                                                                                              md_loss.detach().cpu().numpy(),
+                                                                                                                              md_loss.mean().detach().cpu().numpy(),
                                                                                                                               actor_loss.detach().cpu().numpy().squeeze(),
                                                                                                                               score,
                                                                                                                               res_step,
