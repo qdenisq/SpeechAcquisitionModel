@@ -263,11 +263,11 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                 axes[1, 1].set_title('pred rollout acoustic')
                 plt.colorbar(im_pred, ax=axes[1, 1])
 
-                im_pred = axes[2, 0].imshow(np.array(pred_states_std)[:, :n_artic].T, vmax=1.)
+                im_pred = axes[2, 0].imshow(np.array(pred_states_std)[:, :n_artic].T)
                 axes[2, 0].set_title('pred rollout artic std')
                 plt.colorbar(im_pred, ax=axes[2, 0])
 
-                im_pred = axes[2, 1].imshow(np.array(pred_states_std)[:, n_artic: n_artic+n_audio].T, vmax=1.)
+                im_pred = axes[2, 1].imshow(np.array(pred_states_std)[:, n_artic: n_artic+n_audio].T)
                 axes[2, 1].set_title('pred rollout acoustic std')
                 plt.colorbar(im_pred, ax=axes[2, 1])
 
@@ -355,35 +355,35 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
                     train_step_i += 1
                     s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
 
-                    # self.model_dynamics_optim.zero_grad()
-                    # s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
+                    self.model_dynamics_optim.zero_grad()
+                    s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
+                    md_loss = torch.nn.L1Loss(reduce=False)(s1_pred_ensemble,
+                                                                     s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
+                    md_loss = md_loss.sum() / self.minibatch_size
+
+                    # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
+
+
+                    md_loss.backward()
+                    torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
+                    self.model_dynamics_optim.step()
+
+                    # s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device),
+                    #                                                    a_batch.float().to(self.device))
                     # md_loss = torch.nn.SmoothL1Loss(reduce=False)(s1_pred_ensemble,
-                    #                                                  s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
-                    # md_loss = md_loss.sum() / self.minibatch_size
+                    #                                               s1_batch[:, :-env.goal_dim].float().to(
+                    #                                                   self.device).repeat(s1_pred_ensemble.shape[0], 1,
+                    #                                                                       1))
                     #
-                    # # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
+                    # for md_idx in range(md_loss.shape[0]):
+                    #     single_md_loss = md_loss[md_idx, :, :].sum() / self.minibatch_size
                     #
+                    #     # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
                     #
-                    # md_loss.backward()
-                    # torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
-                    # self.model_dynamics_optim.step()
-
-                    s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device),
-                                                                       a_batch.float().to(self.device))
-                    md_loss = torch.nn.SmoothL1Loss(reduce=False)(s1_pred_ensemble,
-                                                                  s1_batch[:, :-env.goal_dim].float().to(
-                                                                      self.device).repeat(s1_pred_ensemble.shape[0], 1,
-                                                                                          1))
-
-                    for md_idx in range(md_loss.shape[0]):
-                        single_md_loss = md_loss[md_idx, :, :].sum() / self.minibatch_size
-
-                        # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
-
-                        self.model_dynamics_optim.zero_grad()
-                        single_md_loss.backward(retain_graph=True)
-                        torch.nn.utils.clip_grad_norm_(self.model_dynamics.nets[md_idx].parameters(), self.clip_grad)
-                        self.model_dynamics_optim.step()
+                    #     self.model_dynamics_optim.zero_grad()
+                    #     single_md_loss.backward(retain_graph=True)
+                    #     torch.nn.utils.clip_grad_norm_(self.model_dynamics.nets[md_idx].parameters(), self.clip_grad)
+                    #     self.model_dynamics_optim.step()
 
                 ##############################################################
                 # train policy
@@ -412,8 +412,6 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifier:
 
                     # TODO find tha way to scale density probability function
                     s1_pred_log_prob = (Normal(s1_pred, s1_pred_std).cdf(s1_pred + self.cdf_beta) - Normal(s1_pred, s1_pred_std).cdf(s1_pred - self.cdf_beta)).prod(dim=-1)
-
-
 
                     s1_pred_log_probs.append(s1_pred_log_prob.detach().cpu().numpy())
                     s1_pred_log_prob = torch.clamp(s1_pred_log_prob, max=1.0).detach()

@@ -7,6 +7,7 @@ import datetime
 import sys
 from torch.distributions import Normal
 
+import copy
 import torch
 from src.reinforcement.goal_directed_model_based_rl.replay_buffer import ReplayBuffer
 
@@ -248,11 +249,11 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                 axes[1, 1].set_title('pred rollout acoustic')
                 plt.colorbar(im_pred, ax=axes[1, 1])
 
-                im_pred = axes[2, 0].imshow(np.array(pred_states_std)[:, :n_artic].T, vmax=1.)
+                im_pred = axes[2, 0].imshow(np.array(pred_states_std)[:, :n_artic].T)
                 axes[2, 0].set_title('pred rollout artic std')
                 plt.colorbar(im_pred, ax=axes[2, 0])
 
-                im_pred = axes[2, 1].imshow(np.array(pred_states_std)[:, n_artic: n_artic+n_audio].T, vmax=1.)
+                im_pred = axes[2, 1].imshow(np.array(pred_states_std)[:, n_artic: n_artic+n_audio].T)
                 axes[2, 1].set_title('pred rollout acoustic std')
                 plt.colorbar(im_pred, ax=axes[2, 1])
 
@@ -339,21 +340,34 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                     train_step_i += 1
                     s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
 
-
+                    self.model_dynamics_optim.zero_grad()
                     s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
-                    md_loss = torch.nn.SmoothL1Loss(reduce=False)(s1_pred_ensemble,
+                    md_loss = torch.nn.L1Loss(reduce=False)(s1_pred_ensemble,
                                                                      s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
-
-
-                    for md_idx in range(md_loss.shape[0]):
-                        single_md_loss = md_loss[md_idx, :, :].sum() / self.minibatch_size
+                    md_loss = md_loss.sum() / self.minibatch_size
 
                     # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
 
-                        self.model_dynamics_optim.zero_grad()
-                        single_md_loss.backward(retain_graph=True)
-                        torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
-                        self.model_dynamics_optim.step()
+
+                    md_loss.backward()
+                    torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
+                    self.model_dynamics_optim.step()
+
+
+                    # s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
+                    # md_loss = torch.nn.L1Loss(reduce=False)(s1_pred_ensemble,
+                    #                                                  s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
+                    #
+                    #
+                    # for md_idx in range(md_loss.shape[0]):
+                    #     single_md_loss = md_loss[md_idx, :, :].sum() / self.minibatch_size
+                    #
+                    # # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
+                    #
+                    #     self.model_dynamics_optim.zero_grad()
+                    #     single_md_loss.backward(retain_graph=True)
+                    #     torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
+                    #     self.model_dynamics_optim.step()
 
                 ##############################################################
                 # train policy
@@ -403,7 +417,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                 self.agent.eval()
                 self.model_dynamics.eval()
 
-                replay_buffer = ReplayBuffer(self.num_virtual_rollouts_per_update * 20)
+                replay_buffer = ReplayBuffer(self.num_virtual_rollouts_per_update * 30)
 
                 refs, _, init_states = env.get_references(self.num_virtual_rollouts_per_update)
 
@@ -418,17 +432,19 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                 state_goal_mask = torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()
                 state_probability = torch.ones(self.num_virtual_rollouts_per_update)
                 state_probabilities = [state_probability]
-                for s_i in range(self.num_rollouts_per_update):
-                    replay_buffer.add((state[s_i].detach().cpu().numpy(),
-                                       state_probability[s_i].detach().cpu().numpy(),
+                for s_i in range(self.num_virtual_rollouts_per_update):
+                    s = copy.deepcopy(state[s_i].detach().cpu().numpy())
+                    p_s = copy.deepcopy(state_probability[s_i].detach().cpu().numpy())
+                    replay_buffer.add((s,
+                                       p_s,
                                        0))
 
                 for v_i in range(refs.shape[1] - 1):
                     action = self.agent(state)
                     next_state_pred, next_state_pred_std, _ = self.model_dynamics(state, action)
                     next_state_distr = Normal(next_state_pred, next_state_pred_std)
-                    # next_state_sampled = next_state_distr.sample()
-                    next_state_sampled = next_state_pred
+                    next_state_sampled = next_state_distr.sample()
+                    # next_state_sampled = next_state_pred
                     next_state_sampled_prob = (next_state_distr.cdf(next_state_sampled + self.cdf_beta) - next_state_distr.cdf(
                         next_state_sampled - self.cdf_beta)).prod(dim=-1)
                     state_probability = state_probability * next_state_sampled_prob
@@ -441,9 +457,11 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
 
                     # TODO: classify hidden
 
-                    for s_i in range(self.num_rollouts_per_update):
-                        replay_buffer.add((state[s_i].detach().cpu().numpy(),
-                                           state_probability[s_i].detach().cpu().numpy(),
+                    for s_i in range(self.num_virtual_rollouts_per_update):
+                        s = copy.deepcopy(state[s_i].detach().cpu().numpy())
+                        p_s = copy.deepcopy(state_probability[s_i].detach().cpu().numpy())
+                        replay_buffer.add((s,
+                                           p_s,
                                            0))
 
                 # train
@@ -478,7 +496,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                     actor_loss = actor_loss
                     # study this penalty
                     action_penalty = self.action_penalty * torch.mean(torch.abs(actions_predicted))
-                    # actor_loss += action_penalty
+                    actor_loss += action_penalty
                     # old_weights = self.agent.bn.weight.data.numpy()
                     # old_bias = self.agent.bn.bias.data.numpy()
                     self.actor_optim.zero_grad()
