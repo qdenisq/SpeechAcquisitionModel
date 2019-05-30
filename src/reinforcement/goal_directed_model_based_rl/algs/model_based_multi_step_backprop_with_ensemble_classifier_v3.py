@@ -146,6 +146,11 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
 
             probs = []
             entropies = []
+
+            reference_probs = []
+            reference_entropies = []
+            reference_classify_hidden = None
+
             while True:
                 state_tensor = torch.from_numpy(state).float().to(self.device).view(1, -1)
                 action = self.agent(state_tensor).detach().cpu().numpy().squeeze()
@@ -153,6 +158,12 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
                 ep_actions.append(action)
                 action_denorm = env.denormalize(action, env.action_bound)
                 next_state, reward, done, _ = env.step(action_denorm)
+
+                # reference classify
+                sound_ref = env.get_current_reference()[step, -env.audio_dim:]
+                ref_prob, ref_entropy, reference_classify_hidden = env.classify(torch.from_numpy(sound_ref).float().to(self.device).view(1,1,-1), reference_classify_hidden)
+                reference_probs.append(ref_prob.detach().cpu().numpy())
+                reference_entropies.append(ref_entropy.detach().cpu().numpy())
 
                 if isinstance(reward, float):
                     probs.append(0)
@@ -194,6 +205,9 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
                     break
                 state = next_state
                 step += 1
+
+
+
 
             if episode % 10 != 0:
                 self.replay_buffer.add((states, actions, next_states, dones))
@@ -241,7 +255,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
 
 
                 # Share a X axis with each column of subplots
-                fig, axes = plt.subplots(8, 2, figsize=(5, 13))
+                fig, axes = plt.subplots(9, 2, figsize=(5, 17))
                 cb = None
                 # plt.ion()
                 # plt.show()
@@ -310,17 +324,30 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
 
                 im4 = axes[6, 0].imshow(np.array(probs).T, vmin=0., vmax=np.array(probs).T.max())
                 # axes[5, 1].ylim((0, 1.0))
-                axes[6, 0].set_title('pred prob')
+                axes[6, 0].set_title('classify prob')
                 plt.colorbar(im4, ax=axes[6, 0])
 
                 im4 = axes[6, 1].plot(np.array(entropies))
                 axes[6, 1].set_ylim(bottom=0, top=np.array(entropies).max()+2)
-                axes[6, 1].set_title('pred entropy')
+                axes[6, 1].set_title('classify entropy')
                 # plt.colorbar(im4, ax=axes[4, 1])
 
                 axes[7, 1].plot(np.array(pred_states_probs))
                 axes[7, 1].set_ylim(bottom=0, top=1.2)
                 axes[7, 1].set_title('pred state probability')
+
+                im = axes[8, 0].imshow(np.array(reference_probs).T, vmin=0., vmax=np.array(reference_probs).T.max())
+                # axes[5, 1].ylim((0, 1.0))
+                axes[8, 0].set_title('classify ref prob')
+                plt.colorbar(im, ax=axes[8, 0])
+
+                im = axes[8, 1].plot(np.array(reference_entropies).T)
+                axes[8, 1].set_ylim(bottom=0, top=np.array(reference_entropies).max()+2)
+                # axes[5, 1].ylim((0, 1.0))
+                axes[8, 1].set_title('classify ref entropy')
+
+
+
                 # if cb is None:
                 # cb = plt.colorbar(im0, ax=axes[0, 1])
                 # plt.colorbar(im_pred, ax=axes[1, 1])
@@ -382,126 +409,14 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
                                                             s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
                     md_loss = md_loss.sum() / s0_batch.shape[0]
 
-                    # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
-
-
                     md_loss.backward()
                     torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
                     self.model_dynamics_optim.step()
-
-
-                    # s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
-                    # md_loss = torch.nn.L1Loss(reduce=False)(s1_pred_ensemble,
-                    #                                                  s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
-                    #
-                    #
-                    # for md_idx in range(md_loss.shape[0]):
-                    #     single_md_loss = md_loss[md_idx, :, :].sum() / self.minibatch_size
-                    #
-                    # # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
-                    #
-                    #     self.model_dynamics_optim.zero_grad()
-                    #     single_md_loss.backward(retain_graph=True)
-                    #     torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), self.clip_grad)
-                    #     self.model_dynamics_optim.step()
 
                 ##############################################################
                 # train policy
                 ##############################################################
 
-                # n_train_steps = round(
-                #     self.replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
-                # self.agent.train()
-                # self.model_dynamics.eval()
-                #
-                # s1_pred_log_probs = []
-                # for _ in range(n_train_steps):
-                #     # train_step_i += 1
-                #     s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
-                #
-                #     self.actor_optim.zero_grad()
-                #     actions_predicted = self.agent(s0_batch.float().to(self.device))
-                #     # predict state if predicted actions will be applied
-                #     s1_pred, s1_pred_std, s1_pred_ensmble = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
-                #     # s1_pred = s1_pred_ensmble[0,:,:]
-                #     actor_loss = torch.nn.SmoothL1Loss(reduction='none')(
-                #         s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
-                #         s0_batch[:, -env.goal_dim:].float().to(self.device))
-                #
-                #     # s1_pred_log_prob = Normal(s1_pred, s1_pred_std).log_prob(s1_pred).sum(dim=-1).exp()
-                #
-                #     s1_pred_log_prob = (Normal(s1_pred, s1_pred_std).cdf(s1_pred + 5e-2) - Normal(s1_pred, s1_pred_std).cdf(s1_pred - 5e-2)).cumprod(dim=-1)[:, -1]
-                #
-                #
-                #
-                #     s1_pred_log_probs.append(s1_pred_log_prob.detach().cpu().numpy())
-                #     s1_pred_log_prob = torch.clamp(s1_pred_log_prob, max=1.0).detach()
-                #     actor_loss = actor_loss * s1_pred_log_prob.unsqueeze(1)
-                #     actor_loss = actor_loss.sum() / self.minibatch_size
-                #
-                #     # study this penalty
-                #     action_penalty = self.action_penalty * torch.mean((actions_predicted**2))
-                #     actor_loss += action_penalty
-                #
-                #     actor_loss.backward()
-                #     torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
-                #     self.actor_optim.step()
-
-                # policy update V2
-
-
-                # self.agent.eval()
-                # self.model_dynamics.eval()
-                #
-                # replay_buffer = ReplayBuffer(self.num_virtual_rollouts_per_update * 30)
-                #
-                # refs, _, init_states = env.get_references(self.num_virtual_rollouts_per_update)
-                #
-                # init_states = env.normalize(init_states, env.state_bound)
-                # refs_shape = refs.shape
-                # refs = refs.reshape(-1, refs_shape[-1])
-                # refs = env.normalize(refs, env.goal_bound)
-                # refs = refs.reshape(refs_shape)
-                # # collect
-                # state = torch.from_numpy(init_states).float().to(self.device)
-                # classify_hidden = None
-                # state_goal_mask = torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()
-                # state_probability = torch.ones(self.num_virtual_rollouts_per_update)
-                # state_probabilities = [state_probability]
-                # for s_i in range(self.num_virtual_rollouts_per_update):
-                #     s = copy.deepcopy(state[s_i].detach().cpu().numpy())
-                #     p_s = copy.deepcopy(state_probability[s_i].detach().cpu().numpy())
-                #     replay_buffer.add((s,
-                #                        p_s,
-                #                        0))
-                #
-                # for v_i in range(refs.shape[1] - 1):
-                #     action = self.agent(state)
-                #     next_state_pred, next_state_pred_std, _ = self.model_dynamics(state, action)
-                #     next_state_distr = Normal(next_state_pred, next_state_pred_std)
-                #     next_state_sampled = next_state_distr.sample()
-                #     # next_state_sampled = next_state_pred
-                #     next_state_sampled_prob = (next_state_distr.cdf(next_state_sampled + self.cdf_beta) - next_state_distr.cdf(
-                #         next_state_sampled - self.cdf_beta)).prod(dim=-1)
-                #     state_probability = state_probability * next_state_sampled_prob
-                #     state_probabilities.append(state_probability)
-                #     next_state_ref = torch.from_numpy(refs[:, v_i + 1, :]).float().to(self.device)
-                #     state = torch.cat((next_state_sampled, next_state_ref), -1)
-                #
-                #     next_state_acoustic = next_state_sampled[:, state_goal_mask][:, -env.audio_dim:].unsqueeze_(1)
-                #     classify_out, classify_enthropy, classify_hidden = env.classify(next_state_acoustic, classify_hidden)
-                #
-                #     # TODO: classify hidden
-                #
-                #     for s_i in range(self.num_virtual_rollouts_per_update):
-                #         s = copy.deepcopy(state[s_i].detach().cpu().numpy())
-                #         p_s = copy.deepcopy(state_probability[s_i].detach().cpu().numpy())
-                #         replay_buffer.add((s,
-                #                            p_s,
-                #                            0))
-                #
-                # # train
-                # n_train_steps = round(replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
                 self.model_dynamics.eval()
 
                 s0_batch, a_batch, s1_batch, dones_batch = self.replay_buffer.sample_batch(self.replay_buffer.size())
@@ -566,20 +481,10 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
                     # study this penalty
                     action_penalty = self.action_penalty * torch.mean(torch.abs(actions_predicted))
                     # actor_loss += action_penalty
-                    # old_weights = self.agent.bn.weight.data.numpy()
-                    # old_bias = self.agent.bn.bias.data.numpy()
                     self.actor_optim.zero_grad()
                     actor_loss.backward()
-                    # print("weight grads: ", self.agent.bn.weight.grad)
-                    # print("bias grads: ", self.agent.bn.bias.grad)
-                    if torch.isnan(self.agent.bn.weight.grad.mean()):
-                        k=9
                     torch.nn.utils.clip_grad_norm_(self.agent.parameters(), self.clip_grad)
                     self.actor_optim.step()
-                    # print("loss: ", actor_loss.detach().cpu().numpy())
-                    # print("weight: ", (old_weights - self.agent.bn.weight.data.numpy()).mean())
-                    # print("bias: ", (old_bias - self.agent.bn.bias.data.numpy()).mean())
-                    # print("action: ", actions_predicted.detach().cpu().numpy().mean())
 
                 print("|episode: {}| train step: {}| model_dynamics loss: {:.8f}| policy loss: {:.5f}| score:{:.2f} | steps {}| miss_max_idx {} | md_prob_mean {:.2f}".format(episode,
                                                                                                                               train_step_i,
