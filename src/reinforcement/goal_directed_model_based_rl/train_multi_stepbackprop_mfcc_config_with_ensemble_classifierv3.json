@@ -4,7 +4,7 @@
     "seed": 1234,
     "audio_dim": 64,
     "shift": 3,
-    "ensemble_speech_classifier": "",
+    "ensemble_speech_classifier": "C:/Study/SpeechAcquisitionModel/models/speech_classification/simple_lstm_05_03_2019_09_33_PM_acc_0.8750.pt",
     "reference_fnames": [
       "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_1.pkl",
       "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl"
@@ -64,7 +64,7 @@
     "actor_lr": 0.001,
     "critic_lr": 0.001,
     "model_dynamics_lr": 0.001,
-    "minibatch_size": 6,
+    "minibatch_size": 256,
     "rollouts_per_update": 50,
     "virtual_rollouts_per_update": 30,
     "num_epochs_actor": 5,

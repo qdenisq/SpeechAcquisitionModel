@@ -186,7 +186,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
                     miss_max_idx = np.argmax(miss[:].detach().cpu().numpy())
                 elif not terminated:
                     score = step
-                if len(misses) > 3 and np.all(np.array(misses[-3:]) > 0.1) and (episode % 10 != 0 or self.replay_buffer.size() < 2 * self.minibatch_size):
+                if len(misses) > 3 and np.all(np.array(misses[-3:]) > 0.1) and (episode % 10 != 0 or self.replay_buffer.size() * 3 < 2 * self.minibatch_size):
                     miss_max_idx = np.argmax(miss[:].detach().cpu().numpy())
                     break
                 if np.any(done):
@@ -204,7 +204,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
             if episode % 10 == 0:
                 self.noise_gamma *= self.noise_decay
 
-            if episode % 10 == 0 and episode > 1 and self.replay_buffer.size() > 2 * self.minibatch_size:
+            if episode % 10 == 0 and episode > 1 and self.replay_buffer.size() * 3 > 2 * self.minibatch_size:
                 n_audio = 26
                 n_artic = 24
                 n_artic_goal = 24
@@ -347,28 +347,40 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
 
             if self.replay_buffer.size() * 3 > 2 * self.minibatch_size:
                 # train nets couple of times relative to the increase of replay buffer
-                n_train_steps = round(
-                    self.replay_buffer.size() / self.minibatch_size * self.num_epochs_model_dynamics + 1)
+
                 ##############################################################
                 # train model dynamics
                 ##############################################################
+
+
+                s0_batch, a_batch, s1_batch, dones_batch = self.replay_buffer.sample_batch(self.replay_buffer.size())
+
+                state_mask = dones_batch.repeat(s0_batch.shape[-1], 1, 1).permute(1, 2, 0).byte()
+                action_mask = dones_batch.repeat(a_batch.shape[-1], 1, 1).permute(1, 2, 0).byte()
+
+                s0_batch_masked = s0_batch.masked_select(state_mask).view(-1, env.state_dim)
+                a_batch_masked = a_batch.masked_select(action_mask).view(-1, env.action_dim)
+                s1_batch_masked = s1_batch.masked_select(state_mask).view(-1, env.state_dim)
+
+                md_replay_buffer = ReplayBuffer(self.replay_buffer.size() * 30)
+
+                [md_replay_buffer.add((s0_batch_masked[i].detach().cpu().numpy(),
+                                          a_batch_masked[i].detach().cpu().numpy(),
+                                          s1_batch_masked[i].detach().cpu().numpy())) for i in range(s0_batch_masked.shape[0])]
+
+                n_train_steps = round(
+                    md_replay_buffer.size() / self.minibatch_size * self.num_epochs_model_dynamics + 1)
+
                 self.model_dynamics.train()
                 for _ in range(n_train_steps):
                     train_step_i += 1
-                    s0_batch, a_batch, s1_batch, dones_batch = self.replay_buffer.sample_batch(self.minibatch_size)
-
-                    state_mask = dones_batch.repeat(s0_batch.shape[-1], 1, 1).permute(1, 2, 0).byte()
-                    action_mask = dones_batch.repeat(a_batch.shape[-1], 1, 1).permute(1, 2, 0).byte()
-
-                    s0_batch_masked = s0_batch.masked_select(state_mask).view(-1, env.state_dim)
-                    a_batch_masked = a_batch.masked_select(action_mask).view(-1, env.action_dim)
-                    s1_batch_masked = s1_batch.masked_select(state_mask).view(-1, env.state_dim)
+                    s0_batch, a_batch, s1_batch = md_replay_buffer.sample_batch(self.minibatch_size)
 
                     self.model_dynamics_optim.zero_grad()
-                    s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch_masked.float().to(self.device), a_batch_masked.float().to(self.device))
-                    md_loss = torch.nn.L1Loss(reduce=False)(s1_pred_ensemble,
-                                                                     s1_batch_masked[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
-                    md_loss = md_loss.sum() / self.minibatch_size
+                    s1_pred, _, s1_pred_ensemble = self.model_dynamics(s0_batch.float().to(self.device), a_batch.float().to(self.device))
+                    md_loss = torch.nn.SmoothL1Loss(reduce=False)(s1_pred_ensemble,
+                                                            s1_batch[:, :-env.goal_dim].float().to(self.device).repeat(s1_pred_ensemble.shape[0], 1, 1))
+                    md_loss = md_loss.sum() / s0_batch.shape[0]
 
                     # md_loss = torch.nn.SmoothL1Loss(reduction="sum")(s1_pred_ensemble[0,:,:], s1_batch[:, :-env.goal_dim].float().to(self.device)) / self.minibatch_size
 
@@ -490,14 +502,46 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
                 #
                 # # train
                 # n_train_steps = round(replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
+                self.model_dynamics.eval()
 
+                s0_batch, a_batch, s1_batch, dones_batch = self.replay_buffer.sample_batch(self.replay_buffer.size())
+
+                # calculate probabilities of trajectories
+                next_state_pred, next_state_pred_std, _ = self.model_dynamics(s0_batch.view(-1, env.state_dim).float(),
+                                                                              a_batch.view(-1, env.action_dim).float())
+                next_state_dist = Normal(next_state_pred, next_state_pred_std)
+                next_state_prob = (next_state_dist.cdf(s1_batch.float().view(-1, env.state_dim)[:, :-env.goal_dim] + self.cdf_beta)
+                                   - next_state_dist.cdf(s1_batch.float().view(-1, env.state_dim)[:, :-env.goal_dim] - self.cdf_beta)).prod(dim=-1)
+
+                # compute cum prod of trajectory probability
+                next_state_prob = next_state_prob.view(s0_batch.shape[0], -1).cumprod(dim=-1)
+
+                state_mask = dones_batch.repeat(s0_batch.shape[-1], 1, 1).permute(1, 2, 0).byte()
+                action_mask = dones_batch.repeat(a_batch.shape[-1], 1, 1).permute(1, 2, 0).byte()
+
+                s0_batch_masked = s0_batch.masked_select(state_mask).view(-1, env.state_dim)
+                a_batch_masked = a_batch.masked_select(action_mask).view(-1, env.action_dim)
+                s1_batch_masked = s1_batch.masked_select(state_mask).view(-1, env.state_dim)
+                s0_prob = torch.cat((torch.ones(s0_batch.shape[0], 1), next_state_prob[:, :-1]), dim=-1)
+                s0_prob_masked = s0_prob.masked_select(dones_batch.byte())
+
+                agent_replay_buffer = ReplayBuffer(self.replay_buffer.size() * 30)
+
+                [agent_replay_buffer.add((s0_batch_masked[i].detach().cpu().numpy(),
+                                          a_batch_masked[i].detach().cpu().numpy(),
+                                          s1_batch_masked[i].detach().cpu().numpy(),
+                                          s0_prob_masked[i].detach().cpu().numpy())) for i in range(s0_batch_masked.shape[0])]
 
                 s1_pred_log_probs = []
                 self.agent.train()
+                self.model_dynamics.eval()
                 for _ in range(n_train_steps):
                     # train_step_i += 1
-                    s0_batch, s0_prob, classify_hidden = self.replay_buffer.sample_batch(self.minibatch_size)
+
+                    s0_batch, a_batch, s1_batch, s0_prob_batch = agent_replay_buffer.sample_batch(self.minibatch_size)
+
                     s0_batch = s0_batch.detach()
+                    s0_prob_batch = s0_prob_batch.detach()
 
                     actions_predicted = self.agent(s0_batch.float().to(self.device))
                     # predict state if predicted actions will be applied
@@ -510,7 +554,8 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
                     # s1_pred_log_prob = Normal(s1_pred, s1_pred_std).log_prob(s1_pred).sum(dim=-1).exp()
 
                     s1_pred_prob = (Normal(s1_pred, s1_pred_std).cdf(s1_pred + self.cdf_beta) - Normal(s1_pred, s1_pred_std).cdf(s1_pred - self.cdf_beta)).prod(dim=-1)
-                    s1_pred_prob = s1_pred_prob * s0_prob
+                    s1_pred_prob = s1_pred_prob * s0_prob_batch
+                    # s1_pred_prob = s1_pred_prob
 
                     s1_pred_log_probs.append(s1_pred_prob.detach().cpu().numpy().squeeze())
                     actor_loss = actor_loss * s1_pred_prob.detach().unsqueeze(1)
@@ -520,7 +565,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
                     actor_loss = actor_loss
                     # study this penalty
                     action_penalty = self.action_penalty * torch.mean(torch.abs(actions_predicted))
-                    actor_loss += action_penalty
+                    # actor_loss += action_penalty
                     # old_weights = self.agent.bn.weight.data.numpy()
                     # old_bias = self.agent.bn.bias.data.numpy()
                     self.actor_optim.zero_grad()

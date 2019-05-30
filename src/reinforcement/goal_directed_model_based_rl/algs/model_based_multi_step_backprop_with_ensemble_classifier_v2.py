@@ -114,6 +114,10 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
 
         sys.stdout = Logger(video_dir + "/log.txt")
 
+
+
+        episode_lengths_in_rb = []
+
         for episode in range(num_episodes):
             ep_states = []
             ep_states_pred = []
@@ -182,6 +186,9 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                 state = next_state
                 step += 1
             scores.append(score)
+
+            episode_lengths_in_rb.append(score)
+
             if not terminated:
                 res_step = step
             if episode % 10 == 0:
@@ -458,14 +465,25 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                     # TODO: classify hidden
 
                     for s_i in range(self.num_virtual_rollouts_per_update):
+                        if p_s < 0.5:
+                            continue
                         s = copy.deepcopy(state[s_i].detach().cpu().numpy())
                         p_s = copy.deepcopy(state_probability[s_i].detach().cpu().numpy())
                         replay_buffer.add((s,
                                            p_s,
                                            0))
 
+                    if state_probability.mean() < 0.5:
+                        break
+
                 # train
                 n_train_steps = round(replay_buffer.size() / self.minibatch_size * self.num_epochs_actor + 1)
+
+                # cropped_rb = ReplayBuffer(self.num_virtual_rollouts_per_update * 30)
+                # for ts_idx in range(max(self.replay_buffer.size()-replay_buffer.size()-1, 0), self.replay_buffer.size()-1):
+                #     cropped_rb.add(self.replay_buffer.buffer[ts_idx])
+
+
 
 
                 s1_pred_log_probs = []
@@ -475,18 +493,36 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                     s0_batch, s0_prob, classify_hidden = replay_buffer.sample_batch(self.minibatch_size)
                     s0_batch = s0_batch.detach()
 
+                    # s0_batch, a_batch, s1_batch = self.replay_buffer.sample_batch(self.minibatch_size)
+                    # s0_batch = s0_batch.detach()
+
+                    # s0_batch, a_batch, s1_batch = cropped_rb.sample_batch(self.minibatch_size)
+                    # s0_batch = s0_batch.detach()
+
                     actions_predicted = self.agent(s0_batch.float().to(self.device))
                     # predict state if predicted actions will be applied
                     s1_pred, s1_pred_std, s1_pred_ensmble = self.model_dynamics(s0_batch.float().to(self.device), actions_predicted)
-                    # s1_pred = s1_pred_ensmble[0,:,:]
-                    actor_loss = torch.nn.MSELoss(reduction='none')(
-                        s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
+
+                    s1_pred_dist = Normal(s1_pred, s1_pred_std)
+                    # s1_pred_sampled = s1_pred_dist.rsample()
+                    s1_pred_sampled = s1_pred
+                    s1_pred_prob = (s1_pred_dist.cdf(s1_pred_sampled + self.cdf_beta) - s1_pred_dist.cdf(s1_pred_sampled - self.cdf_beta)).prod(dim=-1)
+                    s1_pred_prob = s1_pred_prob * s0_prob
+                    actor_loss = torch.nn.SmoothL1Loss(reduction='none')(
+                        s1_pred_sampled[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
                         s0_batch[:, -env.goal_dim:].float().to(self.device))
 
-                    # s1_pred_log_prob = Normal(s1_pred, s1_pred_std).log_prob(s1_pred).sum(dim=-1).exp()
 
-                    s1_pred_prob = (Normal(s1_pred, s1_pred_std).cdf(s1_pred + self.cdf_beta) - Normal(s1_pred, s1_pred_std).cdf(s1_pred - self.cdf_beta)).prod(dim=-1)
-                    s1_pred_prob = s1_pred_prob * s0_prob
+
+                    # # s1_pred = s1_pred_ensmble[0,:,:]
+                    # actor_loss = torch.nn.SmoothL1Loss(reduction='none')(
+                    #     s1_pred[:, torch.from_numpy(np.array(env.state_goal_mask, dtype=np.uint8)).byte()],
+                    #     s0_batch[:, -env.goal_dim:].float().to(self.device))
+                    #
+                    # # s1_pred_log_prob = Normal(s1_pred, s1_pred_std).log_prob(s1_pred).sum(dim=-1).exp()
+                    #
+                    # s1_pred_prob = (Normal(s1_pred, s1_pred_std).cdf(s1_pred + self.cdf_beta) - Normal(s1_pred, s1_pred_std).cdf(s1_pred - self.cdf_beta)).prod(dim=-1)
+                    # s1_pred_prob = s1_pred_prob * s0_prob
 
                     s1_pred_log_probs.append(s1_pred_prob.detach().cpu().numpy().squeeze())
                     actor_loss = actor_loss * s1_pred_prob.detach().unsqueeze(1)
@@ -495,8 +531,8 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV2:
                         k = 7
                     actor_loss = actor_loss
                     # study this penalty
-                    action_penalty = self.action_penalty * torch.mean(torch.abs(actions_predicted))
-                    actor_loss += action_penalty
+                    # action_penalty = self.action_penalty * torch.mean(torch.abs(actions_predicted))
+                    # actor_loss += action_penalty
                     # old_weights = self.agent.bn.weight.data.numpy()
                     # old_bias = self.agent.bn.bias.data.numpy()
                     self.actor_optim.zero_grad()

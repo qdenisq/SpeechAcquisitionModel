@@ -35,7 +35,7 @@ def train(*args, **kwargs):
     speaker_fname = os.path.join(kwargs['env']['vtl_dir'], 'JD2.speaker')
     lib_path = os.path.join(kwargs['env']['vtl_dir'], 'VocalTractLab2.dll')
 
-    env = VTLEnvWithReferenceTransitionMasked(lib_path, speaker_fname, **kwargs['env'])
+    env = VTLEnvWithReferenceTransitionMaskedEntropyScore(lib_path, speaker_fname, **kwargs['env'])
     env.reset(train_mode=True)
 
     state_dim = env.state_dim
