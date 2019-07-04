@@ -30,7 +30,7 @@ def random_rollout(env, ep_duration, timestep, initial_state=None):
 
 
 def generate_random_rollout_dataset(env, num_rollouts, ep_duration, timestep, initial_states=None):
-    base_dir = r'C:\Study\SpeechAcquisitionModel\data/raw/VTL_random_rollouts'
+    base_dir = r'C:\Study\SpeechAcquisitionModel\data/raw/VTL_random_rollouts_s2s'
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
     save_dir = os.path.join(base_dir, dt)
     if not os.path.exists(save_dir):

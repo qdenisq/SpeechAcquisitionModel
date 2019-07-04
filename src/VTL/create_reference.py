@@ -14,7 +14,18 @@ import librosa
 import matplotlib.pyplot as plt
 
 
-def create_reference(env, ep_duration, timestep, initial_state=None, end_state=None, state_sigma=0.01, action_sigma=0.01, time_shift_max=4, directory=None, name=None):
+def create_reference(env,
+                     ep_duration,
+                     timestep,
+                     initial_sound_name=None,
+                     end_sound_name=None,
+                     initial_state=None,
+                     end_state=None,
+                     state_sigma=0.01,
+                     action_sigma=0.01,
+                     time_shift_max=4,
+                     directory=None,
+                     name=None):
     num_steps_per_ep = ep_duration // timestep
     action_space = env.number_glottis_parameters + env.number_vocal_tract_parameters
 
@@ -32,6 +43,7 @@ def create_reference(env, ep_duration, timestep, initial_state=None, end_state=N
     states = []
     actions = []
     audios = []
+    labels = []
 
     t0 = num_steps_per_ep // 3 + random.randint(0, 2 * time_shift_max) - time_shift_max
 
@@ -47,6 +59,7 @@ def create_reference(env, ep_duration, timestep, initial_state=None, end_state=N
         states.append(state)
         actions.append(action)
         audios.append(audio)
+        labels.append(initial_sound_name)
         env.render()
 
     for i in range(t1 - t0):
@@ -56,6 +69,10 @@ def create_reference(env, ep_duration, timestep, initial_state=None, end_state=N
         states.append(state)
         actions.append(action)
         audios.append(audio)
+        if initial_sound_name == end_sound_name:
+            labels.append(initial_sound_name)
+        else:
+            labels.append(f"{initial_sound_name}{end_sound_name}")
         env.render()
 
     for i in range(num_steps_per_ep - t1):
@@ -66,6 +83,7 @@ def create_reference(env, ep_duration, timestep, initial_state=None, end_state=N
         states.append(state)
         actions.append(action)
         audios.append(audio)
+        labels.append(end_sound_name)
         env.render()
 
     actions = np.stack(actions)
@@ -76,10 +94,11 @@ def create_reference(env, ep_duration, timestep, initial_state=None, end_state=N
         pickle.dump({"audio": audios,
                      "tract_params": states[:, :24],
                      "glottis_params": states[:, 24:],
-                     "action": actions}, f, protocol=0)
+                     "action": actions,
+                     "label": labels}, f, protocol=0)
     env.dump_episode(os.path.join(directory, name))
     # with open(os.path.join(directory, name + '.wav'), 'wb') as f:
-    return audios, states, actions
+    return audios, states, actions, labels
 
 
 def create_datatset(**kwargs):
@@ -106,7 +125,7 @@ def create_datatset(**kwargs):
             pass
     fname = os.path.join(save_dir, dt) + '.pd'
 
-    rollouts = pd.DataFrame(columns=['y', 'audio', 'states', 'actions'])
+    rollouts = pd.DataFrame(columns=['y', 'audio', 'states', 'actions', 'labels'])
     i_g = 0
     for s0 in sound_names:
         for s1 in sound_names:
@@ -121,10 +140,13 @@ def create_datatset(**kwargs):
 
                 initial_state = env.get_cf(s0)
                 end_state = env.get_cf(s1)
-                audios, states, actions = create_reference(env, ep_duration, timestep, initial_state=initial_state, end_state=end_state, name=name, directory=sound_dir)
+                audios, states, actions, labels = create_reference(env, ep_duration, timestep,
+                                                           initial_sound_name=s0,
+                                                           end_sound_name=s1,
+                                                           initial_state=initial_state, end_state=end_state, name=name, directory=sound_dir)
                 ep_name = os.path.join(sound_dir, str(i))
                 env.dump_episode(ep_name)
-                rollouts.loc[i_g] = [name, np.array(audios), np.array(states), np.array(actions)]
+                rollouts.loc[i_g] = [name, np.array(audios), np.array(states), np.array(actions), np.array(labels)]
                 i_g += 1
 
                 if i_g % 500 == 0:
@@ -134,12 +156,12 @@ def create_datatset(**kwargs):
 
 
 if __name__ == '__main__':
-    # kwargs = {
-    #     "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions",
-    #     "sound_names": ['a', 'i', 'u', 'o', 'e'],
-    #     "num_samples_per_sound": 300
-    # }
-    # create_datatset(**kwargs)
+    kwargs = {
+        "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions_s2s",
+        "sound_names": ['a', 'i', 'u', 'o'],
+        "num_samples_per_sound": 300
+    }
+    create_datatset(**kwargs)
 
 
 

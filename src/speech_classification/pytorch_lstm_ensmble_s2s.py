@@ -1,7 +1,6 @@
 import src.speech_classification.utils as utils
 from src.speech_classification.audio_processing import AudioPreprocessorFbank, SpeechCommandsDataCollector
 from sklearn import preprocessing
-
 import torch.nn.functional as F
 import torch.nn as nn
 import torch
@@ -10,6 +9,7 @@ import random
 import os
 import datetime
 from multiprocessing import Pool
+import pandas as pd
 
 
 from python_speech_features import mfcc
@@ -87,21 +87,20 @@ if __name__ == '__main__':
 
     # instantiate preproc cand lstm net
 
-    wanted_words = ['bed', 'bird', 'cat', 'dog', 'down', 'eight', 'five', 'four', 'go', 'happy', 'house', 'left', 'marvin',
-                    'nine', 'no', 'off', 'on', 'one', 'right', 'seven', 'sheila', 'six', 'stop', 'three', 'tree', 'two',
-                    'up', 'wow', 'yes', 'zero']
-    wanted_words_tanh_transition = ['a_a', 'a_i', 'a_u', 'a_o',
-                                    'i_a', 'i_i', 'i_u', 'i_o',
-                                    'u_a', 'u_i', 'u_u', 'u_o',
-                                    'o_a', 'o_i', 'o_u', 'o_o']
-
-    wanted_words_combined = wanted_words_tanh_transition
 
 
+    phonemes = ['a', 'i', 'o', 'u']
+    phoneme_transitions = ['ai', 'au', 'ao',
+                            'ia', 'iu', 'io',
+                            'ua', 'ui', 'uo',
+                            'oa', 'oi', 'ou']
+    total_classes =  ['sil', 'none'] + phonemes + phoneme_transitions
 
+    le = preprocessing.LabelEncoder()
+    le.fit(total_classes)
     model_settings = {
         'dct_coefficient_count': 26,
-        'label_count': len(wanted_words_combined) + 2,
+        'label_count': len(total_classes),
         'hidden_reccurent_cells_count': 128,
         'winlen': 0.04,
         'winstep': 0.04,
@@ -119,12 +118,26 @@ if __name__ == '__main__':
 
     preproc = AudioPreprocessorFbank(nfilt=model_settings['dct_coefficient_count'], winlen=model_settings['winlen'], winstep=model_settings['winstep'])
 
-    data_iter = SpeechCommandsDataCollector(preproc,
-                                            data_dir=r'C:\Study\Speech_command_classification\speech_dataset',
-                                            wanted_words=wanted_words_combined,
-                                            testing_percentage=10,
-                                            validation_percentage=10
-                                            )
+    data_dir = r'C:\Study\Speech_command_classification\speech_dataset'
+    dataset_fname = r'C:\Study\SpeechAcquisitionModel\data\raw\Simple_transitions_s2s\07_04_2019_01_11_PM_31\07_04_2019_01_11_PM_31.pd'
+    df = pd.read_pickle(dataset_fname)
+
+    processed_audio = []
+    labels_int = []
+    print("preprocessing audio...")
+
+    for i in range(df.shape[0]):
+        print(f"\r{i}", end="")
+        sr = 22050
+        sample = df.iloc[i]
+        audio = sample['audio'].flatten()
+        audio_proc = preproc(audio, sr)
+        processed_audio.append(audio_proc)
+        labels_int.append(le.transform(sample['labels']))
+
+    processed_audio = np.array(processed_audio)
+    labels_int = np.array(labels_int)
+
     net = LstmNetEnsemble(model_settings)
     optimizer = torch.optim.Adam(net.parameters(), lr=0.001)
 
@@ -134,22 +147,25 @@ if __name__ == '__main__':
 
     for i in range(n_train_steps):
         # collect data
-        d = data_iter.get_data(n_mini_batch_size, 0, 'training')
-        data = d['x']
-        # cut first 2 steps
-        data = d['x'][:,2:,:]
-        labels = d['y']
-        seq_lengths = d['seq_len']
+        batch_idx = np.random.randint(0, df.shape[0], n_mini_batch_size)
+
+        data = processed_audio[batch_idx, :]
+        labels = labels_int[batch_idx, :]
+        # labels_int = np.array([le.transform(s) for s in labels])
+
+
+
+        seq_lengths = [labels.shape[-1]] * n_mini_batch_size
         max_seq_len = seq_lengths[0]-2
         # seq_len = np.random.randint(10, max_seq_len)
-        seq_begin = np.random.randint(0, max_seq_len-2)
-        seq_end = np.random.randint(seq_begin + 1, max_seq_len)
+        seq_begin = 2
+        # seq_begin = np.random.randint(2, max_seq_len-2)
+        # seq_end = np.random.randint(seq_begin + 1, max_seq_len)
+        seq_end = seq_lengths[0]
         seq_len = seq_end - seq_begin
         seq_lengths = np.array([seq_len] * len(seq_lengths))
         data = data[:, seq_begin:seq_end, :]
-
-
-
+        labels = labels[:, seq_begin:seq_end]
         data = torch.from_numpy(data).float()
         labels = torch.from_numpy(labels).long()
         # seq_lengths = torch.from_numpy(seq_lengths)
@@ -158,40 +174,53 @@ if __name__ == '__main__':
 
         losses = []
         accs = []
-        pred, hidden, _, _ = net(data, seq_lengths)
-        for e, p in enumerate(pred):
+        pred, hidden, _, pred_full = net(data, seq_lengths)
+        for e, p in enumerate(pred_full):
             # train just a few nets on a single batch (this is similar to training each net with an individual seed)
             if random.random() < 1.0 or (e == len(pred) - 1 and len(accs) == 0):
                 optimizer.zero_grad()
                 # pred = torch.stack(pred)
                 # extend labels by number of nets
-                loss = torch.nn.CrossEntropyLoss()(p, labels)
+                loss = torch.nn.CrossEntropyLoss()(p.view(-1, len(total_classes)), labels.flatten())
                 loss.backward()
                 optimizer.step()
 
                 losses.append(loss.detach())
 
-                acc = accuracy(p.detach().numpy(), labels.detach().numpy())
+                acc = accuracy(p.view(-1, len(total_classes)).detach().numpy(), labels.flatten().detach().numpy())
                 accs.append(acc)
         print("|train_step: {}| loss: {:.4f} std:{:.4f}| accuracy: {:.4f} std:{:.4f}|".format(i, np.mean(losses), np.std(losses), np.mean(accs), np.std(accs)))
         # validate each 100 train steps
         if i % 100 == 0:
-            d = data_iter.get_data(n_mini_batch_size, 0, 'validation')
-            data = d['x'][:, 2:, :]
-            labels = d['y']
-            seq_lengths = d['seq_len'] - 2
+            batch_idx = np.random.randint(0, df.shape[0], n_mini_batch_size)
 
+            data = processed_audio[batch_idx, :]
+            labels = labels_int[batch_idx, :]
+            # labels_int = np.array([le.transform(s) for s in labels])
+
+            seq_lengths = [labels.shape[-1]] * n_mini_batch_size
+            max_seq_len = seq_lengths[0] - 2
+            # seq_len = np.random.randint(10, max_seq_len)
+            seq_begin = 2
+            # seq_begin = np.random.randint(2, max_seq_len-2)
+            # seq_end = np.random.randint(seq_begin + 1, max_seq_len)
+            seq_end = seq_lengths[0]
+            seq_len = seq_end - seq_begin
+            seq_lengths = np.array([seq_len] * len(seq_lengths))
+            data = data[:, seq_begin:seq_end, :]
+            labels = labels[:, seq_begin:seq_end]
             data = torch.from_numpy(data).float()
             labels = torch.from_numpy(labels).long()
-            # zero grad
+
+
             optimizer.zero_grad()
 
-            pred, hidden, _, _ = net(data, seq_lengths)
+            pred, hidden, _, pred_full = net(data, seq_lengths)
 
-            pred = torch.stack(pred).mean(dim=0)
+            pred_full = torch.stack(pred_full).mean(dim=0)
 
-            validation_loss = torch.nn.CrossEntropyLoss()(pred.detach(), labels.detach())
-            acc = accuracy(pred.detach().numpy(), labels.detach().numpy())
+            validation_loss = torch.nn.CrossEntropyLoss()(pred_full.detach().view(-1, len(total_classes)), labels.detach().flatten())
+            acc = accuracy(pred_full.detach().view(-1, len(total_classes)).detach().numpy(), labels.detach().flatten().numpy())
             print("Validation loss: {:.4f}| accuracy: {:.4f}|".format(validation_loss.detach(), acc))
 
             if acc > best_acc or validation_loss < lowest_loss:

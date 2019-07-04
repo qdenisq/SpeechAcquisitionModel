@@ -221,7 +221,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
             if episode % 10 == 0 and episode > 1 and self.replay_buffer.size() * 3 > 2 * self.minibatch_size:
                 n_audio = 26
                 n_artic = 24
-                n_artic_goal = 24
+                n_artic_goal = 6
 
                 # show fully predicted rollout given s0  and list of actions
                 pred_states = []
@@ -277,6 +277,7 @@ class ModelBasedMultiStepBackPropWithEnsembleClassifierV3:
                 plt.colorbar(im_pred, ax=axes[1, 0])
 
                 im_pred = axes[1, 1].imshow(np.array(pred_states)[:, n_artic: n_artic+n_audio].T, vmin=-1., vmax=1.)
+                axes[1, 1].set_title('pred rollout acoustic')
                 axes[1, 1].set_title('pred rollout acoustic')
                 plt.colorbar(im_pred, ax=axes[1, 1])
 
