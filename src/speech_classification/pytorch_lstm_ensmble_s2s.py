@@ -150,6 +150,7 @@ if __name__ == '__main__':
         batch_idx = np.random.randint(0, df.shape[0], n_mini_batch_size)
 
         data = processed_audio[batch_idx, :]
+
         labels = labels_int[batch_idx, :]
         # labels_int = np.array([le.transform(s) for s in labels])
 
@@ -166,9 +167,20 @@ if __name__ == '__main__':
         seq_lengths = np.array([seq_len] * len(seq_lengths))
         data = data[:, seq_begin:seq_end, :]
         labels = labels[:, seq_begin:seq_end]
+
+        # add random number of silence frames at the beginning
+        silent_frames = np.random.randint(0, 5)
+        seq_lengths += silent_frames
+        data = np.concatenate((np.zeros((n_mini_batch_size, silent_frames, data.shape[-1])), data), axis=1)
+        labels = np.concatenate((np.ones((n_mini_batch_size, silent_frames))*le.transform(['sil']), labels), axis=1)
+
+
         data = torch.from_numpy(data).float()
         labels = torch.from_numpy(labels).long()
         # seq_lengths = torch.from_numpy(seq_lengths)
+
+
+
 
         # zero grad
 
