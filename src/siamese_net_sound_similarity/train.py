@@ -30,7 +30,7 @@ class SiameseSpeechCommandsDataCollector(SpeechCommandsDataCollector):
         data = []
         seq_lens = []
         # labels = np.zeros(sample_count)
-        pick_deterministically = (mode != 'training')
+        pick_deterministically = False
         # Use the processing graph we created earlier to repeatedly to generate the
         # final output sample data we'll use in training.
         for i in xrange(offset, offset + sample_count):
@@ -72,7 +72,7 @@ class SiameseSpeechCommandsDataCollector(SpeechCommandsDataCollector):
         data = []
         seq_lens = []
         # labels = np.zeros(sample_count)
-        pick_deterministically = (mode != 'training')
+        pick_deterministically = False
         # Use the processing graph we created earlier to repeatedly to generate the
         # final output sample data we'll use in training.
         for i in xrange(offset, offset + sample_count):
@@ -114,11 +114,21 @@ class SiameseLSTMNet(nn.Module):
         self.__lstm = nn.LSTM(self.__n_window_height, self.__n_hidden_cells, batch_first=True, bidirectional=False)
 
 
-        self.__output_layer = nn.Linear(self.__n_hidden_cells * 2, 512)
-        self.__output_layer_1 = nn.Linear(512, 1)
+        self.__output_layer = nn.Linear(self.__n_hidden_cells * 2, 128)
+        self.__output_layer_1 = nn.Linear(128, 1)
 
-        self.__output_layer_cce = nn.Linear(self.__n_hidden_cells, 512)
-        self.__output_layer_cce_1 = nn.Linear(512, self.__n_classes)
+        self.__output_layer_cce = nn.Linear(self.__n_hidden_cells, 256)
+        self.__output_layer_cce_1 = nn.Linear(256, self.__n_classes)
+
+    def single_forward(self, input, hidden=None):
+        x = input
+        orig_shape = x.shape
+        x = x.view(-1, self.__n_window_height)
+        x = self.__bn1(x)
+        x = self.__dropout(x)
+        x = x.view(orig_shape)
+        x, hidden = self.__lstm(x, None)
+        return x, hidden
 
     def forward(self, input, hidden=None):
         # if hidden is None:
@@ -126,12 +136,7 @@ class SiameseLSTMNet(nn.Module):
         lstm_out = []
         for i in range(2):
             x = input[i]
-            orig_shape = x.shape
-            x = x.view(-1, self.__n_window_height)
-            x = self.__bn1(x)
-            # # x = self.__dropout(x)
-            x = x.view(orig_shape)
-            x, hidden = self.__lstm(x, None)
+            x, hidden = self.single_forward(x)
             lstm_out.append(hidden[0])
 
         # cce path
@@ -144,6 +149,8 @@ class SiameseLSTMNet(nn.Module):
         output = torch.nn.Tanh()(self.__output_layer(lstm_out))
         output = torch.nn.Sigmoid()(self.__output_layer_1(output))
         return output, cce_output
+
+
 
 
 def accuracy(out, labels):
@@ -170,7 +177,7 @@ def train():
     model_settings = {
         'dct_coefficient_count': 26,
         'label_count': len(wanted_words_combined) + 2,
-        'hidden_reccurent_cells_count': 128,
+        'hidden_reccurent_cells_count': 16,
         'winlen': 0.04,
         'winstep': 0.04
     }
@@ -197,8 +204,8 @@ def train():
     writer = SummaryWriter(f'../../reports/seamise_net_{dt}')
 
     # configure training procedure
-    n_train_steps = 10000
-    n_mini_batch_size = 64
+    n_train_steps = 30000
+    n_mini_batch_size = 128
 
     siamese_net = SiameseLSTMNet(model_settings).to('cuda')
     optimizer = torch.optim.Adam(siamese_net.parameters(), lr=0.0005)
@@ -208,7 +215,7 @@ def train():
     """
     Train 
     """
-
+    min_bce_loss = 10.0
     for i in range(n_train_steps):
         # collect data
         data = data_iter.get_data(n_mini_batch_size, 0, 'training')
@@ -241,22 +248,71 @@ def train():
         optimizer.zero_grad()
         bce_loss = nn.BCELoss()(y, y_target)
         ce_loss = torch.nn.CrossEntropyLoss()(predicted_labels, target_labels)
-        # loss = nn.BCELoss()(y, y_target) + torch.nn.CrossEntropyLoss()(predicted_labels, target_labels)
         loss = bce_loss + ce_loss
         loss.backward()
         optimizer.step()
 
-        acc = accuracy(predicted_labels.detach().cpu().numpy(), target_labels.detach().cpu().numpy())
+        cce_acc = accuracy(predicted_labels.detach().cpu().numpy(), target_labels.detach().cpu().numpy())
+        y = np.array([[1.0 - v, v] for v in y.detach().cpu().numpy()]).squeeze()
+        bce_acc = accuracy(y, y_target.detach().cpu().numpy())
         writer.add_scalar('BCE', bce_loss.detach().cpu(), i)
         writer.add_scalar('CCE', ce_loss.detach().cpu(), i)
-        writer.add_scalar('Classification Accuracy', acc, i)
+        writer.add_scalar('CCE_Accuracy', cce_acc, i)
+        writer.add_scalar('BCE_Accuracy', bce_acc, i)
 
         if i % 100 == 0:
             for name, param in siamese_net.named_parameters():
                 writer.add_histogram("SiameseNet_" + name, param, i)
 
+        if bce_loss.detach().cpu() < min_bce_loss:
+            min_bce_loss = bce_loss.detach().cpu()
+            fname = os.path.join(f'../../reports/seamise_net_{dt}/net_{min_bce_loss}.net')
+            torch.save(siamese_net, fname)
+
         print(i, loss.detach().cpu(), bce_loss.detach().cpu(), ce_loss.detach().cpu())
-        # seq_lengths = d['seq_len']
+
+        # TODO: add validation each 1k steps for example
+        if i % 500 == 0:
+            # collect data
+            data = data_iter.get_data(n_mini_batch_size, 0, 'validation')
+            labels = data['y']
+
+            duplicates = data_iter.get_duplicates(labels, 0, 'validation')
+            assert np.any(labels == duplicates['y'])
+
+            non_duplicates = data_iter.get_nonduplicates(labels, 0, 'validation')
+            assert np.any(labels != non_duplicates['y'])
+
+            # construct a tensor of a form [data duplicates, data non-duplicates]
+            x = torch.from_numpy(np.array([np.concatenate([data['x'], data['x']]),
+                                           np.concatenate([duplicates['x'], non_duplicates['x']])])).float().to('cuda')
+            y_target = np.array([0] * len(labels) + [1] * len(labels))
+            y_target = torch.from_numpy(y_target).float().to('cuda')
+            # forward
+            y, predicted_labels = siamese_net(x)
+
+            #
+            target_labels = torch.from_numpy(np.array([np.concatenate([data['y'],
+                                                                       data['y'],
+                                                                       duplicates['y'],
+                                                                       non_duplicates['y']])]
+                                                      )).long().to('cuda').squeeze()
+
+            # backward and update
+            bce_loss = nn.BCELoss()(y, y_target)
+            ce_loss = torch.nn.CrossEntropyLoss()(predicted_labels, target_labels)
+            loss = bce_loss + ce_loss
+
+            y = np.array([[1.0 - v, v] for v in y.detach().cpu().numpy()]).squeeze()
+
+            cce_acc = accuracy(predicted_labels.detach().cpu().numpy(), target_labels.detach().cpu().numpy())
+            bce_acc = accuracy(y, y_target.detach().cpu().numpy())
+            writer.add_scalar('valid_BCE', bce_loss.detach().cpu(), i)
+            writer.add_scalar('valid_CCE', ce_loss.detach().cpu(), i)
+            writer.add_scalar('valid_CCE_Accuracy', cce_acc, i)
+            writer.add_scalar('valid_BCE_Accuracy', bce_acc, i)
+
+            print('validation: ', i, loss.detach().cpu(), bce_loss.detach().cpu(), ce_loss.detach().cpu())
 
 
 if __name__ == '__main__':
