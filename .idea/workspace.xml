@@ -5,9 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/dtw/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/dtw/prefix_identification.ipynb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/dtw/soft_dtw.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/prefix_identification-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/prefix_identification-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/prefix_identification.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/prefix_identification.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -38,7 +40,7 @@
           <entry key="ipynb" value="29" />
           <entry key="json" value="50" />
           <entry key="png" value="1" />
-          <entry key="py" value="317" />
+          <entry key="py" value="321" />
           <entry key="pyi" value="1" />
           <entry key="txt" value="1" />
         </counts>
@@ -49,7 +51,7 @@
           <entry key="Image" value="1" />
           <entry key="JSON" value="50" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="317" />
+          <entry key="Python" value="321" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
@@ -58,7 +60,7 @@
           <entry key="Python Console" value="352" />
           <entry key="dummy" value="4" />
           <entry key="json" value="1785" />
-          <entry key="py" value="49612" />
+          <entry key="py" value="50319" />
           <entry key="txt" value="403" />
         </counts>
       </usages-collector>
@@ -66,7 +68,7 @@
         <counts>
           <entry key="JSON" value="1785" />
           <entry key="PLAIN_TEXT" value="407" />
-          <entry key="Python" value="49964" />
+          <entry key="Python" value="50671" />
         </counts>
       </usages-collector>
     </session>
@@ -85,13 +87,52 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="556">
-              <caret line="133" column="28" selection-start-line="133" selection-start-column="28" selection-end-line="133" selection-end-column="28" />
+            <state relative-caret-position="276">
+              <caret line="138" column="46" selection-start-line="138" selection-start-column="46" selection-end-line="138" selection-end-column="46" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
+              </folding>
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="180">
+              <caret line="195" column="42" selection-start-line="195" selection-start-column="42" selection-end-line="195" selection-end-column="42" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/module.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="476">
+              <caret line="530" selection-start-line="530" selection-end-line="530" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/linear.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="724">
+              <caret line="86" selection-start-line="86" selection-end-line="86" />
+            </state>
+          </provider>
+        </entry>
+      </file>
+      <file pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/src/dtw/soft_dtw.py">
+          <provider selected="true" editor-type-id="text-editor">
+            <state relative-caret-position="1780">
+              <caret line="89" column="17" selection-start-line="89" selection-start-column="17" selection-end-line="89" selection-end-column="17" />
+              <folding>
+                <element signature="e#0#18#0" expanded="true" />
               </folding>
             </state>
           </provider>
@@ -102,15 +143,6 @@
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="305">
               <caret line="296" column="19" selection-start-line="296" selection-start-column="8" selection-end-line="296" selection-end-column="19" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/functional.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="185">
-              <caret line="1994" selection-start-line="1994" selection-end-line="1994" />
             </state>
           </provider>
         </entry>
@@ -148,15 +180,6 @@
               <folding>
                 <element signature="e#0#11#0" expanded="true" />
               </folding>
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/codecs.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="6260">
-              <caret line="313" column="67" selection-start-line="313" selection-start-column="67" selection-end-line="313" selection-end-column="67" />
             </state>
           </provider>
         </entry>
@@ -199,7 +222,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/VTL/pyvtl_v2.py" />
         <option value="$PROJECT_DIR$/../LANL-Earthquake/validation/validation_run.py" />
         <option value="$PROJECT_DIR$/../LANL-Earthquake/validation/validation_config.json" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_1_step_backprop_test.py" />
@@ -250,6 +272,7 @@
         <option value="$PROJECT_DIR$/src/speech_classification/pytorch_lstm_ensmble_s2s.py" />
         <option value="$PROJECT_DIR$/src/dtw/prefix_identification.ipynb" />
         <option value="$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py" />
+        <option value="$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py" />
       </list>
     </option>
   </component>
@@ -353,6 +376,15 @@
               <item name="Study" type="462c0819:PsiDirectoryNode" />
               <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
               <item name="src" type="462c0819:PsiDirectoryNode" />
+              <item name="siamese_net_sound_similarity" type="462c0819:PsiDirectoryNode" />
+            </path>
+            <path>
+              <item name="SpeechAcquisitionModel" type="b2602c69:ProjectViewProjectNode" />
+              <item name="External Libraries" type="cb654da1:ExternalLibrariesNode" />
+              <item name="&lt; Python 3.6.3 (C:\ProgramData\Anaconda3\python.exe) &gt;" type="70bed36:NamedLibraryElementNode" />
+              <item name="Study" type="462c0819:PsiDirectoryNode" />
+              <item name="SpeechAcquisitionModel" type="462c0819:PsiDirectoryNode" />
+              <item name="src" type="462c0819:PsiDirectoryNode" />
               <item name="speech_classification" type="462c0819:PsiDirectoryNode" />
             </path>
             <path>
@@ -376,17 +408,18 @@
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\src\dtw" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl\algs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\notebooks" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\speech_classification" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl\algs" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\vtl_reference_guided" />
-      <recent name="C:\Study\SpeechAcquisitionModel\VTL" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Study\SpeechAcquisitionModel\src" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl\algs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\notebooks" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -401,7 +434,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.train">
+  <component name="RunManager" selected="Python.slstm_train">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -522,6 +555,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="slstm_train" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="SpeechAcquisitionModel" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/siamese_net_sound_similarity" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="train" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -535,27 +589,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="train_multi_stepbackprop_with_ensemble_classifier_scorer" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SpeechAcquisitionModel" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_multi_stepbackprop_with_ensemble_classifier_scorer.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -582,19 +615,19 @@
     </configuration>
     <list>
       <item itemvalue="Jupyter Notebook.SpeechAcquisitionModel" />
-      <item itemvalue="Python.train_multi_stepbackprop_with_ensemble_classifier_scorer" />
       <item itemvalue="Python.pytorch_lstm_ensmble" />
       <item itemvalue="Python.create_reference" />
       <item itemvalue="Python.pytorch_lstm_ensmble_s2s" />
       <item itemvalue="Python.train" />
+      <item itemvalue="Python.slstm_train" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.slstm_train" />
         <item itemvalue="Python.train" />
         <item itemvalue="Python.pytorch_lstm_ensmble_s2s" />
         <item itemvalue="Python.create_reference" />
         <item itemvalue="Python.pytorch_lstm_ensmble" />
-        <item itemvalue="Python.train_multi_stepbackprop_with_ensemble_classifier_scorer" />
       </list>
     </recent_temporary>
   </component>
@@ -1099,23 +1132,93 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py</url>
-          <line>283</line>
+          <line>281</line>
           <option name="timeStamp" value="747" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py</url>
-          <line>256</line>
+          <line>254</line>
           <option name="timeStamp" value="748" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py</url>
-          <line>255</line>
+          <line>253</line>
           <option name="timeStamp" value="749" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py</url>
-          <line>156</line>
+          <line>154</line>
           <option name="timeStamp" value="750" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>341</line>
+          <option name="timeStamp" value="752" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>137</line>
+          <option name="timeStamp" value="754" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>142</line>
+          <option name="timeStamp" value="756" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>264</line>
+          <option name="timeStamp" value="757" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>270</line>
+          <option name="timeStamp" value="758" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>279</line>
+          <option name="timeStamp" value="759" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>282</line>
+          <option name="timeStamp" value="760" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>255</line>
+          <option name="timeStamp" value="761" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>162</line>
+          <option name="timeStamp" value="762" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>161</line>
+          <option name="timeStamp" value="763" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>160</line>
+          <option name="timeStamp" value="764" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py</url>
+          <line>143</line>
+          <option name="timeStamp" value="765" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py</url>
+          <line>142</line>
+          <option name="timeStamp" value="766" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py</url>
+          <line>149</line>
+          <option name="timeStamp" value="767" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
@@ -1139,6 +1242,36 @@
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
       <expression>
+        <expression-string>torch.cat(lstm_out, dim=0).squeeze()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.cat(lstm_out, dim=1).squeeze()</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.cat(means,dim=0)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.cat(lstm_out, dim=1)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.randn(mean.shape).to(mean.device)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.randn(mean.shape).to(self.device)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
         <expression-string>outputs == labels</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
@@ -1150,36 +1283,6 @@
       </expression>
       <expression>
         <expression-string>np.argmax(out, axis=1)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>labels == duplicates['y']</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>labels != non_duplicates['y']</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>torch.cat(lstm_out, dim=1).squeeze()</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>torch.cat(lstm_out, dim=1)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>torch.cat(lstm_out)</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>torch.stack(lstm_out, dim=-2)</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -1238,30 +1341,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/../udacity_p2_continious_control/src/ppo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2900">
-          <caret line="146" column="22" selection-start-line="146" selection-start-column="22" selection-end-line="146" selection-end-column="22" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/ppo.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3720">
-          <caret line="190" column="33" selection-start-line="190" selection-start-column="33" selection-end-line="190" selection-end-column="33" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_with_ensemble_classifier_scorer.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="500">
-          <caret line="47" column="24" selection-start-line="47" selection-start-column="24" selection-end-line="47" selection-end-column="24" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../udacity_p2_continious_control/src/models.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1080">
@@ -1501,13 +1580,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/module.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="10780">
-          <caret line="546" selection-start-line="546" selection-end-line="546" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/VTL/create_reference.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="940">
@@ -1608,13 +1680,44 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/dtw/soft_dtw.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1780">
+          <caret line="89" column="17" selection-start-line="89" selection-start-column="17" selection-end-line="89" selection-end-column="17" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/linear.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="724">
+          <caret line="86" selection-start-line="86" selection-end-line="86" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/module.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="476">
+          <caret line="530" selection-start-line="530" selection-end-line="530" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="556">
-          <caret line="133" column="28" selection-start-line="133" selection-start-column="28" selection-end-line="133" selection-end-column="28" />
+        <state relative-caret-position="276">
+          <caret line="138" column="46" selection-start-line="138" selection-start-column="46" selection-end-line="138" selection-end-column="46" />
           <folding>
             <element signature="e#0#9#0" expanded="true" />
           </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/siamese_net_sound_similarity/slstm_train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="180">
+          <caret line="195" column="42" selection-start-line="195" selection-start-column="42" selection-end-line="195" selection-end-column="42" />
         </state>
       </provider>
     </entry>

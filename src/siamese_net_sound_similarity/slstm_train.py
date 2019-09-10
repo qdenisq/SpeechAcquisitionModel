@@ -102,17 +102,20 @@ class SiameseSpeechCommandsDataCollector(SpeechCommandsDataCollector):
                 'seq_len': seq_lens}
 
 
-class SiameseLSTMNet(nn.Module):
+class StochasticSiameseLSTMNet(nn.Module):
     def __init__(self, model_settings):
-        super(SiameseLSTMNet, self).__init__()
+        super(StochasticSiameseLSTMNet, self).__init__()
         self.__n_window_height = model_settings['dct_coefficient_count']
         self.__n_classes = model_settings['label_count']
-        self.__n_hidden_cells = model_settings['hidden_reccurent_cells_count']
+        self.__n_hidden_reccurent_cells = model_settings['hidden_reccurent_cells_count']
+        self.__n_hidden_cells = model_settings['hidden_latent_count']
         self.__dropout = nn.Dropout(p=0.2)
         self.__bn1 = nn.BatchNorm1d(self.__n_window_height)
         # self.__compress_layer = nn.Linear(self.__n_hidden_cells, 10)
-        self.__lstm = nn.LSTM(self.__n_window_height, self.__n_hidden_cells, batch_first=True, bidirectional=False)
+        self.__lstm = nn.LSTM(self.__n_window_height, self.__n_hidden_reccurent_cells, batch_first=True, bidirectional=False)
 
+        self.mu_z = nn.Linear(self.__n_hidden_reccurent_cells, self.__n_hidden_cells)
+        self.logvar_z = nn.Linear(self.__n_hidden_reccurent_cells, self.__n_hidden_cells)
 
         self.__output_layer = nn.Linear(self.__n_hidden_cells * 2, 128)
         self.__output_layer_1 = nn.Linear(128, 1)
@@ -128,19 +131,34 @@ class SiameseLSTMNet(nn.Module):
         x = self.__dropout(x)
         x = x.view(orig_shape)
         x, hidden = self.__lstm(x, None)
-        return x, hidden
+
+        # REPARAMETERIZATION
+        mean = self.mu_z(x)
+        logv = self.logvar_z(x)
+        std = torch.exp(0.5 * logv)
+
+        z = torch.randn(mean.shape).to(mean.device)
+        z = z * std + mean
+
+        hidden = z[:, -1, :].unsqueeze(1)
+
+        return z, hidden, mean, logv
 
     def forward(self, input, hidden=None):
         # if hidden is None:
         #     hidden = torch.zeros(x.size(0), self.n_hidden)
         lstm_out = []
+        means = []
+        logvs = []
         for i in range(2):
             x = input[i]
-            x, hidden = self.single_forward(x)
-            lstm_out.append(hidden[0])
+            x, hidden, mean, logv = self.single_forward(x)
+            means.append(mean)
+            logvs.append(logv)
+            lstm_out.append(hidden)
 
         # cce path
-        cce_output = torch.cat(lstm_out, dim=1).squeeze()
+        cce_output = torch.cat(lstm_out, dim=0).squeeze()
         cce_output = torch.nn.ReLU()(self.__output_layer_cce(cce_output))
         cce_output = self.__output_layer_cce_1(cce_output)
 
@@ -148,7 +166,7 @@ class SiameseLSTMNet(nn.Module):
         lstm_out = torch.cat(lstm_out, dim=-1).squeeze()
         output = torch.nn.Tanh()(self.__output_layer(lstm_out))
         output = torch.nn.Sigmoid()(self.__output_layer_1(output))
-        return output, cce_output
+        return output, cce_output, means, logvs
 
 
 def accuracy(out, labels):
@@ -175,7 +193,8 @@ def train():
     model_settings = {
         'dct_coefficient_count': 26,
         'label_count': len(wanted_words_combined) + 2,
-        'hidden_reccurent_cells_count': 16,
+        'hidden_reccurent_cells_count': 32,
+        'hidden_latent_count': 16,
         'winlen': 0.04,
         'winstep': 0.04
     }
@@ -199,17 +218,17 @@ def train():
 
     # Summary writer
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
-    writer = SummaryWriter(f'../../reports/seamise_net_{dt}')
+    writer = SummaryWriter(f'../../reports/stochastic_seamise_net_{dt}')
 
     # configure training procedure
     n_train_steps = 30000
     n_mini_batch_size = 128
 
-    siamese_net = SiameseLSTMNet(model_settings).to('cuda')
+    siamese_net = StochasticSiameseLSTMNet(model_settings).to('cuda')
     optimizer = torch.optim.Adam(siamese_net.parameters(), lr=0.0005)
 
-    dummy_input = torch.zeros(2, 1, 25, 26).cuda()
-    writer.add_graph(siamese_net, dummy_input)
+    # dummy_input = torch.zeros(2, 1, 25, 26).cuda()
+    # writer.add_graph(siamese_net, dummy_input)
     """
     Train 
     """
@@ -231,7 +250,7 @@ def train():
         y_target = np.array([0] * len(labels) + [1]*len(labels))
         y_target = torch.from_numpy(y_target).float().to('cuda')
         # forward
-        y, predicted_labels = siamese_net(x)
+        y, predicted_labels, means, logvs = siamese_net(x)
 
         #
         target_labels = torch.from_numpy(np.array([np.concatenate([data['y'],
@@ -244,15 +263,27 @@ def train():
 
         # backward and update
         optimizer.zero_grad()
+
+        # bce loss
         bce_loss = nn.BCELoss()(y, y_target)
+
+        # ce loss
         ce_loss = torch.nn.CrossEntropyLoss()(predicted_labels, target_labels)
-        loss = bce_loss + ce_loss
+
+        # KL divergence regularization
+        KL_loss = -0.5 * torch.sum(
+            1 + torch.cat(logvs, dim=0) - torch.cat(means, dim=0).pow(2) - torch.cat(logvs, dim=0).exp()) / (
+                              4 * n_mini_batch_size)
+
+        loss = bce_loss + ce_loss + KL_loss
+
         loss.backward()
         optimizer.step()
 
         cce_acc = accuracy(predicted_labels.detach().cpu().numpy(), target_labels.detach().cpu().numpy())
         y = np.array([[1.0 - v, v] for v in y.detach().cpu().numpy()]).squeeze()
         bce_acc = accuracy(y, y_target.detach().cpu().numpy())
+        writer.add_scalar('DKL', KL_loss.detach().cpu(), i)
         writer.add_scalar('BCE', bce_loss.detach().cpu(), i)
         writer.add_scalar('CCE', ce_loss.detach().cpu(), i)
         writer.add_scalar('CCE_Accuracy', cce_acc, i)
@@ -260,14 +291,18 @@ def train():
 
         if i % 100 == 0:
             for name, param in siamese_net.named_parameters():
-                writer.add_histogram("SiameseNet_" + name, param, i)
+                writer.add_histogram("StochasticSiameseNet_" + name, param, i)
 
         if bce_acc > max_bce_acc:
             max_bce_acc = bce_acc
-            fname = os.path.join(f'../../reports/seamise_net_{dt}/net_{bce_acc}.net')
+            fname = os.path.join(f'../../reports/stochastic_seamise_net_{dt}/net_{bce_acc}.net')
             torch.save(siamese_net, fname)
 
-        print(i, loss.detach().cpu(), bce_loss.detach().cpu(), ce_loss.detach().cpu())
+        print(f"{i} "
+              f"| L: {loss.detach().cpu().numpy()} "
+              f"| BCE {bce_loss.detach().cpu().numpy()} "
+              f"| CE {ce_loss.detach().cpu().numpy()} "
+              f"| DKL {KL_loss.detach().cpu().numpy()}")
 
         # TODO: add validation each 1k steps for example
         if i % 500 == 0:
@@ -287,7 +322,7 @@ def train():
             y_target = np.array([0] * len(labels) + [1] * len(labels))
             y_target = torch.from_numpy(y_target).float().to('cuda')
             # forward
-            y, predicted_labels = siamese_net(x)
+            y, predicted_labels, means, logvs = siamese_net(x)
 
             #
             target_labels = torch.from_numpy(np.array([np.concatenate([data['y'],
@@ -297,9 +332,16 @@ def train():
                                                       )).long().to('cuda').squeeze()
 
             # backward and update
+            # bce loss
             bce_loss = nn.BCELoss()(y, y_target)
+
+            # CrossEntropy loss
             ce_loss = torch.nn.CrossEntropyLoss()(predicted_labels, target_labels)
-            loss = bce_loss + ce_loss
+
+            # KL divergence regularization
+            KL_loss = -0.5 * torch.sum(1 + torch.cat(logvs, dim=0) - torch.cat(means, dim=0).pow(2) - torch.cat(logvs, dim=0).exp()) / (4 * n_mini_batch_size)
+
+            loss = bce_loss + ce_loss + KL_loss
 
             y = np.array([[1.0 - v, v] for v in y.detach().cpu().numpy()]).squeeze()
 
