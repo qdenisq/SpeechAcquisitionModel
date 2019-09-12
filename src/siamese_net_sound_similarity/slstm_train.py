@@ -14,6 +14,7 @@ import scipy.io.wavfile as wav
 
 from src.speech_classification.audio_processing import AudioPreprocessorFbank, SpeechCommandsDataCollector
 import src.speech_classification.utils as utils
+from src.siamese_net_sound_similarity.soft_dtw import SoftDTW
 
 
 class SiameseSpeechCommandsDataCollector(SpeechCommandsDataCollector):
@@ -150,9 +151,11 @@ class StochasticSiameseLSTMNet(nn.Module):
         lstm_out = []
         means = []
         logvs = []
+        zs = []
         for i in range(2):
             x = input[i]
             x, hidden, mean, logv = self.single_forward(x)
+            zs.append(x)
             means.append(mean)
             logvs.append(logv)
             lstm_out.append(hidden)
@@ -166,7 +169,14 @@ class StochasticSiameseLSTMNet(nn.Module):
         lstm_out = torch.cat(lstm_out, dim=-1).squeeze()
         output = torch.nn.Tanh()(self.__output_layer(lstm_out))
         output = torch.nn.Sigmoid()(self.__output_layer_1(output))
-        return output, cce_output, means, logvs
+        return output, cce_output, zs, means, logvs
+
+
+def kl_anneal_function(anneal_function, step, k, x0):
+    if anneal_function == 'logistic':
+        return float(1 / (1 + np.exp(-k * (step - x0))))
+    elif anneal_function == 'linear':
+        return min(1, step / x0)
 
 
 def accuracy(out, labels):
@@ -193,8 +203,8 @@ def train():
     model_settings = {
         'dct_coefficient_count': 26,
         'label_count': len(wanted_words_combined) + 2,
-        'hidden_reccurent_cells_count': 32,
-        'hidden_latent_count': 16,
+        'hidden_reccurent_cells_count': 64,
+        'hidden_latent_count': 32,
         'winlen': 0.04,
         'winstep': 0.04
     }
@@ -250,7 +260,7 @@ def train():
         y_target = np.array([0] * len(labels) + [1]*len(labels))
         y_target = torch.from_numpy(y_target).float().to('cuda')
         # forward
-        y, predicted_labels, means, logvs = siamese_net(x)
+        y, predicted_labels, zs, means, logvs = siamese_net(x)
 
         #
         target_labels = torch.from_numpy(np.array([np.concatenate([data['y'],
@@ -271,11 +281,20 @@ def train():
         ce_loss = torch.nn.CrossEntropyLoss()(predicted_labels, target_labels)
 
         # KL divergence regularization
-        KL_loss = -0.5 * torch.sum(
-            1 + torch.cat(logvs, dim=0) - torch.cat(means, dim=0).pow(2) - torch.cat(logvs, dim=0).exp()) / (
-                              4 * n_mini_batch_size)
+        logvs_flaten = torch.cat(logvs, dim=0).view(-1, model_settings['hidden_latent_count'])
+        means_flaten = torch.cat(means, dim=0).view(-1, model_settings['hidden_latent_count'])
+        KL_loss = -0.5 * torch.sum(1 + logvs_flaten - means_flaten.pow(2) - logvs_flaten.exp()) / (logvs_flaten.shape[0])
 
-        loss = bce_loss + ce_loss + KL_loss
+        KL_weight = kl_anneal_function('logistic', i, 0.0025, 2500)
+
+        # # DTWLoss (want to minimize dtw between duplica)
+        # DTW_loss = 0
+        # for k in range(n_mini_batch_size):
+        #     DTW_loss += SoftDTW()(zs[0][k], zs[1][k])
+        # for k in range(n_mini_batch_size, 2*n_mini_batch_size):
+        #     DTW_loss -= SoftDTW()(zs[0][k], zs[1][k])
+
+        loss = bce_loss + ce_loss + KL_loss * KL_weight
 
         loss.backward()
         optimizer.step()
@@ -322,7 +341,7 @@ def train():
             y_target = np.array([0] * len(labels) + [1] * len(labels))
             y_target = torch.from_numpy(y_target).float().to('cuda')
             # forward
-            y, predicted_labels, means, logvs = siamese_net(x)
+            y, predicted_labels, _, means, logvs = siamese_net(x)
 
             #
             target_labels = torch.from_numpy(np.array([np.concatenate([data['y'],
@@ -339,7 +358,10 @@ def train():
             ce_loss = torch.nn.CrossEntropyLoss()(predicted_labels, target_labels)
 
             # KL divergence regularization
-            KL_loss = -0.5 * torch.sum(1 + torch.cat(logvs, dim=0) - torch.cat(means, dim=0).pow(2) - torch.cat(logvs, dim=0).exp()) / (4 * n_mini_batch_size)
+            logvs_flaten = torch.cat(logvs, dim=0).view(-1, model_settings['hidden_latent_count'])
+            means_flaten = torch.cat(means, dim=0).view(-1, model_settings['hidden_latent_count'])
+            KL_loss = -0.5 * torch.sum(1 + logvs_flaten - means_flaten.pow(2) - logvs_flaten.exp()) / (
+            logvs_flaten.shape[0])
 
             loss = bce_loss + ce_loss + KL_loss
 

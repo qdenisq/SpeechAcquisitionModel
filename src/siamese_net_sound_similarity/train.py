@@ -175,7 +175,7 @@ def train():
     model_settings = {
         'dct_coefficient_count': 26,
         'label_count': len(wanted_words_combined) + 2,
-        'hidden_reccurent_cells_count': 16,
+        'hidden_reccurent_cells_count': 32,
         'winlen': 0.04,
         'winstep': 0.04
     }
