@@ -118,8 +118,8 @@ class StochasticSiameseLSTMNet(nn.Module):
         self.mu_z = nn.Linear(self.__n_hidden_reccurent_cells, self.__n_hidden_cells)
         self.logvar_z = nn.Linear(self.__n_hidden_reccurent_cells, self.__n_hidden_cells)
 
-        self.__output_layer = nn.Linear(self.__n_hidden_cells * 2, 128)
-        self.__output_layer_1 = nn.Linear(128, 1)
+        self.__output_layer = nn.Linear(self.__n_hidden_cells * 2, 256)
+        self.__output_layer_1 = nn.Linear(256, 1)
 
         self.__output_layer_cce = nn.Linear(self.__n_hidden_cells, 256)
         self.__output_layer_cce_1 = nn.Linear(256, self.__n_classes)
@@ -135,7 +135,7 @@ class StochasticSiameseLSTMNet(nn.Module):
 
         # REPARAMETERIZATION
         mean = self.mu_z(x)
-        logv = self.logvar_z(x)
+        logv = -torch.nn.ReLU()(self.logvar_z(x))
         std = torch.exp(0.5 * logv)
 
         z = torch.randn(mean.shape).to(mean.device)
@@ -203,10 +203,10 @@ def train():
     model_settings = {
         'dct_coefficient_count': 26,
         'label_count': len(wanted_words_combined) + 2,
-        'hidden_reccurent_cells_count': 64,
-        'hidden_latent_count': 32,
+        'hidden_reccurent_cells_count': 128,
+        'hidden_latent_count': 16,
         'winlen': 0.04,
-        'winstep': 0.04
+        'winstep': 0.02
     }
 
     save_dir = r'C:\Study\SpeechAcquisitionModel\models\siamese_net_sound_similarity'
@@ -231,7 +231,7 @@ def train():
     writer = SummaryWriter(f'../../reports/stochastic_seamise_net_{dt}')
 
     # configure training procedure
-    n_train_steps = 30000
+    n_train_steps = 100000
     n_mini_batch_size = 128
 
     siamese_net = StochasticSiameseLSTMNet(model_settings).to('cuda')
@@ -286,15 +286,21 @@ def train():
         KL_loss = -0.5 * torch.sum(1 + logvs_flaten - means_flaten.pow(2) - logvs_flaten.exp()) / (logvs_flaten.shape[0])
 
         KL_weight = kl_anneal_function('logistic', i, 0.0025, 2500)
+        DTW_weight = kl_anneal_function('logistic', i, 0.0025, 2500)
 
-        # # DTWLoss (want to minimize dtw between duplica)
-        # DTW_loss = 0
-        # for k in range(n_mini_batch_size):
-        #     DTW_loss += SoftDTW()(zs[0][k], zs[1][k])
-        # for k in range(n_mini_batch_size, 2*n_mini_batch_size):
-        #     DTW_loss -= SoftDTW()(zs[0][k], zs[1][k])
+        # DTWLoss (want to minimize dtw between duplica)
+        DTW_loss = torch.tensor([0]).float().cuda()
+        for k in range(n_mini_batch_size):
+            DTW_loss += SoftDTW()(zs[0][k], zs[1][k])
+        for k in range(n_mini_batch_size, 2*n_mini_batch_size):
+            DTW_loss -= SoftDTW()(zs[0][k], zs[1][k])
 
-        loss = bce_loss + ce_loss + KL_loss * KL_weight
+        DTW_loss = torch.nn.functional.relu(DTW_loss + 5.0)
+
+        DTW_loss /= (2 * n_mini_batch_size * zs[0].shape[1])
+
+        # loss = bce_loss + ce_loss + KL_loss * KL_weight
+        loss = bce_loss + ce_loss + DTW_loss * DTW_weight + KL_loss * KL_weight
 
         loss.backward()
         optimizer.step()
@@ -305,15 +311,18 @@ def train():
         writer.add_scalar('DKL', KL_loss.detach().cpu(), i)
         writer.add_scalar('BCE', bce_loss.detach().cpu(), i)
         writer.add_scalar('CCE', ce_loss.detach().cpu(), i)
+        writer.add_scalar('DTW_loss', DTW_loss.detach().cpu(), i)
         writer.add_scalar('CCE_Accuracy', cce_acc, i)
         writer.add_scalar('BCE_Accuracy', bce_acc, i)
+        writer.add_scalar('DTW_Weight', DTW_weight, i)
 
         if i % 100 == 0:
             for name, param in siamese_net.named_parameters():
                 writer.add_histogram("StochasticSiameseNet_" + name, param, i)
 
-        if bce_acc > max_bce_acc:
-            max_bce_acc = bce_acc
+        if bce_acc > max_bce_acc or i % 1000 == 0:
+            if bce_acc > max_bce_acc:
+                max_bce_acc = bce_acc
             fname = os.path.join(f'../../reports/stochastic_seamise_net_{dt}/net_{bce_acc}.net')
             torch.save(siamese_net, fname)
 
@@ -321,7 +330,8 @@ def train():
               f"| L: {loss.detach().cpu().numpy()} "
               f"| BCE {bce_loss.detach().cpu().numpy()} "
               f"| CE {ce_loss.detach().cpu().numpy()} "
-              f"| DKL {KL_loss.detach().cpu().numpy()}")
+              f"| DKL {KL_loss.detach().cpu().numpy()}"
+              f"| DTW {DTW_loss.detach().cpu()}")
 
         # TODO: add validation each 1k steps for example
         if i % 500 == 0:
