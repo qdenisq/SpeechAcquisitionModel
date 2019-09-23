@@ -6,6 +6,8 @@ import torch.nn as nn
 import torch
 from torch.utils.tensorboard import SummaryWriter
 
+import dtwalign
+
 import numpy as np
 from six.moves import xrange
 
@@ -117,11 +119,9 @@ class SiameseLSTMNet(nn.Module):
 
         self.__linear_0 = nn.Linear(self.__n_hidden_reccurent_cells, self.__n_hidden_cells)
 
-        self.__output_layer = nn.Linear(self.__n_hidden_cells * 2, 128)
-        self.__output_layer_1 = nn.Linear(128, 1)
+        self.__output_layer = nn.Linear(self.__n_hidden_cells * 2, 1)
 
-        self.__output_layer_cce = nn.Linear(self.__n_hidden_cells, 256)
-        self.__output_layer_cce_1 = nn.Linear(256, self.__n_classes)
+        self.__output_layer_cce = nn.Linear(self.__n_hidden_cells, self.__n_classes)
 
     def single_forward(self, input, hidden=None):
         x = input
@@ -148,13 +148,11 @@ class SiameseLSTMNet(nn.Module):
 
         # cce path
         cce_output = torch.cat(lstm_out, dim=0).squeeze()
-        cce_output = torch.nn.ReLU()(self.__output_layer_cce(cce_output))
-        cce_output = self.__output_layer_cce_1(cce_output)
+        cce_output = self.__output_layer_cce(cce_output)
 
         # bce path
         lstm_out = torch.cat(lstm_out, dim=-1).squeeze()
-        output = torch.nn.Tanh()(self.__output_layer(lstm_out))
-        output = torch.nn.Sigmoid()(self.__output_layer_1(output))
+        output = torch.nn.Sigmoid()(self.__output_layer(lstm_out))
         return zs, output, cce_output
 
 
@@ -190,7 +188,7 @@ def train():
         'dct_coefficient_count': 26,
         'label_count': len(wanted_words_combined) + 2,
         'hidden_reccurent_cells_count': 128,
-        'hidden_latent_count': 16,
+        'hidden_latent_count': 32,
         'winlen': 0.04,
         'winstep': 0.02
     }
@@ -218,7 +216,7 @@ def train():
 
     # configure training procedure
     n_train_steps = 100000
-    n_mini_batch_size = 128
+    n_mini_batch_size = 256
 
     siamese_net = SiameseLSTMNet(model_settings).to('cuda')
     optimizer = torch.optim.Adam(siamese_net.parameters(), lr=0.0005)
@@ -269,16 +267,14 @@ def train():
         # DTWLoss (want to minimize dtw between duplica)
         DTW_loss = torch.tensor([0]).float().cuda()
         for k in range(n_mini_batch_size):
-            DTW_loss += SoftDTW()(zs[0][k], zs[1][k])
-        for k in range(n_mini_batch_size, 2 * n_mini_batch_size):
-            DTW_loss -= SoftDTW()(zs[0][k], zs[1][k])
+            DTW_loss += torch.nn.functional.relu(SoftDTW()(zs[0][k], zs[1][k]) -
+                                                 SoftDTW()(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
+                                                 + 0.2)
 
-        DTW_loss = torch.nn.functional.relu(DTW_loss + 5.0)
-
-        DTW_loss /= (2 * n_mini_batch_size * zs[0].shape[1])
+        DTW_loss /= (n_mini_batch_size)
 
         # loss = bce_loss + ce_loss + KL_loss * KL_weight
-        loss = bce_loss + ce_loss + DTW_loss * DTW_weight
+        loss = ce_loss + DTW_loss * DTW_weight
         loss.backward()
         optimizer.step()
 
