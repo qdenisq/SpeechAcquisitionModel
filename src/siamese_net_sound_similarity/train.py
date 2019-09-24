@@ -216,7 +216,7 @@ def train():
 
     # configure training procedure
     n_train_steps = 100000
-    n_mini_batch_size = 256
+    n_mini_batch_size = 128
 
     siamese_net = SiameseLSTMNet(model_settings).to('cuda')
     optimizer = torch.optim.Adam(siamese_net.parameters(), lr=0.0005)
@@ -271,7 +271,7 @@ def train():
                                                  SoftDTW()(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
                                                  + 0.2)
 
-        DTW_loss /= (n_mini_batch_size)
+        DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
 
         # loss = bce_loss + ce_loss + KL_loss * KL_weight
         loss = ce_loss + DTW_loss * DTW_weight

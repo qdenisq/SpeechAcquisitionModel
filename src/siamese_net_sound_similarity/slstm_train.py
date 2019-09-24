@@ -15,6 +15,7 @@ import scipy.io.wavfile as wav
 from src.speech_classification.audio_processing import AudioPreprocessorFbank, SpeechCommandsDataCollector
 import src.speech_classification.utils as utils
 from src.siamese_net_sound_similarity.soft_dtw import SoftDTW
+import dtwalign
 
 
 class SiameseSpeechCommandsDataCollector(SpeechCommandsDataCollector):
@@ -286,16 +287,18 @@ def train():
         KL_loss = -0.5 * torch.sum(1 + logvs_flaten - means_flaten.pow(2) - logvs_flaten.exp()) / (logvs_flaten.shape[0])
 
         KL_weight = kl_anneal_function('logistic', i, 0.0025, 2500)
+
         DTW_weight = kl_anneal_function('logistic', i, 0.0025, 2500)
 
         # DTWLoss (want to minimize dtw between duplica)
         DTW_loss = torch.tensor([0]).float().cuda()
         for k in range(n_mini_batch_size):
-            DTW_loss += SoftDTW()(zs[0][k], zs[1][k])
-        for k in range(n_mini_batch_size, 2*n_mini_batch_size):
-            DTW_loss -= SoftDTW()(zs[0][k], zs[1][k])
+            DTW_loss += torch.nn.functional.relu(SoftDTW()(zs[0][k], zs[1][k]) -
+                                                 SoftDTW()(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
+                                                 + 0.2)
 
-        DTW_loss = torch.nn.functional.relu(DTW_loss + 5.0)
+        DTW_loss /= (n_mini_batch_size)
+
 
         DTW_loss /= (2 * n_mini_batch_size * zs[0].shape[1])
 
