@@ -192,10 +192,12 @@ def train():
         'winlen': 0.04,
         'winstep': 0.02,
         'open_end': True,
-        'dist': 'canberra'
+        'dist': 'l1',
+        'margin': 0.2
     }
     open_end = model_settings['open_end']
     dist = model_settings['dist']
+    margin = model_settings['margin']
 
     save_dir = r'C:\Study\SpeechAcquisitionModel\models\siamese_net_sound_similarity'
     if not os.path.exists(save_dir):
@@ -275,10 +277,10 @@ def train():
         for k in range(n_mini_batch_size):
             DTW_loss += torch.nn.functional.relu(soft_dtw_loss(zs[0][k], zs[1][k]) -
                                                  soft_dtw_loss(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
-                                                 + 0.2)
+                                                 + margin)
 
         if open_end:
-            DTW_loss /= (n_mini_batch_size )
+            DTW_loss /= (n_mini_batch_size)
         else:
             DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
 

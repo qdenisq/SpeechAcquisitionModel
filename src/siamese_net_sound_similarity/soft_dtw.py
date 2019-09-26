@@ -94,7 +94,7 @@ def calc_distance_matrices(xb, yb):
 
 
 class SoftDTW(torch.nn.Module):
-  def __init__(self, gamma=1.0, normalize=False, open_end=False, dist='euclidian'):
+  def __init__(self, gamma=1.0, normalize=False, open_end=False, dist='euclidean'):
     super(SoftDTW, self).__init__()
     self.normalize = normalize
     self.gamma = gamma
@@ -108,10 +108,14 @@ class SoftDTW(torch.nn.Module):
     d = x.size(1)
     x = x.unsqueeze(1).expand(n, m, d)
     y = y.unsqueeze(0).expand(n, m, d)
-    if self.dist == 'euclidian':
+    if self.dist == 'euclidean':
       dist = torch.pow(x - y, 2).sum(2)
     elif self.dist == 'canberra':
-      dist = (torch.abs(x - y) / (torch.abs(x) + torch.abs(y))).sum(2)
+      dist = (torch.abs(x - y) / (torch.abs(x) + torch.abs(y) + 1e-8)).sum(2)
+    elif self.dist == 'l1':
+      dist = torch.abs(x - y).sum(2)
+    else:
+      raise KeyError(f"unknown distance metric: {self.dist}")
     return dist
 
   # def calc_canberra_distance_matrix(self, x, y):
