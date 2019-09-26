@@ -21,17 +21,18 @@ def compute_softdtw(D, gamma):
   return R
 
 @jit(nopython = True)
-def compute_softdtw_backward(D_, R, gamma):
+def compute_softdtw_backward(D_, R, gamma, bmi):
   N = D_.shape[0]
   M = D_.shape[1]
   D = np.zeros((N + 2, M + 2))
   E = np.zeros((N + 2, M + 2))
   D[1:N + 1, 1:M + 1] = D_
-  E[-1, -1] = 1
+  E[-1, bmi + 1] = 1
   R[:, -1] = -1e8
   R[-1, :] = -1e8
-  R[-1, -1] = R[-2, -2]
-  for j in range(M, 0, -1):
+  # R[-1, -1] = R[-2, -2]
+  R[-1, bmi + 1] = R[-2, bmi]
+  for j in range(bmi, 0, -1):
     for i in range(N, 0, -1):
       a0 = (R[i + 1, j] - R[i, j] - D[i + 1, j]) / gamma
       b0 = (R[i, j + 1] - R[i, j] - D[i, j + 1]) / gamma
@@ -44,26 +45,37 @@ def compute_softdtw_backward(D_, R, gamma):
 
 class _SoftDTW(Function):
   @staticmethod
-  def forward(ctx, D, gamma):
+  def forward(ctx, D, gamma, open_end):
     dev = D.device
     dtype = D.dtype
     gamma = torch.Tensor([gamma]).to(dev).type(dtype) # dtype fixed
     D_ = D.detach().cpu().numpy()
     g_ = gamma.item()
     R = torch.Tensor(compute_softdtw(D_, g_)).to(dev).type(dtype)
-    ctx.save_for_backward(D, R, gamma)
-    return R[-2, -2]
+    N = D.shape[0]
+    M = D.shape[1]
+    if open_end:
+      row = R[-2, 1:M+1] / (N + torch.arange(1, M + 1).to(dev).type(dtype))
+      # R[-2, 1:M+1] /= (N + torch.arange(1, M + 1).to(dev).type(dtype)) # probably shouldn't change inplace
+      res, best_match_index = torch.min(row, dim=0)
+      best_match_index += 1
+    else:
+      res = R[-2, -2]
+      best_match_index = torch.Tensor([M]).to(dev).type(dtype)
+    ctx.save_for_backward(D, R, gamma, best_match_index)
+    return res
 
   @staticmethod
   def backward(ctx, grad_output):
     dev = grad_output.device
     dtype = grad_output.dtype
-    D, R, gamma = ctx.saved_tensors
+    D, R, gamma, best_match_index = ctx.saved_tensors
     D_ = D.detach().cpu().numpy()
     R_ = R.detach().cpu().numpy()
     g_ = gamma.item()
-    E = torch.Tensor(compute_softdtw_backward(D_, R_, g_)).to(dev).type(dtype)
-    return grad_output * E, None
+    bmi_ = best_match_index.item()
+    E = torch.Tensor(compute_softdtw_backward(D_, R_, g_, bmi_)).to(dev).type(dtype)
+    return grad_output * E, None, None
 
 ## Added
 '''
@@ -78,11 +90,13 @@ def calc_distance_matrices(xb, yb):
 '''
 
 class SoftDTW(torch.nn.Module):
-  def __init__(self, gamma=1.0, normalize=False):
+  def __init__(self, gamma=1.0, normalize=False, open_end=False, dist='euclidian'):
     super(SoftDTW, self).__init__()
     self.normalize = normalize
-    self.gamma=gamma
+    self.gamma = gamma
+    self.open_end = open_end
     self.func_dtw = _SoftDTW.apply
+    self.dist = dist
 
   def calc_distance_matrix(self, x, y):
     n = x.size(0)
@@ -90,19 +104,31 @@ class SoftDTW(torch.nn.Module):
     d = x.size(1)
     x = x.unsqueeze(1).expand(n, m, d)
     y = y.unsqueeze(0).expand(n, m, d)
-    dist = torch.pow(x - y, 2).sum(2)
+    if self.dist == 'euclidian':
+      dist = torch.pow(x - y, 2).sum(2)
+    elif self.dist == 'canberra':
+      dist = (torch.abs(x - y) / (torch.abs(x) + torch.abs(y))).sum(2)
     return dist
+
+  # def calc_canberra_distance_matrix(self, x, y):
+  #   n = x.size(0)
+  #   m = y.size(0)
+  #   d = x.size(1)
+  #   x = x.unsqueeze(1).expand(n, m, d)
+  #   y = y.unsqueeze(0).expand(n, m, d)
+  #   dist = (torch.abs(x - y) / (torch.abs(x) + torch.abs(y))).sum(2)
+  #   return dist
 
   def forward(self, x, y):
     if self.normalize:
       D_xy = self.calc_distance_matrix(x, y)
-      out_xy = self.func_dtw(D_xy, self.gamma)
+      out_xy = self.func_dtw(D_xy, self.gamma, self.open_end)
       D_xx = self.calc_distance_matrix(x, x)
-      out_xx = self.func_dtw(D_xx, self.gamma)
+      out_xx = self.func_dtw(D_xx, self.gamma, self.open_end)
       D_yy = self.calc_distance_matrix(y, y)
-      out_yy = self.func_dtw(D_yy, self.gamma)
+      out_yy = self.func_dtw(D_yy, self.gamma, self.open_end)
       return out_xy - 1/2 * (out_xx + out_yy) # distance
     else:
       D_xy = self.calc_distance_matrix(x, y)
-      out_xy = self.func_dtw(D_xy, self.gamma)
+      out_xy = self.func_dtw(D_xy, self.gamma, self.open_end)
       return out_xy # discrepancy

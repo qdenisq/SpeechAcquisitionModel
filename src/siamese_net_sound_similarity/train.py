@@ -190,8 +190,12 @@ def train():
         'hidden_reccurent_cells_count': 128,
         'hidden_latent_count': 32,
         'winlen': 0.04,
-        'winstep': 0.02
+        'winstep': 0.02,
+        'open_end': True,
+        'dist': 'canberra'
     }
+    open_end = model_settings['open_end']
+    dist = model_settings['dist']
 
     save_dir = r'C:\Study\SpeechAcquisitionModel\models\siamese_net_sound_similarity'
     if not os.path.exists(save_dir):
@@ -216,10 +220,12 @@ def train():
 
     # configure training procedure
     n_train_steps = 100000
-    n_mini_batch_size = 128
+    n_mini_batch_size = 64
 
     siamese_net = SiameseLSTMNet(model_settings).to('cuda')
     optimizer = torch.optim.Adam(siamese_net.parameters(), lr=0.0005)
+
+    soft_dtw_loss = SoftDTW(open_end=open_end, dist=dist)
 
     # dummy_input = torch.zeros(2, 1, 25, 26).cuda()
     # writer.add_graph(siamese_net, dummy_input)
@@ -267,11 +273,14 @@ def train():
         # DTWLoss (want to minimize dtw between duplica)
         DTW_loss = torch.tensor([0]).float().cuda()
         for k in range(n_mini_batch_size):
-            DTW_loss += torch.nn.functional.relu(SoftDTW()(zs[0][k], zs[1][k]) -
-                                                 SoftDTW()(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
+            DTW_loss += torch.nn.functional.relu(soft_dtw_loss(zs[0][k], zs[1][k]) -
+                                                 soft_dtw_loss(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
                                                  + 0.2)
 
-        DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
+        if open_end:
+            DTW_loss /= (n_mini_batch_size )
+        else:
+            DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
 
         # loss = bce_loss + ce_loss + KL_loss * KL_weight
         loss = ce_loss + DTW_loss * DTW_weight
