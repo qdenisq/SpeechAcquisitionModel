@@ -3,6 +3,7 @@ import torch
 from numba import jit
 from torch.autograd import Function
 
+
 @jit(nopython = True)
 def compute_softdtw(D, gamma):
   N = D.shape[0]
@@ -19,6 +20,7 @@ def compute_softdtw(D, gamma):
       softmin = - gamma * (np.log(rsum) + rmax)
       R[i, j] = D[i - 1, j - 1] + softmin
   return R
+
 
 @jit(nopython = True)
 def compute_softdtw_backward(D_, R, gamma, bmi):
@@ -42,6 +44,7 @@ def compute_softdtw_backward(D_, R, gamma, bmi):
       c = np.exp(c0)
       E[i, j] = E[i + 1, j] * a + E[i, j + 1] * b + E[i + 1, j + 1] * c
   return E[1:N + 1, 1:M + 1]
+
 
 class _SoftDTW(Function):
   @staticmethod
@@ -88,6 +91,7 @@ def calc_distance_matrices(xb, yb):
         D[i] = calc_distance_matrix(xb[i], yb[i])
     return D
 '''
+
 
 class SoftDTW(torch.nn.Module):
   def __init__(self, gamma=1.0, normalize=False, open_end=False, dist='euclidian'):
