@@ -63,7 +63,7 @@ class _SoftDTW(Function):
       res, best_match_index = torch.min(row, dim=0)
       best_match_index += 1
     else:
-      res = R[-2, -2]
+      res = R[-2, -2] / (N + M)
       best_match_index = torch.Tensor([M]).to(dev).type(dtype)
     ctx.save_for_backward(D, R, gamma, best_match_index)
     return res

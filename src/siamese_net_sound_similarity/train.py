@@ -193,7 +193,7 @@ def train():
         'winstep': 0.02,
         'open_end': True,
         'dist': 'l1',
-        'margin': 0.2
+        'margin': 0.5
     }
     open_end = model_settings['open_end']
     dist = model_settings['dist']
@@ -285,7 +285,7 @@ def train():
             DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
 
         # loss = bce_loss + ce_loss + KL_loss * KL_weight
-        loss = ce_loss + DTW_loss * DTW_weight
+        loss = 0.4 * ce_loss + 0.6 * DTW_loss * DTW_weight
         loss.backward()
         optimizer.step()
 
