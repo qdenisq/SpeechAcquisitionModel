@@ -7,10 +7,11 @@
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/prefix_identification_noELBO-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/prefix_identification_noELBO-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/spoken_word_metric_noELBO-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/spoken_word_metric_noELBO-checkpoint.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/notebook.tex" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/notebook.tex" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/prefix_identification_noELBO.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/prefix_identification_noELBO.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/spoken_word_metric_noELBO.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/spoken_word_metric_noELBO.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -26,33 +27,34 @@
     <session id="1686499638">
       <usages-collector id="statistics.lifecycle.project">
         <counts>
-          <entry key="project.closed" value="28" />
-          <entry key="project.open.time.0" value="13" />
+          <entry key="project.closed" value="29" />
+          <entry key="project.open.time.0" value="14" />
+          <entry key="project.open.time.2" value="1" />
           <entry key="project.open.time.3" value="3" />
           <entry key="project.open.time.4" value="14" />
           <entry key="project.open.time.5" value="13" />
-          <entry key="project.open.time.6" value="1" />
+          <entry key="project.open.time.6" value="2" />
           <entry key="project.open.time.7" value="2" />
-          <entry key="project.opened" value="46" />
+          <entry key="project.opened" value="49" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.extensions.open">
         <counts>
-          <entry key="ipynb" value="33" />
+          <entry key="ipynb" value="34" />
           <entry key="json" value="50" />
           <entry key="png" value="1" />
-          <entry key="py" value="330" />
+          <entry key="py" value="331" />
           <entry key="pyi" value="1" />
           <entry key="txt" value="1" />
         </counts>
       </usages-collector>
       <usages-collector id="statistics.file.types.open">
         <counts>
-          <entry key="IPNB" value="33" />
+          <entry key="IPNB" value="34" />
           <entry key="Image" value="1" />
           <entry key="JSON" value="50" />
           <entry key="PLAIN_TEXT" value="1" />
-          <entry key="Python" value="330" />
+          <entry key="Python" value="331" />
           <entry key="PythonStub" value="1" />
         </counts>
       </usages-collector>
@@ -61,7 +63,7 @@
           <entry key="Python Console" value="387" />
           <entry key="dummy" value="4" />
           <entry key="json" value="1785" />
-          <entry key="py" value="52142" />
+          <entry key="py" value="52305" />
           <entry key="txt" value="403" />
         </counts>
       </usages-collector>
@@ -69,7 +71,7 @@
         <counts>
           <entry key="JSON" value="1785" />
           <entry key="PLAIN_TEXT" value="407" />
-          <entry key="Python" value="52529" />
+          <entry key="Python" value="52692" />
         </counts>
       </usages-collector>
     </session>
@@ -79,8 +81,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="440">
-              <caret line="277" column="81" selection-start-line="277" selection-start-column="49" selection-end-line="277" selection-end-column="81" />
+            <state relative-caret-position="1040">
+              <caret line="232" column="48" selection-start-line="232" selection-start-column="48" selection-end-line="232" selection-end-column="48" />
               <folding>
                 <element signature="e#0#9#0" expanded="true" />
               </folding>
@@ -88,11 +90,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
-        <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/__init__.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="20">
-              <caret line="1" column="18" selection-start-line="1" selection-start-column="18" selection-end-line="1" selection-end-column="18" />
+      <file pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb">
+          <provider selected="true" editor-type-id="ipnb-editor">
+            <state>
+              <selected id="0" />
             </state>
           </provider>
         </entry>
@@ -100,7 +102,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/dtw.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2016">
+            <state relative-caret-position="2920">
               <caret line="153" selection-start-line="153" selection-end-line="153" />
               <folding>
                 <element signature="e#1154#1172#0" expanded="true" />
@@ -112,7 +114,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/step_pattern.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="365">
+            <state relative-caret-position="12620">
               <caret line="633" column="39" selection-start-line="633" selection-start-column="39" selection-end-line="633" selection-end-column="39" />
             </state>
           </provider>
@@ -121,7 +123,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/distance.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="400">
+            <state relative-caret-position="520">
               <caret line="26" column="35" selection-start-line="26" selection-start-column="35" selection-end-line="26" selection-end-column="35" />
             </state>
           </provider>
@@ -157,11 +159,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="320">
-              <caret line="16" column="31" lean-forward="true" selection-start-line="16" selection-start-column="31" selection-end-line="16" selection-end-column="31" />
+            <state relative-caret-position="2020">
+              <caret line="104" column="39" selection-start-line="104" selection-start-column="39" selection-end-line="104" selection-end-column="39" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
               </folding>
@@ -172,7 +174,7 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/../p2_control_temp/udacity_p2_continious_control/src/ddpg.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="2640">
+            <state relative-caret-position="2540">
               <caret line="132" selection-start-line="132" selection-end-line="132" />
               <folding>
                 <element signature="e#0#18#0" expanded="true" />
@@ -221,7 +223,6 @@
   <component name="IdeDocumentHistory">
     <option name="CHANGED_PATHS">
       <list>
-        <option value="$PROJECT_DIR$/src/som/SOM.py" />
         <option value="$PROJECT_DIR$/src/som/som.py" />
         <option value="$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/train_mb1stepbackprop_config.json" />
         <option value="$PROJECT_DIR$/reports/videos/video_mb1step_03_19_2019_02_25_PM/config.json" />
@@ -272,6 +273,7 @@
         <option value="$PROJECT_DIR$/src/dtw/prefix_identification_noELBO.ipynb" />
         <option value="C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/step_pattern.py" />
         <option value="$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py" />
+        <option value="$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb" />
       </list>
     </option>
   </component>
@@ -413,7 +415,7 @@
   </component>
   <component name="PropertiesComponent">
     <property name="last_opened_file_path" value="C:/ProgramData/Anaconda3/envs/sam" />
-    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PythonContentEntriesConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
@@ -696,7 +698,6 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="-8" y="-8" width="1936" height="1056" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" visible="true" weight="0.23024236" />
       <window_info id="Structure" order="1" weight="0.24960339" />
@@ -1175,6 +1176,11 @@
           <line>45</line>
           <option name="timeStamp" value="799" />
         </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py</url>
+          <line>291</line>
+          <option name="timeStamp" value="800" />
+        </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
         <breakpoint type="python-exception">
@@ -1196,6 +1202,26 @@
   </component>
   <component name="debuggerHistoryManager">
     <expressions id="evaluateCodeFragment">
+      <expression>
+        <expression-string>torch.sum((zs[0][k]- zs[1][k])**2, dim=-1)[-1]</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>(zs[0][k]- zs[1][k])**2</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.sum((zs[0][k]- zs[1][k])**2)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
+      <expression>
+        <expression-string>torch.sum((zs[0][k]- zs[1][k])**2, dim=-1)</expression-string>
+        <language-id>Python</language-id>
+        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
+      </expression>
       <expression>
         <expression-string>R</expression-string>
         <language-id>Python</language-id>
@@ -1223,21 +1249,6 @@
       </expression>
       <expression>
         <expression-string>E[50, 29]</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>E[i , j+1]</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>E[i + 1, j]</expression-string>
-        <language-id>Python</language-id>
-        <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
-      </expression>
-      <expression>
-        <expression-string>E[i + 1, j] * a + E[i, j + 1] * b + E[i + 1, j + 1] * c</expression-string>
         <language-id>Python</language-id>
         <evaluation-mode>CODE_FRAGMENT</evaluation-mode>
       </expression>
@@ -1303,16 +1314,6 @@
     </expressions>
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/algs/model_based_multi_step_backprop_with_ensemble_classifier_v2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9740">
-          <caret line="501" selection-start-line="501" selection-end-line="501" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/reinforcement/goal_directed_model_based_rl/replay_buffer.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="380">
@@ -1482,13 +1483,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/loss.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="9860">
-          <caret line="497" selection-start-line="497" selection-end-line="497" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/VTL/create_reference.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="940">
@@ -1531,19 +1525,12 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="335">
           <caret line="191" column="73" selection-start-line="190" selection-start-column="8" selection-end-line="191" selection-end-column="73" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/src/speech_classification/convRNN.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-9184">
-          <folding>
-            <element signature="e#0#38#0" expanded="true" />
-          </folding>
-        </state>
+        <state relative-caret-position="-9184" />
       </provider>
     </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/utils/tensorboard/writer.py">
@@ -1583,9 +1570,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="240">
           <caret line="351" column="26" selection-start-line="351" selection-start-column="26" selection-end-line="351" selection-end-column="50" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
         </state>
       </provider>
     </entry>
@@ -1620,6 +1604,61 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/src/dtw/prefix_identification_noELBO.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/torch/nn/modules/loss.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="9860">
+          <caret line="497" selection-start-line="497" selection-end-line="497" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1040">
+          <caret line="232" column="48" selection-start-line="232" selection-start-column="48" selection-end-line="232" selection-end-column="48" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/dtw.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2920">
+          <caret line="153" selection-start-line="153" selection-end-line="153" />
+          <folding>
+            <element signature="e#1154#1172#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/step_pattern.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="12620">
+          <caret line="633" column="39" selection-start-line="633" selection-start-column="39" selection-end-line="633" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/distance.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="520">
+          <caret line="26" column="35" selection-start-line="26" selection-start-column="35" selection-end-line="26" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://C:/ProgramData/Anaconda3/pkgs/tensorflow-gpu-1.1.0-np112py36_0/Lib/site-packages/tensorflow/python/kernel_tests/multinomial_op_test.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="2300">
+          <caret line="133" column="6" selection-start-line="133" selection-start-column="6" selection-end-line="133" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/result.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="1660">
@@ -1637,23 +1676,19 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/dtw/prefix_identification_noELBO.ipynb">
-      <provider selected="true" editor-type-id="ipnb-editor">
-        <state>
-          <selected id="0" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/distance.py">
+    <entry file="file://$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="400">
-          <caret line="26" column="35" selection-start-line="26" selection-start-column="35" selection-end-line="26" selection-end-column="35" />
+        <state relative-caret-position="2020">
+          <caret line="104" column="39" selection-start-line="104" selection-start-column="39" selection-end-line="104" selection-end-column="39" />
+          <folding>
+            <element signature="e#0#18#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/../p2_control_temp/udacity_p2_continious_control/src/ddpg.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2640">
+        <state relative-caret-position="2540">
           <caret line="132" selection-start-line="132" selection-end-line="132" />
           <folding>
             <element signature="e#0#18#0" expanded="true" />
@@ -1661,47 +1696,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/pkgs/tensorflow-gpu-1.1.0-np112py36_0/Lib/site-packages/tensorflow/python/kernel_tests/multinomial_op_test.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2300">
-          <caret line="133" column="6" selection-start-line="133" selection-start-column="6" selection-end-line="133" selection-end-column="6" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/dtw.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2016">
-          <caret line="153" selection-start-line="153" selection-end-line="153" />
-          <folding>
-            <element signature="e#1154#1172#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://C:/ProgramData/Anaconda3/Lib/site-packages/dtwalign/step_pattern.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="365">
-          <caret line="633" column="39" selection-start-line="633" selection-start-column="39" selection-end-line="633" selection-end-column="39" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="440">
-          <caret line="277" column="81" selection-start-line="277" selection-start-column="49" selection-end-line="277" selection-end-column="81" />
-          <folding>
-            <element signature="e#0#9#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="320">
-          <caret line="16" column="31" lean-forward="true" selection-start-line="16" selection-start-column="31" selection-end-line="16" selection-end-column="31" />
-          <folding>
-            <element signature="e#0#18#0" expanded="true" />
-          </folding>
+    <entry file="file://$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb">
+      <provider selected="true" editor-type-id="ipnb-editor">
+        <state>
+          <selected id="0" />
         </state>
       </provider>
     </entry>

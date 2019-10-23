@@ -270,22 +270,38 @@ def train():
         # ce loss
         ce_loss = torch.nn.CrossEntropyLoss()(predicted_labels, target_labels)
 
-        DTW_weight = anneal_function('logistic', i, 0.0025, 2500)
+        Triplet_loss_weight = anneal_function('logistic', i, 0.0025, 2500)
+
+        Triplet_loss = torch.tensor([0]).float().cuda()
 
         # DTWLoss (want to minimize dtw between duplica)
-        DTW_loss = torch.tensor([0]).float().cuda()
+        # DTW_loss = torch.tensor([0]).float().cuda()
+        # for k in range(n_mini_batch_size):
+        #     DTW_loss += torch.nn.functional.relu(soft_dtw_loss(zs[0][k], zs[1][k]) -
+        #                                          soft_dtw_loss(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
+        #                                          + margin)
+        #
+        # if open_end:
+        #     DTW_loss /= (n_mini_batch_size)
+        # else:
+        #     DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
+        # Triplet_loss = DTW_loss
+
+        L2_loss = torch.tensor([0]).float().cuda()
         for k in range(n_mini_batch_size):
-            DTW_loss += torch.nn.functional.relu(soft_dtw_loss(zs[0][k], zs[1][k]) -
-                                                 soft_dtw_loss(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
-                                                 + margin)
+            L2_loss += torch.nn.functional.relu(torch.sum((zs[0][k]- zs[1][k])**2, dim=-1)[-1] -
+                                                torch.sum((zs[0][k + n_mini_batch_size] - zs[1][k + n_mini_batch_size]) ** 2, dim=-1)[-1] +
+                                                margin)
 
         if open_end:
-            DTW_loss /= (n_mini_batch_size)
+            L2_loss /= (n_mini_batch_size)
         else:
-            DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
+            L2_loss /= (n_mini_batch_size * zs[0].shape[1])
+        Triplet_loss = L2_loss
 
         # loss = bce_loss + ce_loss + KL_loss * KL_weight
-        loss = 0.4 * ce_loss + 0.6 * DTW_loss * DTW_weight
+        loss = 0.4 * ce_loss + 0.6 * Triplet_loss * Triplet_loss_weight
+        loss = ce_loss
         loss.backward()
         optimizer.step()
 
@@ -294,10 +310,10 @@ def train():
         bce_acc = accuracy(y, y_target.detach().cpu().numpy())
         writer.add_scalar('BCE', bce_loss.detach().cpu(), i)
         writer.add_scalar('CCE', ce_loss.detach().cpu(), i)
-        writer.add_scalar('DTW_loss', DTW_loss.detach().cpu(), i)
+        writer.add_scalar('Triplet Loss', Triplet_loss.detach().cpu(), i)
         writer.add_scalar('CCE_Accuracy', cce_acc, i)
         writer.add_scalar('BCE_Accuracy', bce_acc, i)
-        writer.add_scalar('DTW_Weight', DTW_weight, i)
+        writer.add_scalar('Triplet_loss_weight', Triplet_loss_weight, i)
 
         if i % 500 == 0:
             for name, param in siamese_net.named_parameters():
@@ -313,7 +329,7 @@ def train():
               f"| L: {loss.detach().cpu().numpy()} "
               f"| BCE {bce_loss.detach().cpu().numpy()} "
               f"| CE {ce_loss.detach().cpu().numpy()} "
-              f"| DTW {DTW_loss.detach().cpu()}")
+              f"| Triplet Loss {Triplet_loss.detach().cpu()}")
 
         # TODO: add validation each 1k steps for example
         if i % 500 == 0:
