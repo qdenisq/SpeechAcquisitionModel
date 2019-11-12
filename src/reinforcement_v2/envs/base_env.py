@@ -67,7 +67,9 @@ class VTLEnvPreprocAudio(VTLEnv):
             state_out.extend(preproc_audio.squeeze())
 
         # there is no reward and time limit constraint for this environment
-        reward = None
         done = None
-        info = None
+        if self.current_step > 40:
+            done = True
+        reward = None
+        info = {}
         return state_out, reward, done, info

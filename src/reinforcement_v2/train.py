@@ -37,11 +37,13 @@ if __name__ == '__main__':
     env_id = env_kwargs.pop('env_id')
     env = env_mgr.make(env_id, *env_args, **env_kwargs)
 
-    env.reset()
-    while True:
-        obs_dict, reward, done, info = env.step(np.tile(env.action_space.sample(), (kwargs['env']['num_workers'], 1)))
-        if np.any(done):
-            break
+    for i in range(10):
+        env.reset()
+        while True:
+            obs_dict, reward, done, info = env.step(np.tile(env.action_space.sample(), (kwargs['env']['num_workers'], 1)))
+            env.render()
+            if np.any(done):
+                break
 
 
     kwargs['train'].update(kwargs['env'])

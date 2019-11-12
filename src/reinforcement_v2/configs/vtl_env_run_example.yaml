@@ -4,9 +4,11 @@ env:
   lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
   norm_observation: true
   norm_action: false
-  num_workers: 10
+  num_workers: 5
   visualize: false
   seed: 123456
+  timestep: 20
+  max_episode_duration: 1000
   preprocessing_params:
     numcep: 12
     winlen: 0.02
