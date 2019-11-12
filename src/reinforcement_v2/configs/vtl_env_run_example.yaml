@@ -1,0 +1,15 @@
+env:
+  env_id: vtl_base
+  speaker_fname: "C:/Study/SpeechAcquisitionModel/src/VTL/JD2.speaker"
+  lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
+  norm_observation: true
+  norm_action: false
+  num_workers: 10
+  visualize: false
+  seed: 123456
+  preprocessing_params:
+    numcep: 12
+    winlen: 0.02
+    winstep: 0.02
+    sample_rate: 22050
+

@@ -7,8 +7,15 @@ import subprocess
 import av
 from scipy.io import wavfile
 import numpy as np
+from gym import spaces
+import gym
 
-class VTLEnv(object):
+
+def convert_to_gym(space):
+    return spaces.Box(np.array(space[0]), np.array(space[1]))
+
+
+class VTLEnv(gym.Env):
     def __init__(self, lib_path, speaker_fname, timestep=10, max_episode_duration=1000, img_width=400, img_height=400, **kwargs):
         # load vocaltractlab binary
         # Use 'VocalTractLabApi32.dll' if you use a 32-bit python version.
@@ -111,6 +118,8 @@ class VTLEnv(object):
         self.state_bound = list(zip(self.tract_param_min, self.tract_param_max))
         self.state_bound.extend(zip(self.glottis_param_min, self.glottis_param_max))
 
+        self.action_space = convert_to_gym(list(zip(*self.action_bound)))
+        self.observation_space = convert_to_gym(list(zip(*self.state_bound)))
         self.current_step = 0
         return
 
