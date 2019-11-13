@@ -74,6 +74,14 @@ class VectorizedWrapper(SubprocVecEnv):
         # else:
         #     raise NotImplementedError
 
+    def dump_episode(self, *args, **kwargs):
+        for pipe in self.remotes:
+            # gather images from subprocesses
+            # `mode` will be taken into account later
+            pipe.send(('env_method', ('dump_episode', args, {**kwargs})))
+        res = [pipe.recv() for pipe in self.remotes]
+        return
+
     def reset(self, remotes=None):
         """Reset specified environments. If remotes is None, then all environments will be reseted"""
         if remotes is None:

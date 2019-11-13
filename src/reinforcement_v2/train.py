@@ -5,6 +5,7 @@ import datetime
 import copy
 import os
 from collections import defaultdict
+import time
 
 import numpy as np
 
@@ -40,10 +41,13 @@ if __name__ == '__main__':
     for i in range(10):
         env.reset()
         while True:
-            obs_dict, reward, done, info = env.step(np.tile(env.action_space.sample(), (kwargs['env']['num_workers'], 1)))
+            print(i)
+            obs_dict, reward, done, info = env.step(np.tile(env.action_space.sample()*0.1, (kwargs['env']['num_workers'], 1)))
             env.render()
             if np.any(done):
+                env.dump_episode()
                 break
+
 
 
     kwargs['train'].update(kwargs['env'])

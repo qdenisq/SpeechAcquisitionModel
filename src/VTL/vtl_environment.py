@@ -33,7 +33,7 @@ class VTLEnv(gym.Env):
         # initialize vtl
         speaker_file_name = ctypes.c_char_p(speaker_fname.encode())
 
-        failure = self.VTL.vtlInitialize(speaker_file_name)
+        failure = self.VTL.vtlInitialize(speaker_file_name, True)
         if failure != 0:
             raise ValueError('Error in vtlInitialize! Errorcode: %i' % failure)
 
@@ -186,11 +186,15 @@ class VTLEnv(gym.Env):
         self.VTL.vtlClose()
         return
 
-    def dump_episode(self, fname=None):
+    def dump_episode(self, *args, fname=None, **kwargs ):
         # saving video
+        id = np.random.randint(0, 10000)
+
         if fname is None:
             directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            fname = directory + '/videos/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
+            fname = directory + '/videos/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S")) + str(id)
+
+
 
         codec = 'mpeg4'
         bitrate = 8000000
