@@ -557,7 +557,7 @@ class AudioPreprocessorMFCCDeltaDelta(object):
         return out
 
     def get_dim(self):
-        return self.__numcep
+        return self.__numcep * 3
 
 
 class AudioPreprocessorFbank(object):

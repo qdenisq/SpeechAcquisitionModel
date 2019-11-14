@@ -4,14 +4,20 @@ env:
   lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
   norm_observation: true
   norm_action: false
-  num_workers: 5
+  num_workers: 1
   visualize: false
   seed: 123456
-  timestep: 20
+  timestep: 40
   max_episode_duration: 1000
   preprocessing_params:
-    numcep: 12
+    name: AudioPreprocessorFbank
+    nfilt: 12
     winlen: 0.02
-    winstep: 0.02
+    winstep: 0.01
     sample_rate: 22050
+#    name: AudioPreprocessorMFCCDeltaDelta
+#    numcep: 12
+#    winlen: 0.02
+#    winstep: 0.02
+#    sample_rate: 22050
 

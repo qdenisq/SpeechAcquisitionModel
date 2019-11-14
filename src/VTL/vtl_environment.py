@@ -146,7 +146,6 @@ class VTLEnv(gym.Env):
         idx_1 = int((self.current_step + 1) * self.audio_sampling_rate * self.timestep / 1000)
         self.audio_stream[idx:idx_1] = self.audio_buffer[:int(self.audio_sampling_rate * self.timestep / 1000)]
 
-
         state_out = list(self.tract_params_out) + list(self.glottis_params_out)
         audio_out = self.audio_stream[idx:idx_1]
         self.current_step += 1

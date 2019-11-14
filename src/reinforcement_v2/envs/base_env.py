@@ -1,20 +1,26 @@
 import torch
 import numpy as np
+import copy
 import random
 import pickle
 
 from src.speech_classification.pytorch_conv_lstm import LstmNet, LstmNetEnsemble
 from src.VTL.vtl_environment import VTLEnv, convert_to_gym
-from src.speech_classification.audio_processing import AudioPreprocessorFbank
+from src.speech_classification.audio_processing import AudioPreprocessorFbank, AudioPreprocessorMFCCDeltaDelta
+from src.reinforcement_v2.utils.utils import str_to_class
 
 
 class VTLEnvPreprocAudio(VTLEnv):
     def __init__(self, lib_path, speaker_fname, **kwargs):
         super(VTLEnvPreprocAudio, self).__init__(lib_path, speaker_fname, **kwargs)
 
-        self.preproc = AudioPreprocessorFbank(**kwargs['preprocessing_params'])
+        self.preproc_params = copy.deepcopy(kwargs['preprocessing_params'])
+        preproc_name = self.preproc_params['name']
+        self.preproc = str_to_class(__name__, preproc_name)(**self.preproc_params)
+
         self.sr = kwargs['preprocessing_params']['sample_rate']
 
+        # self.audio_buffer = []
         if "preproc_net_fname" in kwargs:
             self.device = kwargs['device']
             self.preproc_net = torch.load(kwargs['preproc_net_fname']).to(self.device)
@@ -25,26 +31,14 @@ class VTLEnvPreprocAudio(VTLEnv):
 
         else:
             self.preproc_net = None
-            self.audio_dim = self.preproc.get_dim()
-            self.audio_bound = [(-0.01, 0.01)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
+            cols_per_timestep = kwargs['timestep'] / 1000 / self.preproc_params['winstep'] # preproc could return more than 1 column of features per timestep
+            self.audio_dim = self.preproc.get_dim() * int(cols_per_timestep)
+            self.audio_bound = [(-10.01, 10.01)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
 
         self.state_dim += self.audio_dim
         self.state_bound.extend(self.audio_bound)
 
         self.observation_space = convert_to_gym(list(zip(*self.state_bound)))
-
-
-    @staticmethod
-    def normalize(data, bound):
-        largest = np.array([max(abs(y[0]), abs(y[1])) for y in bound])
-        normed_data = data / largest
-        return normed_data
-
-    @staticmethod
-    def denormalize(normed_data, bound):
-        largest = np.array([max(abs(y[0]), abs(y[1])) for y in bound])
-        data = normed_data * largest
-        return data
 
     def reset(self, state_to_reset=None, **kwargs):
         state_out = super(VTLEnvPreprocAudio, self).reset(state_to_reset)
@@ -54,7 +48,18 @@ class VTLEnvPreprocAudio(VTLEnv):
 
     def step(self, action, render=True):
         state_out, audio_out = super(VTLEnvPreprocAudio, self).step(action, render)
-        preproc_audio = self.preproc(audio_out, self.sr)
+
+        # self.audio_buffer.extend(audio_out)
+        # pad audio with zeros to ensure even number of preprocessed columns per each timestep (boundary case for the first time step)
+        zero_pad = np.zeros(int(self.audio_sampling_rate * (self.preproc_params['winlen'] - self.preproc_params['winstep'])))
+        audio = np.array(self.audio_stream[:int(self.current_step * self.audio_sampling_rate * self.timestep / 1000)])
+        audio = np.concatenate((zero_pad, audio))
+
+        # preproc_audio = self.preproc(audio_out, self.sr)
+        preproc_audio = self.preproc(audio, self.sr)
+        # slice columns corresponding to the last timestep
+        preproc_audio = preproc_audio[-int(self.timestep / 1000 / self.preproc_params['winstep']):]
+
         if self.preproc_net:
             self.preproc_net.eval()
             preproc_audio = torch.from_numpy(preproc_audio[np.newaxis]).float().to(self.device)
@@ -64,7 +69,7 @@ class VTLEnvPreprocAudio(VTLEnv):
             new_goal_state = new_goal_state.detach().cpu().numpy().squeeze()
             state_out.extend(new_goal_state)
         else:
-            state_out.extend(preproc_audio.squeeze())
+            state_out.extend(preproc_audio.flatten().squeeze())
 
         # there is no reward and time limit constraint for this environment
         done = None
