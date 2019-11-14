@@ -9,6 +9,11 @@ env:
   seed: 123456
   timestep: 40
   max_episode_duration: 1000
+  showControlPoints: True
+  showCenterLine: False
+  showCutVectors: True
+  renderBothSides: False
+  renderMode: 2
   preprocessing_params:
     name: AudioPreprocessorFbank
     nfilt: 12

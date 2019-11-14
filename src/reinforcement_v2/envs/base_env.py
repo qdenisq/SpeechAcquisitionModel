@@ -73,7 +73,7 @@ class VTLEnvPreprocAudio(VTLEnv):
 
         # there is no reward and time limit constraint for this environment
         done = None
-        if self.current_step > 40:
+        if self.current_step > int(self.max_episode_duration / self.timestep) - 1:
             done = True
         reward = None
         info = {}

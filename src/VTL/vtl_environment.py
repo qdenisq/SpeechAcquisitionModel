@@ -16,7 +16,18 @@ def convert_to_gym(space):
 
 
 class VTLEnv(gym.Env):
-    def __init__(self, lib_path, speaker_fname, timestep=10, max_episode_duration=1000, img_width=400, img_height=400, **kwargs):
+    def __init__(self, lib_path,
+                 speaker_fname,
+                 timestep=10,
+                 max_episode_duration=1000,
+                 img_width=400,
+                 img_height=400,
+                 showControlPoints = True,
+                 showCenterLine = False,
+                 showCutVectors = True,
+                 renderBothSides = False,
+                 renderMode = 2,
+                 **kwargs):
         # load vocaltractlab binary
         # Use 'VocalTractLabApi32.dll' if you use a 32-bit python version.
         if sys.platform == 'win32':
@@ -33,7 +44,13 @@ class VTLEnv(gym.Env):
         # initialize vtl
         speaker_file_name = ctypes.c_char_p(speaker_fname.encode())
 
-        failure = self.VTL.vtlInitialize(speaker_file_name, True)
+        failure = self.VTL.vtlInitialize(speaker_file_name,
+                                         True,
+                                         showControlPoints,
+                                         showCenterLine,
+                                         showCutVectors,
+                                         renderBothSides,
+                                         renderMode)
         if failure != 0:
             raise ValueError('Error in vtlInitialize! Errorcode: %i' % failure)
 
