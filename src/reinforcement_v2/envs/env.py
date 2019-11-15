@@ -4,12 +4,14 @@ import copy
 from src.reinforcement_v2.utils.utils import str_to_class
 from src.reinforcement_v2.common.env_wrappers import NormalizedActionWrapper, NormalizedObservationWrapper, VectorizedWrapper
 from src.reinforcement_v2.envs.base_env import *
+from src.reinforcement_v2.envs import *
 
 
 class EnvironmentManager:
     def __init__(self):
         self.env = None
-        self.env_id_to_class_name = {"vtl_base": "VTLEnvPreprocAudio"
+        self.env_id_to_class_name = {"vtl_base": "VTLEnvPreprocAudio",
+                                     "dtw_we_vtl": "VTLDTWEnv"
                                      }
 
     def make(self, env_id, *args, **kwargs):

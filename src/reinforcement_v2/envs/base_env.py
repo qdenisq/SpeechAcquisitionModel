@@ -21,11 +21,12 @@ class VTLEnvPreprocAudio(VTLEnv):
         self.sr = kwargs['preprocessing_params']['sample_rate']
 
         # self.audio_buffer = []
-        if "preproc_net_fname" in kwargs:
-            self.device = kwargs['device']
-            self.preproc_net = torch.load(kwargs['preproc_net_fname']).to(self.device)
+        if "preproc_net" in kwargs:
+            self.device = kwargs["preproc_net"]['device']
+            self.preproc_net = torch.load(kwargs["preproc_net"]['preproc_net_fname']).to(self.device)
 
-            self.audio_dim = kwargs["audio_dim"]
+            cols_per_timestep = kwargs['timestep'] / 1000 / self.preproc_params['winstep']  # preproc could return more than 1 column of features per timestep
+            self.audio_dim = kwargs["preproc_net"]["output_dim"] * int(cols_per_timestep)
             self.audio_bound = [(-1., 1.)] * self.audio_dim
             self._hidden = None
 

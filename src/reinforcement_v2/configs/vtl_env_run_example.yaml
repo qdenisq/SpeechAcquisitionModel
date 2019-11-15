@@ -1,5 +1,5 @@
 env:
-  env_id: vtl_base
+  env_id: dtw_we_vtl # vtl_base, dtw_we_vtl
   speaker_fname: "C:/Study/SpeechAcquisitionModel/src/VTL/JD2.speaker"
   lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
   norm_observation: true
@@ -15,8 +15,8 @@ env:
   renderBothSides: False
   renderMode: 2
   preprocessing_params:
-    name: AudioPreprocessorFbank
-    nfilt: 12
+    name: AudioPreprocessorMFCCDeltaDelta
+    numcep: 13
     winlen: 0.02
     winstep: 0.01
     sample_rate: 22050
@@ -25,4 +25,20 @@ env:
 #    winlen: 0.02
 #    winstep: 0.02
 #    sample_rate: 22050
+  preproc_net:
+    preproc_net_fname: "C:/Study/SpeechAcquisitionModel/reports/seamise_net_10_25_2019_01_55_PM/net_0.4609375.net"
+    device: "cuda"
+    output_dim: 32
+  references:
+    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl"
+  distance:
+#    name: 'soft-DTW'
+#    open_end: True
+#    dist: 'l1'
+
+    name: 'dtwalign'
+    open_end: True
+    dist: 'euclidean'
+    step_pattern: 'typeIc'
 

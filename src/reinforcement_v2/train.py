@@ -20,6 +20,7 @@ from src.reinforcement_v2.utils.timer import Timer
 # from src.common.nn import SoftQNetwork, PolicyNetwork
 # from src.common.noise import OUNoise
 # from src.common.replay_buffer import ReplayBuffer
+from src.siamese_net_sound_similarity.train_v2 import SiameseDeepLSTMNet
 
 
 if __name__ == '__main__':
@@ -40,12 +41,14 @@ if __name__ == '__main__':
 
     for i in range(10):
         env.reset()
+        k = 0
         while True:
-            print(i)
+            k += 1
             obs_dict, reward, done, info = env.step(np.tile(env.action_space.sample()*0.1, (kwargs['env']['num_workers'], 1)))
             env.render()
+            print(f'{k} | r={reward.mean():.2f}')
             if np.any(done):
-                env.dump_episode()
+                # env.dump_episode()
                 break
 
 

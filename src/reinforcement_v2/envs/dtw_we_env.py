@@ -1,0 +1,97 @@
+import torch
+import numpy as np
+import copy
+import random
+import pickle
+import dtwalign
+
+from src.speech_classification.pytorch_conv_lstm import LstmNet, LstmNetEnsemble
+from src.VTL.vtl_environment import VTLEnv, convert_to_gym
+from src.speech_classification.audio_processing import AudioPreprocessorFbank, AudioPreprocessorMFCCDeltaDelta
+from src.reinforcement_v2.utils.utils import str_to_class
+from src.reinforcement_v2.envs.base_env import VTLEnvPreprocAudio
+from src.siamese_net_sound_similarity.train_v2 import SiameseDeepLSTMNet
+from src.siamese_net_sound_similarity.soft_dtw import SoftDTW
+
+
+class VTLDTWEnv(VTLEnvPreprocAudio):
+    def __init__(self, lib_path, speaker_fname, **kwargs):
+        super(VTLDTWEnv, self).__init__(lib_path, speaker_fname, **kwargs)
+
+        # load references
+        self.references = []
+        reference_fnames = kwargs['references']
+        for fname in reference_fnames:
+            with open(fname, 'rb') as f:
+                ref = pickle.load(f)
+            audio = np.array(ref['audio']).flatten()
+            sr = 22050
+            zero_pad = np.zeros(int(self.audio_sampling_rate * (self.preproc_params['winlen'] - self.preproc_params['winstep'])))
+            audio = np.concatenate((zero_pad, audio))
+            preprocessed = self.preproc(audio, sr)[np.newaxis]
+            # preprocessed = self.preproc(fname)[np.newaxis]
+            if self.preproc_net:
+                self.preproc_net.eval()
+                preproc_audio = torch.from_numpy(preprocessed).float().to(self.device)
+                reference, self._hidden = self.preproc_net.single_forward(preproc_audio,
+                                                                          hidden=self._hidden)
+                reference = reference.detach().cpu().numpy().squeeze()
+                self.references.append(reference)
+            else:
+                self.references.append(preprocessed)
+
+        self.cur_reference = self.references[np.random.randint(0, len(self.references))]
+
+        self.dist_params = copy.deepcopy(kwargs['distance'])
+
+    def reset(self, state_to_reset=None, **kwargs):
+        res = super().reset(state_to_reset, **kwargs)
+        self.cur_reference = self.references[np.random.randint(0, len(self.references))]
+        return res
+
+    def step(self, action, render=True):
+        state_out, audio_out = super(VTLEnvPreprocAudio, self).step(action, render)
+
+        # self.audio_buffer.extend(audio_out)
+        # pad audio with zeros to ensure even number of preprocessed columns per each timestep (boundary case for the first time step)
+        zero_pad = np.zeros(int(self.audio_sampling_rate * (self.preproc_params['winlen'] - self.preproc_params['winstep'])))
+        audio = np.array(self.audio_stream[:int(self.current_step * self.audio_sampling_rate * self.timestep / 1000)])
+        audio = np.concatenate((zero_pad, audio))
+
+        # preproc_audio = self.preproc(audio_out, self.sr)
+        preproc_audio = self.preproc(audio, self.sr)
+
+        if self.preproc_net:
+            self.preproc_net.eval()
+            preproc_audio_tensor = torch.from_numpy(preproc_audio[np.newaxis]).float().to(self.device)
+            embeddings, self._hidden = self.preproc_net.single_forward(preproc_audio_tensor,
+                                                                       hidden=None)
+
+            embeddings = embeddings.detach().cpu()
+            embeddings = embeddings.numpy().squeeze()
+        else:
+            embeddings = preproc_audio.squeeze()
+
+        state_out.extend(embeddings[-int(self.timestep / 1000 / self.preproc_params['winstep']):].flatten())
+
+        # calc open_end dtw distance between embeddings and current reference
+        dist = self.calc_distance(embeddings, self.cur_reference)
+
+        # there is no reward and time limit constraint for this environment
+        done = None
+        if self.current_step > int(self.max_episode_duration / self.timestep) - 1:
+            done = True
+        reward = dist
+        info = {}
+        return state_out, reward, done, info
+
+    def calc_distance(self, s, reference):
+        if self.dist_params['name'] == 'soft-DTW':
+            dist_func = SoftDTW(open_end=self.dist_params['open_end'], dist=self.dist_params['dist'])
+            return dist_func(torch.from_numpy(s).to(self.device),
+                             torch.from_numpy(reference).to(self.device)).detach().cpu().item()
+        elif self.dist_params['name'] == 'dtwalign':
+            return dtwalign.dtw(s, reference, dist=self.dist_params['dist'], step_pattern=self.dist_params['step_pattern'],
+                         open_end=self.dist_params['open_end'], dist_only=True).normalized_distance
+        else:
+            raise KeyError(f"unknown name of the dist:  {self.dist_params['name']}")

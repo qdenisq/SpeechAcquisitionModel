@@ -45,7 +45,7 @@ class VTLEnv(gym.Env):
         speaker_file_name = ctypes.c_char_p(speaker_fname.encode())
 
         failure = self.VTL.vtlInitialize(speaker_file_name,
-                                         True,
+                                         True, # render always true
                                          showControlPoints,
                                          showCenterLine,
                                          showCutVectors,
