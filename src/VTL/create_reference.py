@@ -156,12 +156,12 @@ def create_datatset(**kwargs):
 
 
 if __name__ == '__main__':
-    kwargs = {
-        "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions_s2s",
-        "sound_names": ['a', 'i', 'u', 'o'],
-        "num_samples_per_sound": 300
-    }
-    create_datatset(**kwargs)
+    # kwargs = {
+    #     "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions_s2s",
+    #     "sound_names": ['a', 'i', 'u', 'o'],
+    #     "num_samples_per_sound": 300
+    # }
+    # create_datatset(**kwargs)
 
 
 
@@ -174,13 +174,14 @@ if __name__ == '__main__':
 
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
 
-    name = 'i_O_2'
-    initial_state = env.get_cf('i')
-    end_state = env.get_cf('O')
+    name = 'u_i'
+    initial_state = env.get_cf('u')
+    end_state = env.get_cf('i')
 
     directory = 'references'
+    # directory = 'N'
 
-    audios, _, _ = create_reference(env, ep_duration, timestep, initial_state=initial_state, end_state=end_state, name=name, directory=directory)
+    audios, _, _, _ = create_reference(env, ep_duration, timestep, initial_state=initial_state, end_state=end_state, name=name, directory=directory)
 
     preproc_params = {
         "numcep": 12,

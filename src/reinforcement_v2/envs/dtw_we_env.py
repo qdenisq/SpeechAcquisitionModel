@@ -4,6 +4,8 @@ import copy
 import random
 import pickle
 import dtwalign
+import os
+import datetime
 
 from src.speech_classification.pytorch_conv_lstm import LstmNet, LstmNetEnsemble
 from src.VTL.vtl_environment import VTLEnv, convert_to_gym
@@ -22,13 +24,17 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
         self.references = []
         reference_fnames = kwargs['references']
         for fname in reference_fnames:
+            ref_tem = {}
             with open(fname, 'rb') as f:
                 ref = pickle.load(f)
+            ref_item = copy.deepcopy(ref)
+            ref_item['fname'] = fname
             audio = np.array(ref['audio']).flatten()
             sr = 22050
             zero_pad = np.zeros(int(self.audio_sampling_rate * (self.preproc_params['winlen'] - self.preproc_params['winstep'])))
             audio = np.concatenate((zero_pad, audio))
             preprocessed = self.preproc(audio, sr)[np.newaxis]
+            # preprocessed = preprocessed[:, 10:, :] # skip weird clicking in the begining
             # preprocessed = self.preproc(fname)[np.newaxis]
             if self.preproc_net:
                 self.preproc_net.eval()
@@ -36,21 +42,28 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
                 reference, self._hidden = self.preproc_net.single_forward(preproc_audio,
                                                                           hidden=self._hidden)
                 reference = reference.detach().cpu().numpy().squeeze()
-                self.references.append(reference)
+                ref_item['acoustics'] = reference
             else:
-                self.references.append(preprocessed)
+                ref_item['acoustics'] = preprocessed.squeeze()
+
+            self.references.append(ref_item)
 
         self.cur_reference = self.references[np.random.randint(0, len(self.references))]
 
         self.dist_params = copy.deepcopy(kwargs['distance'])
 
     def reset(self, state_to_reset=None, **kwargs):
-        res = super().reset(state_to_reset, **kwargs)
         self.cur_reference = self.references[np.random.randint(0, len(self.references))]
+
+        if state_to_reset is None:
+            state_to_reset = np.concatenate((self.cur_reference['tract_params'][0, :],
+                                             self.cur_reference['glottis_params'][0, :]))
+
+        res = super().reset(state_to_reset, **kwargs)
         return res
 
-    def step(self, action, render=True):
-        state_out, audio_out = super(VTLEnvPreprocAudio, self).step(action, render)
+    def _step(self, action, render=True):
+        state_out, audio_out = super(VTLEnvPreprocAudio, self)._step(action, render)
 
         # self.audio_buffer.extend(audio_out)
         # pad audio with zeros to ensure even number of preprocessed columns per each timestep (boundary case for the first time step)
@@ -75,15 +88,30 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
         state_out.extend(embeddings[-int(self.timestep / 1000 / self.preproc_params['winstep']):].flatten())
 
         # calc open_end dtw distance between embeddings and current reference
-        dist = self.calc_distance(embeddings, self.cur_reference)
+        dist = self.calc_distance(embeddings, self.cur_reference['acoustics'])
 
         # there is no reward and time limit constraint for this environment
         done = None
         if self.current_step > int(self.max_episode_duration / self.timestep) - 1:
             done = True
+            # self.episode_states = []
+            # self.episode_states = embeddings
+            # self.dump_episode()
         reward = dist
         info = {}
+        
+        self.current_state = state_out
+
         return state_out, reward, done, info
+
+    def dump_reference(self, fname=None):
+        if fname is None:
+            directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            fname = directory + '/videos/reference_episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S")) + '_' + str(self.id)
+
+        # save states to pickle
+        with open(f'{fname}.pkl', 'wb') as f:
+            pickle.dump(self.cur_reference, f)
 
     def calc_distance(self, s, reference):
         if self.dist_params['name'] == 'soft-DTW':

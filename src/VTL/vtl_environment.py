@@ -9,7 +9,7 @@ from scipy.io import wavfile
 import numpy as np
 from gym import spaces
 import gym
-
+import pickle
 
 def convert_to_gym(space):
     return spaces.Box(np.array(space[0]), np.array(space[1]))
@@ -138,9 +138,19 @@ class VTLEnv(gym.Env):
         self.action_space = convert_to_gym(list(zip(*self.action_bound)))
         self.observation_space = convert_to_gym(list(zip(*self.state_bound)))
         self.current_step = 0
+        self.episode_states = []
+
+        self.id = np.random.randint(0, 10000)
         return
 
-    def step(self, action, render=True):
+    def _before_step(self):
+        pass
+
+    def _after_step(self):
+        self.episode_states.append(self.current_state)
+        pass
+
+    def _step(self, action, render=True):
         for i in range(self.number_vocal_tract_parameters):
             self.tract_params_acts[i] = action[i]
         for i in range(self.number_glottis_parameters):
@@ -166,9 +176,18 @@ class VTLEnv(gym.Env):
         state_out = list(self.tract_params_out) + list(self.glottis_params_out)
         audio_out = self.audio_stream[idx:idx_1]
         self.current_step += 1
+
+        self.current_state = np.concatenate((state_out, audio_out))
         return state_out, audio_out
 
+    def step(self, action, render=True):
+        self._before_step()
+        res = self._step(action, render)
+        self._after_step()
+        return res
+
     def reset(self, state_to_reset=None):
+        self.episode_states = []
         if state_to_reset is not None:
             tract_params_to_reset = (ctypes.c_double * (self.number_vocal_tract_parameters))()
             glottis_params_to_reset = (ctypes.c_double * (self.number_glottis_parameters))()
@@ -183,7 +202,6 @@ class VTLEnv(gym.Env):
                               ctypes.byref(glottis_params_to_reset)
                               )
         else:
-            k = 0
             self.VTL.vtlReset(ctypes.byref(self.tract_params_out),
                               ctypes.byref(self.glottis_params_out),
                               0,
@@ -203,14 +221,13 @@ class VTLEnv(gym.Env):
         return
 
     def dump_episode(self, *args, fname=None, **kwargs ):
-        # saving video
-        id = np.random.randint(0, 10000)
-
         if fname is None:
             directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-            fname = directory + '/videos/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S")) + str(id)
+            fname = directory + '/videos/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S")) + '_' + str(self.id)
 
-
+        # save states to pickle
+        with open(f'{fname}.pkl', 'wb') as f:
+            pickle.dump(self.episode_states, f)
 
         codec = 'mpeg4'
         bitrate = 8000000
@@ -270,6 +287,7 @@ class VTLEnv(gym.Env):
         data = normed_data * largest
         return data
 
+
 def run_test():
     speaker_fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker')
     lib_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'VocalTractLab2.dll')
@@ -296,6 +314,7 @@ def run_test():
         print("iterations: {}; time simulated: {:2f}sec; time elapsed: {:2f}sec".format(step, step * timestep/1000, time_elapsed))
         env.dump_episode()
         env.reset()
+
 
 if __name__ == '__main__':
     run_test()

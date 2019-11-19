@@ -3,6 +3,8 @@ import numpy as np
 import copy
 import random
 import pickle
+import os
+import datetime
 
 from src.speech_classification.pytorch_conv_lstm import LstmNet, LstmNetEnsemble
 from src.VTL.vtl_environment import VTLEnv, convert_to_gym
@@ -47,8 +49,8 @@ class VTLEnvPreprocAudio(VTLEnv):
             self._hidden = None
         return np.concatenate((state_out, np.zeros(self.audio_dim)))
 
-    def step(self, action, render=True):
-        state_out, audio_out = super(VTLEnvPreprocAudio, self).step(action, render)
+    def _step(self, action, render=True):
+        state_out, audio_out = super(VTLEnvPreprocAudio, self)._step(action, render)
 
         # self.audio_buffer.extend(audio_out)
         # pad audio with zeros to ensure even number of preprocessed columns per each timestep (boundary case for the first time step)
@@ -72,10 +74,21 @@ class VTLEnvPreprocAudio(VTLEnv):
         else:
             state_out.extend(preproc_audio.flatten().squeeze())
 
+        self.current_state = state_out
+
         # there is no reward and time limit constraint for this environment
         done = None
         if self.current_step > int(self.max_episode_duration / self.timestep) - 1:
             done = True
         reward = None
         info = {}
+
+        self.current_state = state_out
         return state_out, reward, done, info
+
+    def dump_episode(self, *args, fname=None, **kwargs ):
+        super(VTLEnvPreprocAudio, self).dump_episode(*args ,fname, **kwargs)
+        if fname is None:
+            directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+            fname = directory + '/videos/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S")) + str(self.id)
+

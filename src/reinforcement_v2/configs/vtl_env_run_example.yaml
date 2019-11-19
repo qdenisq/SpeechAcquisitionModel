@@ -4,7 +4,7 @@ env:
   lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
   norm_observation: true
   norm_action: false
-  num_workers: 1
+  num_workers: 2
   visualize: false
   seed: 123456
   timestep: 40
@@ -25,13 +25,15 @@ env:
 #    winlen: 0.02
 #    winstep: 0.02
 #    sample_rate: 22050
+
   preproc_net:
     preproc_net_fname: "C:/Study/SpeechAcquisitionModel/reports/seamise_net_10_25_2019_01_55_PM/net_0.4609375.net"
     device: "cuda"
     output_dim: 32
   references:
-    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_1.pkl"
-    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i_2.pkl"
+    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i.pkl"
+    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_a_2.pkl"
   distance:
 #    name: 'soft-DTW'
 #    open_end: True

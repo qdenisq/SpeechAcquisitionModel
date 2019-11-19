@@ -1,4 +1,3 @@
-import json
 import yaml
 from pprint import pprint
 import datetime
@@ -31,10 +30,7 @@ if __name__ == '__main__':
     # create env
     env_mgr = EnvironmentManager()
     env_kwargs = copy.deepcopy(kwargs['env'])
-    env_args = []
-
-    env_args.append(kwargs['env']['lib_path'])
-    env_args.append(kwargs['env']['speaker_fname'])
+    env_args = [kwargs['env']['lib_path'], kwargs['env']['speaker_fname']]
 
     env_id = env_kwargs.pop('env_id')
     env = env_mgr.make(env_id, *env_args, **env_kwargs)
@@ -42,49 +38,16 @@ if __name__ == '__main__':
     for i in range(10):
         env.reset()
         k = 0
+        ref = env.get_attr('cur_reference')
         while True:
-            k += 1
-            obs_dict, reward, done, info = env.step(np.tile(env.action_space.sample()*0.1, (kwargs['env']['num_workers'], 1)))
+            action = np.tile(env.action_space.sample()*0.05, (kwargs['env']['num_workers'], 1))
+            action = [ref[j]['action'][k,:] for j in range(kwargs['env']['num_workers'])]
+            action = np.stack(action)
+            obs_dict, reward, done, info = env.step(action)
             env.render()
+            k += 1
             print(f'{k} | r={reward.mean():.2f}')
             if np.any(done):
-                # env.dump_episode()
+                env.dump_episode()
+                env.env_method('dump_reference')
                 break
-
-
-
-    kwargs['train'].update(kwargs['env'])
-    # kwargs['train']['collect_data'] = kwargs['collect_data']
-    # kwargs['train']['log_mode'] = kwargs['log_mode']
-    #
-    # if kwargs["init_data_fname"] is not None:
-    #     kwargs['train']['init_data_fname'] = kwargs['init_data_fname']
-    #
-    # action_dim = env.action_space.shape[0]
-    # state_dim = env.observation_space.shape[0]
-    #
-    # kwargs['soft_q_network']['state_dim'] = state_dim
-    # kwargs['soft_q_network']['action_dim'] = action_dim
-    #
-    # kwargs['policy_network']['state_dim'] = state_dim
-    # kwargs['policy_network']['action_dim'] = action_dim
-    #
-    # if kwargs['agent_fname'] is not None:
-    #     # load agent
-    #     agent_fname = kwargs['agent_fname']
-    #     print(f'Loading agent from "{agent_fname}"')
-    #     agent = torch.load(kwargs['agent_fname'])
-    #     if not kwargs['use_alpha']:
-    #         agent.noise_level = kwargs['noise_init_level']
-    #         agent.noise = OUNoise(kwargs['soft_q_network']['action_dim'] * kwargs['env']['num_workers'],
-    #                                  kwargs['env']['seed'])
-    #     # to enable agent starting with custom (full) replay buffer
-    #     if agent.replay_buffer_csv_filename is not None:
-    #         agent.replay_buffer_csv_filename = os.path.splitext(agent.replay_buffer_csv_filename)[0] + "_new.csv"
-    #         agent.replay_buffer = ReplayBuffer(agent.replay_buffer_size, agent.replay_buffer_csv_filename, None)
-    # else:
-    #     # create agent
-    #     agent = AsyncrhonousSoftActorCritic(**kwargs)
-    #
-    # # train
-    # agent.train(env, **kwargs['train'])

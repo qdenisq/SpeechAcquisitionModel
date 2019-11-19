@@ -74,6 +74,12 @@ class VectorizedWrapper(SubprocVecEnv):
         # else:
         #     raise NotImplementedError
 
+    def env_method(self, method_name, *method_args, **method_kwargs):
+        """Call instance methods of vectorized environments."""
+        for pipe in self.remotes:
+            pipe.send(('env_method', (method_name, method_args, method_kwargs)))
+        return [remote.recv() for remote in self.remotes]
+
     def dump_episode(self, *args, **kwargs):
         for pipe in self.remotes:
             # gather images from subprocesses
