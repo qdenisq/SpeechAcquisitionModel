@@ -44,6 +44,7 @@ def create_reference(env,
     actions = []
     audios = []
     labels = []
+    class_label = f'{initial_sound_name}_{end_sound_name}'
 
     t0 = num_steps_per_ep // 3 + random.randint(0, 2 * time_shift_max) - time_shift_max
 
@@ -95,7 +96,8 @@ def create_reference(env,
                      "tract_params": states[:, :24],
                      "glottis_params": states[:, 24:],
                      "action": actions,
-                     "label": labels}, f, protocol=0)
+                     "labels": labels,
+                     "class": class_label}, f, protocol=0)
     env.dump_episode(os.path.join(directory, name))
     # with open(os.path.join(directory, name + '.wav'), 'wb') as f:
     return audios, states, actions, labels
@@ -174,14 +176,19 @@ if __name__ == '__main__':
 
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
 
-    name = 'u_i'
-    initial_state = env.get_cf('u')
-    end_state = env.get_cf('i')
+    name = 'a_i'
+    initial_sound_name = 'a'
+    end_sound_name = 'i'
+
+    initial_state = env.get_cf(initial_sound_name)
+    end_state = env.get_cf(end_sound_name)
 
     directory = 'references'
     # directory = 'N'
 
-    audios, _, _, _ = create_reference(env, ep_duration, timestep, initial_state=initial_state, end_state=end_state, name=name, directory=directory)
+    audios, _, _, _ = create_reference(env, ep_duration, timestep, initial_state=initial_state,
+                                       initial_sound_name=initial_sound_name, end_sound_name=end_sound_name,
+                                       end_state=end_state, name=name, directory=directory)
 
     preproc_params = {
         "numcep": 12,

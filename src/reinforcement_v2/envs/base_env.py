@@ -87,8 +87,11 @@ class VTLEnvPreprocAudio(VTLEnv):
         return state_out, reward, done, info
 
     def dump_episode(self, *args, fname=None, **kwargs ):
-        super(VTLEnvPreprocAudio, self).dump_episode(*args ,fname, **kwargs)
         if fname is None:
             directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             fname = directory + '/videos/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S")) + str(self.id)
+        else:
+            fname += f'_{self.id}'
+        super(VTLEnvPreprocAudio, self).dump_episode(*args, fname=fname, **kwargs)
+
 

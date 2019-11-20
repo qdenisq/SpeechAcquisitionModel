@@ -108,6 +108,8 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
         if fname is None:
             directory = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             fname = directory + '/videos/reference_episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S")) + '_' + str(self.id)
+        else:
+            fname += f'_{self.id}'
 
         # save states to pickle
         with open(f'{fname}.pkl', 'wb') as f:

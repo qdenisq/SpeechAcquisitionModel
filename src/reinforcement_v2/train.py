@@ -40,9 +40,10 @@ if __name__ == '__main__':
         k = 0
         ref = env.get_attr('cur_reference')
         while True:
-            action = np.tile(env.action_space.sample()*0.05, (kwargs['env']['num_workers'], 1))
-            action = [ref[j]['action'][k,:] for j in range(kwargs['env']['num_workers'])]
-            action = np.stack(action)
+            action_noise = np.tile(env.action_space.sample()*0.00, (kwargs['env']['num_workers'], 1))
+            action = [ref[j]['action'][k, :] for j in range(kwargs['env']['num_workers'])]
+            action = np.stack(action) + action_noise
+            # action = action_noise
             obs_dict, reward, done, info = env.step(action)
             env.render()
             k += 1

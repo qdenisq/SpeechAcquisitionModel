@@ -82,8 +82,6 @@ class VectorizedWrapper(SubprocVecEnv):
 
     def dump_episode(self, *args, **kwargs):
         for pipe in self.remotes:
-            # gather images from subprocesses
-            # `mode` will be taken into account later
             pipe.send(('env_method', ('dump_episode', args, {**kwargs})))
         res = [pipe.recv() for pipe in self.remotes]
         return
