@@ -1,7 +1,32 @@
 env:
-  env_id: dtw_we_vtl # vtl_base, dtw_we_vtl
+  env_id: masked_dtw_we_vtl # vtl_base, dtw_we_vtl
   speaker_fname: "C:/Study/SpeechAcquisitionModel/src/VTL/JD2.speaker"
   lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
+  selected_actions:
+    - "HX"
+    - "HY"
+    - "JX"
+    - "JA"
+    - "LP"
+    - "LD"
+#    - "VS"
+#    - "VO"
+#    - "WC"
+#    - "TCX"
+#    - "TCY"
+#    - "TTX"
+#    - "TTY"
+#    - "TBX"
+#    - "TBY"
+#    - "TRX"
+#    - "TRY"
+#    - "TS1"
+#    - "TS2"
+#    - "TS3"
+#    - "TS4"
+#    - "MA1"
+#    - "MA2"
+#    - "MA3"
   norm_observation: true
   norm_action: false
   num_workers: 2

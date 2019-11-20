@@ -35,12 +35,14 @@ if __name__ == '__main__':
     env_id = env_kwargs.pop('env_id')
     env = env_mgr.make(env_id, *env_args, **env_kwargs)
 
-    gammas = np.linspace(1, 0, 10)
+    gammas = np.linspace(1, 0, 11)
     print(gammas)
 
     num_rollouts_per_gamma = 100
 
     for i, gamma in enumerate(gammas):
+        print(i, gamma)
+
         path = os.path.join(os.path.dirname(os.path.abspath(__file__)), f'gamma_{gamma:.2f}')
         try:
             os.makedirs(path)
@@ -59,7 +61,7 @@ if __name__ == '__main__':
                 obs_dict, reward, done, info = env.step(action)
                 env.render()
                 k += 1
-                print(f'{k} | r={reward.mean():.2f}')
+                # print(f'{k} | r={reward.mean():.2f}')
                 if np.any(done):
                     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
 

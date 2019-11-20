@@ -464,10 +464,10 @@ dtype: object
     \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}103}]:} \PY{c+c1}{\PYZsh{} for i  in range(n\PYZus{}mini\PYZus{}batch\PYZus{}size):}
+{\color{incolor}In [{\color{incolor}113}]:} \PY{c+c1}{\PYZsh{} for i  in range(n\PYZus{}mini\PYZus{}batch\PYZus{}size):}
           \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
           \PY{n}{axes}\PY{o}{.}\PY{n}{title}\PY{o}{.}\PY{n}{set\PYZus{}text}\PY{p}{(}\PY{n}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW (cofidence inetrval = 99}\PY{l+s+s1}{\PYZpc{}}\PY{l+s+s1}{))}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-          \PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.9}\PY{p}{,} \PY{n}{hue}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gamma}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ci}\PY{o}{=}\PY{l+m+mi}{99}\PY{p}{,}
+          \PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.9}\PY{p}{,} \PY{n}{hue}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gamma}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ci}\PY{o}{=}\PY{l+m+mi}{99}\PY{p}{,}  \PY{n}{err\PYZus{}style}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{bars}\PY{l+s+s2}{\PYZdq{}}\PY{p}{,}
                        \PY{n}{palette}\PY{o}{=}\PY{n}{sns}\PY{o}{.}\PY{n}{cubehelix\PYZus{}palette}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dirs}\PY{p}{)}\PY{p}{,} \PY{n}{start}\PY{o}{=}\PY{o}{.}\PY{l+m+mi}{5}\PY{p}{,} \PY{n}{rot}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{o}{.}\PY{l+m+mi}{75}\PY{p}{)}\PY{p}{)}
           \PY{n}{axes}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
           \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Query length (number of samples)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
@@ -483,10 +483,10 @@ dtype: object
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}104}]:} \PY{c+c1}{\PYZsh{} for i  in range(n\PYZus{}mini\PYZus{}batch\PYZus{}size):}
+{\color{incolor}In [{\color{incolor}111}]:} \PY{c+c1}{\PYZsh{} for i  in range(n\PYZus{}mini\PYZus{}batch\PYZus{}size):}
           \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
           \PY{n}{axes}\PY{o}{.}\PY{n}{title}\PY{o}{.}\PY{n}{set\PYZus{}text}\PY{p}{(}\PY{n}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW (cofidence inetrval = standart deviation))}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-          \PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.9}\PY{p}{,} \PY{n}{hue}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gamma}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ci}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sd}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
+          \PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.9}\PY{p}{,} \PY{n}{hue}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gamma}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ci}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sd}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} 
                        \PY{n}{palette}\PY{o}{=}\PY{n}{sns}\PY{o}{.}\PY{n}{cubehelix\PYZus{}palette}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dirs}\PY{p}{)}\PY{p}{,} \PY{n}{start}\PY{o}{=}\PY{o}{.}\PY{l+m+mi}{5}\PY{p}{,} \PY{n}{rot}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{o}{.}\PY{l+m+mi}{75}\PY{p}{)}\PY{p}{)}
           \PY{n}{axes}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
           \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Query length (number of samples)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
@@ -502,10 +502,10 @@ dtype: object
     { \hspace*{\fill} \\}
     
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}105}]:} \PY{c+c1}{\PYZsh{} for i  in range(n\PYZus{}mini\PYZus{}batch\PYZus{}size):}
+{\color{incolor}In [{\color{incolor}116}]:} \PY{c+c1}{\PYZsh{} for i  in range(n\PYZus{}mini\PYZus{}batch\PYZus{}size):}
           \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
           \PY{n}{axes}\PY{o}{.}\PY{n}{title}\PY{o}{.}\PY{n}{set\PYZus{}text}\PY{p}{(}\PY{n}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW (open\PYZus{}end = True)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-          \PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.9}\PY{p}{,} \PY{n}{estimator}\PY{o}{=}\PY{k+kc}{None}\PY{p}{,} \PY{n}{hue}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gamma}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{sort}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,}
+          \PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{x}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{time}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{y}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{data}\PY{o}{=}\PY{n}{df}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{alpha}\PY{o}{=}\PY{l+m+mf}{0.5}\PY{p}{,} \PY{n}{estimator}\PY{o}{=}\PY{k+kc}{None}\PY{p}{,} \PY{n}{hue}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{gamma}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{sort}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{sizes}\PY{o}{=}\PY{p}{[}\PY{l+m+mf}{0.1}\PY{p}{]}\PY{p}{,}
                        \PY{n}{palette}\PY{o}{=}\PY{n}{sns}\PY{o}{.}\PY{n}{cubehelix\PYZus{}palette}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{dirs}\PY{p}{)}\PY{p}{,} \PY{n}{start}\PY{o}{=}\PY{o}{.}\PY{l+m+mi}{5}\PY{p}{,} \PY{n}{rot}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{o}{.}\PY{l+m+mi}{75}\PY{p}{)}\PY{p}{)}
           \PY{n}{axes}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
           \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Query length (number of samples)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
