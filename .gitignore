@@ -5,6 +5,8 @@ reports/
 models/
 data/
 ddpg/results/
+runs/
+runs_light/
 .idea/
 
 **.iml

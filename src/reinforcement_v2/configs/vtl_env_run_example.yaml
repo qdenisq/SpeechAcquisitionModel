@@ -30,7 +30,7 @@ env:
   norm_observation: true
   norm_action: false
   num_workers: 2
-  visualize: false
+  visualize: True
   seed: 123456
   timestep: 40
   max_episode_duration: 1000

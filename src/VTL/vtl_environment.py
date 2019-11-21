@@ -146,6 +146,7 @@ class VTLEnv(gym.Env):
     def _before_step(self):
         pass
 
+
     def _after_step(self):
         self.episode_states.append(self.current_state)
         pass
