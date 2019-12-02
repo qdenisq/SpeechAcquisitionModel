@@ -46,7 +46,7 @@ env:
 #    - "MA2"
 #    - "MA3"
   norm_observation: true
-  norm_action: false
+  norm_action: true
   num_workers: 5
   visualize: false
   seed: 123456
@@ -97,7 +97,7 @@ soft_q_network:
   hidden_dim:
   - 256
   - 256
-policy_network: # policy output distribution is sparse and [0, 1]!
+policy_network:
   hidden_dim:
   - 256
   - 256

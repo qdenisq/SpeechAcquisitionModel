@@ -2,21 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/asac.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/ddpg.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/noise.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/replay_buffer.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/tensorboard.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/SoftActorCritic_e0.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/SpeechAcquisitionModel.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/SpeechAcquisitionModel.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/notes.md" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/VTL/VocalTractLab2.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/VTL/VocalTractLab2.dll" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/VTL/vtl_environment.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/VTL/vtl_environment.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/notebook.tex" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/notebook.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/algo/asac.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/asac.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/common/env_wrappers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/env_wrappers.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/configs/SoftActorCritic_e0.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/SoftActorCritic_e0.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/configs/vtl_env_run_example.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/vtl_env_run_example.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/masked_dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/masked_dtw_we_env.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -44,19 +39,19 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\dtw" />
+    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\common" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\algo" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\notebooks\DTW_env_test" />
-    </key>
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\dtw" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement\goal_directed_model_based_rl\algs" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -799,7 +794,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py</url>
-          <line>107</line>
+          <line>113</line>
           <option name="timeStamp" value="886" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -823,34 +818,9 @@
           <option name="timeStamp" value="898" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/masked_dtw_we_env.py</url>
-          <line>31</line>
-          <option name="timeStamp" value="901" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/masked_dtw_we_env.py</url>
-          <line>23</line>
-          <option name="timeStamp" value="902" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
-          <line>32</line>
-          <option name="timeStamp" value="910" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
-          <line>142</line>
-          <option name="timeStamp" value="911" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
-          <line>57</line>
-          <option name="timeStamp" value="912" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
-          <line>159</line>
-          <option name="timeStamp" value="914" />
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/asac.py</url>
+          <line>288</line>
+          <option name="timeStamp" value="922" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

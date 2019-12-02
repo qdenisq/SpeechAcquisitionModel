@@ -7,6 +7,9 @@ from stable_baselines.common.vec_env.subproc_vec_env import _flatten_obs
 
 
 class NormalizedActionWrapper(gym.ActionWrapper):
+    """
+    (-1 : 1)
+    """
     def action(self, action):
         low = self.action_space.low
         high = self.action_space.high

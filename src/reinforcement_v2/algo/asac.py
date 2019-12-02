@@ -145,17 +145,6 @@ class AsyncrhonousSoftActorCritic(nn.Module):
         q_value_loss1 = self.soft_q_criterion1(predicted_q_value1, target_q_value.detach())
         q_value_loss2 = self.soft_q_criterion2(predicted_q_value2, target_q_value.detach())
 
-        """
-        L1 and L2 loss
-        """
-
-        # norm_new_action = env.action_torch(new_action)
-        # norm_new_action = (new_action + 1)/2
-        norm_new_action = new_action
-        l1 = torch.sum(torch.abs(norm_new_action)) / batch_size
-        # TODO: remove completely (see return)
-        l2 = torch.sum(torch.pow(new_action - new_action, 2)) / batch_size  # just zero out l2 loss because it's not valid here
-        l1_loss = self.alpha_l1 * l1
 
         """
         Update them all
@@ -168,7 +157,7 @@ class AsyncrhonousSoftActorCritic(nn.Module):
         q_value_loss2.backward()
         self.soft_q_optimizer2.step()
 
-        total_loss = policy_loss + l1_loss
+        total_loss = policy_loss
         self.policy_optimizer.zero_grad()
         total_loss.backward()
         self.policy_optimizer.step()
@@ -238,7 +227,7 @@ class AsyncrhonousSoftActorCritic(nn.Module):
         writer.add_graph(self.policy_net, dummy_input)
 
         max_frames = kwargs.get('max_frames', 40000)
-        max_steps = kwargs.get('max_steps', 1000)
+        max_steps = kwargs.get('max_steps', 100)
         batch_size = kwargs.get('batch_size', 256)
 
         self.params['soft_tau'] = self.soft_tau
@@ -282,7 +271,7 @@ class AsyncrhonousSoftActorCritic(nn.Module):
                 action = action.numpy()
                 if not self.use_alpha:
                     action = action + self.noise.sample().reshape(*action.shape) * self.noise_level
-                    action = np.clip(action, 0, 1)
+                    # action = np.clip(action, 0, 1)
 
                 timer['algo'].stop()
                 timer['env'].start()
@@ -295,6 +284,9 @@ class AsyncrhonousSoftActorCritic(nn.Module):
                 timer['replay_buffer'].start()
 
                 for worker_idx in range(kwargs['num_workers']):
+                    # skip steps with undefined reward
+                    if np.isnan(reward[worker_idx]):
+                        continue
                     self.replay_buffer.push((list(state[worker_idx]),
                                              list(action[worker_idx]),
                                              reward[worker_idx],
@@ -311,7 +303,7 @@ class AsyncrhonousSoftActorCritic(nn.Module):
                 writer.add_histogram("Action", action, self.frame_idx)
                 timer['utils'].stop()
 
-                if len(self.replay_buffer) > 10 * batch_size:
+                if len(self.replay_buffer) > 1 * batch_size:
                     timer['algo'].start()
                     for _ in range(self.num_updates_per_step):
                         _, policy_loss, q_value_loss1, q_value_loss2, alpha_loss, alpha = self.update(batch_size)
@@ -366,7 +358,7 @@ class AsyncrhonousSoftActorCritic(nn.Module):
                 if reward_running > best_total_reward:
                     best_total_reward = reward_running
 
-            if self.frame_idx % 1000 == 0:
+            if self.frame_idx % 100 == 0:
                 print(f'step={self.frame_idx} | reward_avg={reward_running:.2f} |')
 
         writer.close()

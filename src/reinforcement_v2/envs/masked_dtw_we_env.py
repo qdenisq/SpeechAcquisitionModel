@@ -35,7 +35,6 @@ class VTLMaskedDTWEnv(VTLDTWEnv):
 
         # unmask action
 
-        k = 9
         full_action = self.cur_reference['action'][self.current_step]
         full_action[self.selected_actions_idx] = action
 

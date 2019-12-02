@@ -5,10 +5,10 @@ env:
   selected_actions:
     - "HX"
     - "HY"
-    - "JX"
-    - "JA"
-    - "LP"
-    - "LD"
+#    - "JX"
+#    - "JA"
+#    - "LP"
+#    - "LD"
 #    - "VS"
 #    - "VO"
 #    - "WC"
@@ -28,7 +28,7 @@ env:
 #    - "MA2"
 #    - "MA3"
   norm_observation: true
-  norm_action: false
+  norm_action: true
   num_workers: 2
   visualize: True
   seed: 123456

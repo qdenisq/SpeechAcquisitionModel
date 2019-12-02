@@ -90,14 +90,20 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
         # calc open_end dtw distance between embeddings and current reference
         dist = self.calc_distance(embeddings, self.cur_reference['acoustics'])
 
+
         # there is no reward and time limit constraint for this environment
-        done = None
+        done = False
         if self.current_step > int(self.max_episode_duration / self.timestep) - 1:
             done = True
             # self.episode_states = []
             # self.episode_states = embeddings
             # self.dump_episode()
+
         reward = dist
+        if not np.isnan(reward):
+            reward = np.exp(5. - reward)
+        else:
+            reward = 0.
         info = {}
         
         self.current_state = state_out

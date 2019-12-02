@@ -87,8 +87,8 @@ class PolicyNetwork(nn.Module):
         z = normal.sample().to(mean.device)
         z.requires_grad_()
         # TODO: check distribution (done for sparsity)
-        action = F.tanh(mean + std * z)**2
-        der = 2 * F.tanh(mean + std * z) * (1 - action) * ((mean + std * z) > 0).float()
+        action = F.tanh(mean + std * z)
+        der = 1 - action ** 2
         log_prob = Normal(mean, std).log_prob(mean + std * z) - torch.log(der + epsilon)
         return action, log_prob, z, mean, log_std
 
@@ -100,8 +100,8 @@ class PolicyNetwork(nn.Module):
         normal = Normal(torch.zeros(mean.shape),
                         torch.ones(mean.shape))
         z = normal.sample().to(mean.device)
-        action = F.tanh(mean + std * z)**2
-        der = 2 * F.tanh(mean + std * z) * (1 - action) * ((mean + std * z) > 0).float()
+        action = F.tanh(mean + std * z)
+        der = 1 - action ** 2
         log_prob = Normal(mean, std).log_prob(mean + std * z) - torch.log(der + epsilon)
         action = action.cpu()  # .detach().cpu().numpy()
         return action, mean, log_std, log_prob
