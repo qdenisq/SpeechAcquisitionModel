@@ -27,8 +27,8 @@ class AsyncrhonousSoftActorCritic(nn.Module):
     def __init__(self, *args, **kwargs):
         super(AsyncrhonousSoftActorCritic, self).__init__()
 
-        self.__dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
-        self.__env_name = kwargs['env']['env_id']
+        self._dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
+        self._env_name = kwargs['env']['env_id']
 
         self.params = kwargs
         self.use_cuda = kwargs.get('use_cuda', True)
@@ -83,7 +83,7 @@ class AsyncrhonousSoftActorCritic(nn.Module):
 
         self.replay_buffer_csv_filename = None
         if kwargs['collect_data']:
-            self.replay_buffer_csv_filename = f'../../../data/{self.__env_name}_sac_data_{self.__dt}.csv'
+            self.replay_buffer_csv_filename = f'../../../data/{self._env_name}_sac_data_{self._dt}.csv'
 
         self.replay_buffer = ReplayBuffer(self.replay_buffer_size, self.replay_buffer_csv_filename, init_data_fname)
 
@@ -219,9 +219,12 @@ class AsyncrhonousSoftActorCritic(nn.Module):
         """
 
         timer = defaultdict(Timer)
-        writer = DoubleSummaryWriter(log_dir=f'../../../runs/{self.__env_name}_asac_{self.__dt}/',
-                                     light_log_dir=f'../../../runs_light/light_{self.__env_name}_asac_{self.__dt}/',
+        writer = DoubleSummaryWriter(log_dir=f'../../../runs/{self._env_name}_asac_{self._dt}/',
+                                     light_log_dir=f'../../../runs_light/light_{self._env_name}_asac_{self._dt}/',
                                      mode=kwargs['log_mode'])
+
+
+
         # TODO: only last called graph is added
         dummy_input = torch.rand(1, self.soft_q_net1.state_dim).to(self.device)
         writer.add_graph(self.policy_net, dummy_input)
@@ -350,8 +353,13 @@ class AsyncrhonousSoftActorCritic(nn.Module):
             if reward_running > best_total_reward or self.frame_idx % 10000 == 0:
                 timer['utils'].start()
                 # self.save_networks(episode_reward)
-                name = f'{self.__env_name}_AsyncSoftActorCritic_' + f'{reward_running:.2f}'
-                path_agent = f'../../../models/{name}.asac'
+                name = f'{self._env_name}_AsyncSoftActorCritic_' + f'{reward_running:.2f}'
+                save_dir = f'../../../models/{self._env_name}_asac_{self._dt}/'
+                try:
+                    os.makedirs(save_dir)
+                except:
+                    pass
+                path_agent = f'{save_dir}{name}.asac'
                 torch.save(self, path_agent)
                 timer['utils'].stop()
                 print(f'step={self.frame_idx} | reward_avg={reward_running:.2f} | saving agent: {name}')
@@ -410,4 +418,14 @@ if __name__ == '__main__':
         agent = AsyncrhonousSoftActorCritic(**kwargs)
 
     # train
+
+    run_dir = f'../../../runs/{agent._env_name}_asac_{agent._dt}/'
+    try:
+        os.makedirs(run_dir)
+    except:
+        pass
+    with open(os.path.join(run_dir, 'SoftActorCritic.yaml'), 'w') as f:
+        yaml.dump(kwargs, f)
+
+
     agent.train(env, **kwargs['train'])

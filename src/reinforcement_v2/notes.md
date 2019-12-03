@@ -7,3 +7,5 @@
  - Check `env.action_space` (we normalize actions to be within (-1;1) range. So unnormalized actions should have sense (i.e. not too big, nor too small))
  - Consider reward function based on the DTW-distance:
  $$r(x,y) = f(d(x,y))$$
+ - Check noise and how big it is compared to policy actions
+ - Somehow let the agent observe the reference (now it receives only its own vocal tract state and sound)

@@ -2,16 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/notes.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/run_agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/VTL/VocalTractLab2.dll" beforeDir="false" afterPath="$PROJECT_DIR$/src/VTL/VocalTractLab2.dll" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/algo/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/__init__.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/algo/asac.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/asac.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/common/env_wrappers.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/env_wrappers.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/configs/SoftActorCritic_e0.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/SoftActorCritic_e0.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/configs/vtl_env_run_example.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/vtl_env_run_example.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/masked_dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/masked_dtw_we_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/notes.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/notes.md" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -35,23 +32,23 @@
   </component>
   <component name="ProjectId" id="1TUk6WvAbJSyi1EJG4d6Go8nGGi" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/reinforcement_v2/configs" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/runs/masked_dtw_we_vtl_asac_12_03_2019_09_16_AM" />
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_16_AM" />
+      <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_09_AM" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\common" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
       <recent name="C:\Study\SpeechAcquisitionModel\src" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\dtw" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\common" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\algo" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\notebooks\DTW_env_test" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -187,6 +184,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="run_agent" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="SpeechAcquisitionModel" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement_v2" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement_v2/run_agent.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="train (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -200,27 +218,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement_v2/train.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="train_v2" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SpeechAcquisitionModel" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/siamese_net_sound_similarity" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -246,19 +243,19 @@
       <option name="ipnbPort" value="8888" />
     </configuration>
     <list>
-      <item itemvalue="Python.train_v2" />
       <item itemvalue="Python.train (1)" />
       <item itemvalue="Python.create_reference" />
       <item itemvalue="Python.DTW_env_test" />
       <item itemvalue="Python.asac" />
+      <item itemvalue="Python.run_agent" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.asac" />
+        <item itemvalue="Python.run_agent" />
         <item itemvalue="Python.train (1)" />
         <item itemvalue="Python.DTW_env_test" />
         <item itemvalue="Python.create_reference" />
-        <item itemvalue="Python.train_v2" />
       </list>
     </recent_temporary>
   </component>
@@ -816,11 +813,6 @@
           <url>file://$PROJECT_DIR$/src/VTL/create_reference.py</url>
           <line>75</line>
           <option name="timeStamp" value="898" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/asac.py</url>
-          <line>288</line>
-          <option name="timeStamp" value="922" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>
