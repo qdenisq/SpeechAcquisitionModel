@@ -66,11 +66,11 @@ class VTLEnvPreprocAudio(VTLEnv):
         if self.preproc_net:
             self.preproc_net.eval()
             preproc_audio = torch.from_numpy(preproc_audio[np.newaxis]).float().to(self.device)
-            _, self._hidden, new_goal_state = self.preproc_net(preproc_audio,
+            _, self._hidden, new_ac_state = self.preproc_net(preproc_audio,
                                                                seq_lens=np.array([preproc_audio.shape[1]]),
                                                                hidden=self._hidden)
-            new_goal_state = new_goal_state.detach().cpu().numpy().squeeze()
-            state_out.extend(new_goal_state)
+            new_ac_state = new_ac_state.detach().cpu().numpy().squeeze()
+            state_out.extend(new_ac_state)
         else:
             state_out.extend(preproc_audio.flatten().squeeze())
 

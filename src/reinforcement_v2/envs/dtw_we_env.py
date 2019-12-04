@@ -17,6 +17,10 @@ from src.siamese_net_sound_similarity.soft_dtw import SoftDTW
 
 
 class VTLDTWEnv(VTLEnvPreprocAudio):
+    """
+    This env implements reference handling, acoustic processing, calculation DTW between synthesized speech and the
+    reference acouctics
+    """
     def __init__(self, lib_path, speaker_fname, **kwargs):
         super(VTLDTWEnv, self).__init__(lib_path, speaker_fname, **kwargs)
 
@@ -93,7 +97,7 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
 
         # there is no reward and time limit constraint for this environment
         done = False
-        if self.current_step > int(self.max_episode_duration / self.timestep) - 1:
+        if self.current_step >= int(self.max_episode_duration / self.timestep) - 1:
             done = True
             # self.episode_states = []
             # self.episode_states = embeddings

@@ -17,9 +17,12 @@ from src.siamese_net_sound_similarity.train_v2 import SiameseDeepLSTMNet
 from src.siamese_net_sound_similarity.soft_dtw import SoftDTW
 
 
-class VTLMaskedDTWEnv(VTLDTWEnv):
+class VTLMaskedActionDTWEnv(VTLDTWEnv):
+    """
+    This env allows agent to articulate only selected actions (the rest is substituted with ground-truth actions from the reference)
+    """
     def __init__(self, lib_path, speaker_fname, **kwargs):
-        super(VTLMaskedDTWEnv, self).__init__(lib_path, speaker_fname, **kwargs)
+        super(VTLMaskedActionDTWEnv, self).__init__(lib_path, speaker_fname, **kwargs)
 
         self.selected_actions = kwargs['selected_actions']
         vtl_names = self.tract_param_names + self.glottis_param_names
@@ -38,5 +41,5 @@ class VTLMaskedDTWEnv(VTLDTWEnv):
         full_action = self.cur_reference['action'][self.current_step]
         full_action[self.selected_actions_idx] = action
 
-        res = super(VTLMaskedDTWEnv, self)._step(full_action, render)
+        res = super(VTLMaskedActionDTWEnv, self)._step(full_action, render)
         return res

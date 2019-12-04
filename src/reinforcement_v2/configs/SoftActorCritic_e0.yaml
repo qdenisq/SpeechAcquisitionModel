@@ -17,9 +17,14 @@ noise_init_level: 1.0
 noise_decay: 0.995
 noise_min: 0.05
 env:
-  env_id: masked_dtw_we_vtl # vtl_base, dtw_we_vtl
+  env_id: ref_masked_dtw_we_vtl # vtl_base, dtw_we_vtl, masked_dtw_we_vtl
   speaker_fname: "C:/Study/SpeechAcquisitionModel/src/VTL/JD2.speaker"
   lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
+  selected_reference_state:
+    - "ACOUSTICS"
+    - "TCX"
+    - "TCY"
+    - "TTX"
   selected_actions:
     - "HX"
     - "HY"
@@ -47,7 +52,7 @@ env:
 #    - "MA3"
   norm_observation: true
   norm_action: true
-  num_workers: 5
+  num_workers: 1
   visualize: false
   seed: 123456
   timestep: 40
