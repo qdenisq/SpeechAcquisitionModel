@@ -2,15 +2,12 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/BackpropIntoPolicy_e0.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/configs/SoftActorCritic_e0.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/SoftActorCritic_e0.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/masked_dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/masked_dtw_we_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/notes.md" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/notes.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -34,7 +31,7 @@
   </component>
   <component name="ProjectId" id="1TUk6WvAbJSyi1EJG4d6Go8nGGi" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/reinforcement_v2/envs" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/reinforcement_v2/configs" />
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
@@ -46,11 +43,11 @@
       <recent name="C:\Study\SpeechAcquisitionModel\src\dtw" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\algo" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
       <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_16_AM" />
       <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_09_AM" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -65,7 +62,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.asac">
+  <component name="RunManager" selected="Python.backprop_md">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -165,7 +162,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="create_reference" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="backprop_md" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -173,11 +170,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/VTL" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement_v2/algo" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/VTL/create_reference.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -246,18 +243,18 @@
     </configuration>
     <list>
       <item itemvalue="Python.train (1)" />
-      <item itemvalue="Python.create_reference" />
       <item itemvalue="Python.DTW_env_test" />
       <item itemvalue="Python.asac" />
       <item itemvalue="Python.run_agent" />
+      <item itemvalue="Python.backprop_md" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.backprop_md" />
         <item itemvalue="Python.asac" />
         <item itemvalue="Python.run_agent" />
         <item itemvalue="Python.train (1)" />
         <item itemvalue="Python.DTW_env_test" />
-        <item itemvalue="Python.create_reference" />
       </list>
     </recent_temporary>
   </component>
@@ -817,69 +814,9 @@
           <option name="timeStamp" value="898" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>33</line>
-          <option name="timeStamp" value="925" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>30</line>
-          <option name="timeStamp" value="926" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>40</line>
-          <option name="timeStamp" value="927" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>37</line>
-          <option name="timeStamp" value="928" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>43</line>
-          <option name="timeStamp" value="929" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>58</line>
-          <option name="timeStamp" value="930" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>55</line>
-          <option name="timeStamp" value="931" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>45</line>
-          <option name="timeStamp" value="932" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>50</line>
-          <option name="timeStamp" value="934" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>52</line>
-          <option name="timeStamp" value="935" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py</url>
           <line>63</line>
           <option name="timeStamp" value="936" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>68</line>
-          <option name="timeStamp" value="937" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>69</line>
-          <option name="timeStamp" value="938" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py</url>
@@ -892,14 +829,24 @@
           <option name="timeStamp" value="940" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py</url>
-          <line>89</line>
-          <option name="timeStamp" value="941" />
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
+          <line>109</line>
+          <option name="timeStamp" value="950" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py</url>
-          <line>91</line>
-          <option name="timeStamp" value="943" />
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
+          <line>95</line>
+          <option name="timeStamp" value="951" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
+          <line>112</line>
+          <option name="timeStamp" value="952" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
+          <line>111</line>
+          <option name="timeStamp" value="953" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

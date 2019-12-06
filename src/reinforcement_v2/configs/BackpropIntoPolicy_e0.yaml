@@ -11,8 +11,6 @@ soft_tau: 0.005
 num_updates_per_step: 1
 soft_update_period: 1
 gamma: 0.96
-alpha_l1: 0.005 # policy output distribution is sparse and [0, 1]!
-alpha_l2: 0.001
 noise_init_level: 1.0
 noise_decay: 0.995
 noise_min: 0.05
@@ -59,7 +57,7 @@ env:
 #    - "MA3"
   norm_observation: true
   norm_action: true
-  num_workers: 5
+  num_workers: 1
   visualize: false
   seed: 123456
   timestep: 40
@@ -105,7 +103,7 @@ train:
   batch_size: 128
 replay_buffer:
   size: 1000000
-soft_q_network:
+model_dynamics:
   hidden_dim:
   - 256
   - 256
