@@ -112,11 +112,13 @@ class SiameseDeepLSTMNet(nn.Module):
         self.__n_classes = model_settings['label_count']
         self.__n_hidden_reccurent_cells = model_settings['hidden_reccurent_cells_count']
         self.__n_hidden_cells = model_settings['hidden_latent_count']
-        self.__dropout = nn.Dropout(p=0.2)
+        self.__dropout = nn.Dropout(p=0.3)
         self.__bn1 = nn.BatchNorm1d(self.__n_window_height)
         # self.__compress_layer = nn.Linear(self.__n_hidden_cells, 10)
         self.__lstm_0 = nn.LSTM(self.__n_window_height, self.__n_hidden_reccurent_cells, batch_first=True, bidirectional=False)
         self.__lstm_1 = nn.LSTM(self.__n_hidden_reccurent_cells, self.__n_hidden_reccurent_cells, batch_first=True,
+                                bidirectional=False)
+        self.__lstm_2 = nn.LSTM(self.__n_hidden_reccurent_cells, self.__n_hidden_reccurent_cells, batch_first=True,
                                 bidirectional=False)
 
         self.__linear_0 = nn.Linear(self.__n_hidden_reccurent_cells, self.__n_hidden_cells)
@@ -135,9 +137,14 @@ class SiameseDeepLSTMNet(nn.Module):
         x = self.__dropout(x)
         x = x.view(orig_shape)
         x, hidden = self.__lstm_0(x, None)
+        x = self.__dropout(x)
         x, hidden = self.__lstm_1(x, None)
+        x = self.__dropout(x)
+        x, hidden = self.__lstm_2(x, None)
         x = torch.relu(self.__linear_0(x))
+        x = self.__dropout(x)
         x = torch.relu(self.__linear_1(x))
+        x = self.__dropout(x)
         x = torch.relu(self.__linear_2(x))
 
         hidden = x[:, -1, :]
@@ -152,7 +159,7 @@ class SiameseDeepLSTMNet(nn.Module):
             x = input[i]
             x, hidden = self.single_forward(x)
             lstm_out.append(hidden)
-            zs.append(x)
+            zs.append(hidden)
 
         # cce path
         cce_output = torch.cat(lstm_out, dim=0).squeeze()
@@ -197,7 +204,7 @@ def train():
         'mfcc_num': 39,
         'label_count': len(wanted_words_combined) + 2,
         'hidden_reccurent_cells_count': 512,
-        'hidden_latent_count': 32,
+        'hidden_latent_count': 1024,
         'winlen': 0.02,
         'winstep': 0.01,
         'open_end': False,
@@ -261,7 +268,7 @@ def train():
         y_target = np.array([0] * len(labels) + [1] * len(labels))
         y_target = torch.from_numpy(y_target).float().to('cuda')
         # forward
-        zs, y, predicted_labels = siamese_net(x)
+        embeddings, y, predicted_labels = siamese_net(x)
 
         #
         target_labels = torch.from_numpy(np.array([np.concatenate([data['y'],
@@ -281,20 +288,16 @@ def train():
 
         Triplet_loss_weight = anneal_function('logistic', i, 0.0025, 2500)
 
-        Triplet_loss = torch.tensor([0]).float().cuda()
+        Cos_hinge_loss = torch.tensor([0]).float().cuda()
 
         # DTWLoss (want to minimize dtw between duplica)
-        DTW_loss = torch.tensor([0]).float().cuda()
+        Cos_hinge_loss = torch.tensor([0]).float().cuda()
         for k in range(n_mini_batch_size):
-            DTW_loss += torch.nn.functional.relu(soft_dtw_loss(zs[0][k], zs[1][k]) -
-                                                 soft_dtw_loss(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
+            Cos_hinge_loss += torch.nn.functional.relu( - torch.nn.CosineSimilarity(dim=0)(embeddings[0][k], embeddings[1][k]) +
+                                                 torch.nn.CosineSimilarity(dim=0)(embeddings[0][k + n_mini_batch_size], embeddings[1][k + n_mini_batch_size])
                                                  + margin)
 
-        if open_end:
-            DTW_loss /= (n_mini_batch_size)
-        else:
-            DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
-        Triplet_loss = DTW_loss
+        Cos_hinge_loss /= n_mini_batch_size
 
         # L2_loss = torch.tensor([0]).float().cuda()
         # for k in range(n_mini_batch_size):
@@ -308,9 +311,9 @@ def train():
         #     L2_loss /= (n_mini_batch_size * zs[0].shape[1])
         # Triplet_loss = L2_loss
 
-        # loss = bce_loss + ce_loss + KL_loss * KL_weight
         # loss = ce_loss
-        loss = 0.4 * ce_loss + 0.6 * Triplet_loss * Triplet_loss_weight
+        # loss = bce_loss + ce_loss + KL_loss * KL_weight
+        loss = 0.2 * ce_loss + 0.8 * Cos_hinge_loss * Triplet_loss_weight
         loss.backward()
         optimizer.step()
 
@@ -319,7 +322,7 @@ def train():
         bce_acc = accuracy(y, y_target.detach().cpu().numpy())
         writer.add_scalar('BCE', bce_loss.detach().cpu(), i)
         writer.add_scalar('CCE', ce_loss.detach().cpu(), i)
-        writer.add_scalar('Triplet Loss', Triplet_loss.detach().cpu(), i)
+        writer.add_scalar('Triplet Loss', Cos_hinge_loss.detach().cpu(), i)
         writer.add_scalar('CCE_Accuracy', cce_acc, i)
         writer.add_scalar('BCE_Accuracy', bce_acc, i)
         writer.add_scalar('Triplet_loss_weight', Triplet_loss_weight, i)
@@ -338,7 +341,7 @@ def train():
               f"| L: {loss.detach().cpu().numpy()} "
               f"| BCE {bce_loss.detach().cpu().numpy()} "
               f"| CE {ce_loss.detach().cpu().numpy()} "
-              f"| Triplet Loss {Triplet_loss.detach().cpu()}")
+              f"| Triplet Loss {Cos_hinge_loss.detach().cpu()}")
 
         # TODO: add validation each 1k steps for example
         if i % 500 == 0:

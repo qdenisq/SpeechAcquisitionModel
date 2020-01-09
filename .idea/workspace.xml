@@ -2,12 +2,20 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/BackpropIntoPolicy_e0.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v3_adopted_from_settle.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/precision_recall_mAP-v2-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/precision_recall_mAP-v2-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/prefix_identification_noELBO-v2-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/prefix_identification_noELBO-v2-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/notebook.tex" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/notebook.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/precision_recall_mAP-v2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/precision_recall_mAP-v2.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/prefix_identification_noELBO-v2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/prefix_identification_noELBO-v2.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/configs/SoftActorCritic_e0.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/SoftActorCritic_e0.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/configs/BackpropIntoPolicy_e0.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/BackpropIntoPolicy_e0.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,23 +39,23 @@
   </component>
   <component name="ProjectId" id="1TUk6WvAbJSyi1EJG4d6Go8nGGi" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/reinforcement_v2/configs" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/siamese_net_sound_similarity" />
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\algo" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_16_AM" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
       <recent name="C:\Study\SpeechAcquisitionModel\src" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\dtw" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\algo" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_16_AM" />
-      <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_09_AM" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -62,7 +70,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.backprop_md">
+  <component name="RunManager" selected="Python.train_v2_with_settle_structure">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -99,27 +107,6 @@
       <option name="ipnbPort" value="8888" />
       <method v="2" />
     </configuration>
-    <configuration name="DTW_env_test" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SpeechAcquisitionModel" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement_v2/notebooks/DTW_env_test" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement_v2/notebooks/DTW_env_test/DTW_env_test.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -133,27 +120,6 @@
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <module name="" />
       <option name="SCRIPT_NAME" value="" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="asac" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SpeechAcquisitionModel" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement_v2/algo" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement_v2/algo/asac.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -183,7 +149,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="run_agent" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -191,11 +157,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement_v2" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../neural-acoustic-word-embeddings-master/code" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement_v2/run_agent.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../neural-acoustic-word-embeddings-master/code/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -204,7 +170,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="train (1)" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="train_v2" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -212,11 +178,53 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement_v2" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/siamese_net_sound_similarity" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement_v2/train.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="train_v2_with_settle_structure" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="SpeechAcquisitionModel" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/siamese_net_sound_similarity" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2_with_settle_structure.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="train_v3_adopted_from_settle" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="SpeechAcquisitionModel" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/siamese_net_sound_similarity" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v3_adopted_from_settle.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -242,19 +250,19 @@
       <option name="ipnbPort" value="8888" />
     </configuration>
     <list>
-      <item itemvalue="Python.train (1)" />
-      <item itemvalue="Python.DTW_env_test" />
-      <item itemvalue="Python.asac" />
-      <item itemvalue="Python.run_agent" />
       <item itemvalue="Python.backprop_md" />
+      <item itemvalue="Python.main" />
+      <item itemvalue="Python.train_v3_adopted_from_settle" />
+      <item itemvalue="Python.train_v2_with_settle_structure" />
+      <item itemvalue="Python.train_v2" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.train_v2_with_settle_structure" />
+        <item itemvalue="Python.train_v2" />
+        <item itemvalue="Python.train_v3_adopted_from_settle" />
+        <item itemvalue="Python.main" />
         <item itemvalue="Python.backprop_md" />
-        <item itemvalue="Python.asac" />
-        <item itemvalue="Python.run_agent" />
-        <item itemvalue="Python.train (1)" />
-        <item itemvalue="Python.DTW_env_test" />
       </list>
     </recent_temporary>
   </component>
@@ -749,16 +757,6 @@
           <option name="timeStamp" value="801" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/speech_classification/audio_processing.py</url>
-          <line>556</line>
-          <option name="timeStamp" value="805" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/speech_classification/audio_processing.py</url>
-          <line>555</line>
-          <option name="timeStamp" value="806" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
           <line>243</line>
           <option name="timeStamp" value="839" />
@@ -847,6 +845,47 @@
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
           <line>111</line>
           <option name="timeStamp" value="953" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
+          <line>302</line>
+          <option name="timeStamp" value="954" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
+          <line>194</line>
+          <option name="timeStamp" value="955" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
+          <line>192</line>
+          <option name="timeStamp" value="956" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v3_adopted_from_settle.py</url>
+          <line>273</line>
+          <option name="timeStamp" value="957" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2.py</url>
+          <line>296</line>
+          <option name="timeStamp" value="958" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <condition expression="D[i - 1, j - 1] + softmin &lt; 0" language="Python" />
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py</url>
+          <line>20</line>
+          <option name="timeStamp" value="967" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py</url>
+          <line>11</line>
+          <option name="timeStamp" value="968" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py</url>
+          <line>8</line>
+          <option name="timeStamp" value="969" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

@@ -8,10 +8,10 @@ use_alpha: false
 target_entropy: -70
 lr: 0.0003
 soft_tau: 0.005
-num_updates_per_step: 1
+num_updates_per_step: 30
 soft_update_period: 1
 gamma: 0.96
-noise_init_level: 1.0
+noise_init_level: 0.3
 noise_decay: 0.995
 noise_min: 0.05
 env:
@@ -26,10 +26,24 @@ env:
     - "JA"
     - "LP"
     - "LD"
+    - "VS"
+    - "VO"
+    - "WC"
     - "TCX"
     - "TCY"
     - "TTX"
     - "TTY"
+    - "TBX"
+    - "TBY"
+    - "TRX"
+    - "TRY"
+    - "TS1"
+    - "TS2"
+    - "TS3"
+    - "TS4"
+    - "MA1"
+    - "MA2"
+    - "MA3"
   selected_actions:
     - "HX"
     - "HY"
@@ -37,31 +51,31 @@ env:
     - "JA"
     - "LP"
     - "LD"
-#    - "VS"
-#    - "VO"
-#    - "WC"
+    - "VS"
+    - "VO"
+    - "WC"
     - "TCX"
     - "TCY"
     - "TTX"
     - "TTY"
-#    - "TBX"
-#    - "TBY"
-#    - "TRX"
-#    - "TRY"
-#    - "TS1"
-#    - "TS2"
-#    - "TS3"
-#    - "TS4"
-#    - "MA1"
-#    - "MA2"
-#    - "MA3"
+    - "TBX"
+    - "TBY"
+    - "TRX"
+    - "TRY"
+    - "TS1"
+    - "TS2"
+    - "TS3"
+    - "TS4"
+    - "MA1"
+    - "MA2"
+    - "MA3"
   norm_observation: true
   norm_action: true
-  num_workers: 1
+  num_workers: 5
   visualize: false
   seed: 123456
-  timestep: 40
-  max_episode_duration: 1000
+  timestep: 40 # in ms
+  max_episode_duration: 1000 # in ms
   showControlPoints: True
   showCenterLine: False
   showCutVectors: True
@@ -94,8 +108,8 @@ env:
 
     name: 'dtwalign'
     open_end: True
-    dist: 'euclidean'
-    step_pattern: 'typeIc'
+    dist: 'canberra'
+    step_pattern: 'symmetric2'
 
 
 train:

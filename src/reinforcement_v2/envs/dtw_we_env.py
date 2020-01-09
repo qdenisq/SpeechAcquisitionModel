@@ -105,10 +105,10 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
 
         reward = dist
         if not np.isnan(reward):
-            reward = np.exp(5. - reward)
+            reward = np.exp(0. - reward)
         else:
             reward = 0.
-        info = {}
+        info = {'dtw_dist': dist}
         
         self.current_state = state_out
 

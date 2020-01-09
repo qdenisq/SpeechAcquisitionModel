@@ -1,0 +1,63 @@
+---
+wanted_words:
+  - 'bed'
+  - 'bird'
+  - 'cat'
+  - 'dog'
+  - 'down'
+  - 'eight'
+  - 'five'
+  - 'four'
+  - 'go'
+  - 'happy'
+  - 'house'
+  - 'left'
+  - 'marvin'
+  - 'nine'
+  - 'no'
+  - 'off'
+  - 'on'
+  - 'one'
+  - 'right'
+  - 'seven'
+  - 'sheila'
+  - 'six'
+  - 'stop'
+  - 'three'
+  - 'tree'
+  - 'two'
+  - 'up'
+  - 'wow'
+  - 'yes'
+  - 'zero'
+
+
+dct_coefficient_count: 13
+mfcc_num: 39
+#  label_count: len(wanted_words_combined) + 2,
+hidden_reccurent:
+  - 512
+  - 512
+  - 512
+hidden_fc:
+  - 1024
+  - 1024
+  - 1024
+winlen: 0.02
+winstep: 0.01
+open_end: False
+dist: 'l1'
+margin: 0.4
+dropout: 0.3
+
+save_dir: r'C:\Study\SpeechAcquisitionModel\models\siamese_net_sound_similarity'
+
+loss_type: 'sdtw'
+
+triplet_anneal_k: 0.0025
+triplet_anneal_b: 1500
+
+train_steps: 100000
+mini_batch_size: 64
+
+learning_rate: 0.0005

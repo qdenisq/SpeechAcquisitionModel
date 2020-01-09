@@ -11,6 +11,9 @@ import dtwalign
 import numpy as np
 from six.moves import xrange
 
+import yaml
+
+from pprint import pprint
 from python_speech_features import mfcc
 import scipy.io.wavfile as wav
 
@@ -110,22 +113,37 @@ class SiameseDeepLSTMNet(nn.Module):
         super(SiameseDeepLSTMNet, self).__init__()
         self.__n_window_height = model_settings['mfcc_num']
         self.__n_classes = model_settings['label_count']
-        self.__n_hidden_reccurent_cells = model_settings['hidden_reccurent_cells_count']
-        self.__n_hidden_cells = model_settings['hidden_latent_count']
-        self.__dropout = nn.Dropout(p=0.2)
+
+        self.__dropout = nn.Dropout(p=model_settings['dropout'])
         self.__bn1 = nn.BatchNorm1d(self.__n_window_height)
-        # self.__compress_layer = nn.Linear(self.__n_hidden_cells, 10)
-        self.__lstm_0 = nn.LSTM(self.__n_window_height, self.__n_hidden_reccurent_cells, batch_first=True, bidirectional=False)
-        self.__lstm_1 = nn.LSTM(self.__n_hidden_reccurent_cells, self.__n_hidden_reccurent_cells, batch_first=True,
-                                bidirectional=False)
 
-        self.__linear_0 = nn.Linear(self.__n_hidden_reccurent_cells, self.__n_hidden_cells)
-        self.__linear_1 = nn.Linear(self.__n_hidden_cells, self.__n_hidden_cells)
-        self.__linear_2 = nn.Linear(self.__n_hidden_cells, self.__n_hidden_cells)
+        self.__n_hidden_reccurent = model_settings['hidden_reccurent']
+        self.__n_hidden_fc = model_settings['hidden_fc']
 
-        self.__output_layer = nn.Linear(self.__n_hidden_cells * 2, 1)
+        self.lstms = nn.ModuleList([nn.LSTM(self.__n_window_height, self.__n_hidden_reccurent[0], batch_first=True, bidirectional=False)])
+        self.lstms.extend(
+            [nn.LSTM(self.__n_hidden_reccurent[i-1], self.__n_hidden_reccurent[i], batch_first=True, bidirectional=False)
+             for i in range(1, len(self.__n_hidden_reccurent))])
 
-        self.__output_layer_cce = nn.Linear(self.__n_hidden_cells, self.__n_classes)
+        self.linears = nn.ModuleList(
+            [nn.Linear(self.__n_hidden_reccurent[-1], self.__n_hidden_fc[0])])
+        self.linears.extend(
+            [nn.Linear(self.__n_hidden_fc[i-1], self.__n_hidden_fc[i]) for i in range(1, len(self.__n_hidden_reccurent))])
+
+        # # self.__compress_layer = nn.Linear(self.__n_hidden_cells, 10)
+        # self.__lstm_0 = nn.LSTM(self.__n_window_height, self.__n_hidden_reccurent_cells, batch_first=True, bidirectional=False)
+        # self.__lstm_1 = nn.LSTM(self.__n_hidden_reccurent_cells, self.__n_hidden_reccurent_cells, batch_first=True,
+        #                         bidirectional=False)
+        # self.__lstm_2 = nn.LSTM(self.__n_hidden_reccurent_cells, self.__n_hidden_reccurent_cells, batch_first=True,
+        #                         bidirectional=False)
+        #
+        # self.__linear_0 = nn.Linear(self.__n_hidden_reccurent_cells, self.__n_hidden_cells)
+        # self.__linear_1 = nn.Linear(self.__n_hidden_cells, self.__n_hidden_cells)
+        # self.__linear_2 = nn.Linear(self.__n_hidden_cells, self.__n_hidden_cells)
+
+        self.__output_layer = nn.Linear(self.__n_hidden_fc[-1] * 2, 1)
+
+        self.__output_layer_cce = nn.Linear(self.__n_hidden_fc[-1], self.__n_classes)
 
     def single_forward(self, input, hidden=None):
         x = input
@@ -134,11 +152,27 @@ class SiameseDeepLSTMNet(nn.Module):
         x = self.__bn1(x)
         x = self.__dropout(x)
         x = x.view(orig_shape)
-        x, hidden = self.__lstm_0(x, None)
-        x, hidden = self.__lstm_1(x, None)
-        x = torch.relu(self.__linear_0(x))
-        x = torch.relu(self.__linear_1(x))
-        x = torch.relu(self.__linear_2(x))
+
+        for i in range(len(self.__n_hidden_reccurent) - 1):
+            x, hidden = self.lstms[i](x, None)
+            x = self.__dropout(x)
+        x, hidden = self.lstms[-1](x, None)
+
+        for i in range(len(self.__n_hidden_fc) - 1):
+            x = torch.relu(self.linears[i](x))
+            x = self.__dropout(x)
+        x = torch.relu(self.linears[-1](x))
+
+        # x, hidden = self.__lstm_0(x, None)
+        # x = self.__dropout(x)
+        # x, hidden = self.__lstm_1(x, None)
+        # x = self.__dropout(x)
+        # x, hidden = self.__lstm_2(x, None)
+        # x = torch.relu(self.__linear_0(x))
+        # x = self.__dropout(x)
+        # x = torch.relu(self.__linear_1(x))
+        # x = self.__dropout(x)
+        # x = torch.relu(self.__linear_2(x))
 
         hidden = x[:, -1, :]
         return x, hidden
@@ -176,7 +210,7 @@ def accuracy(out, labels):
     return np.sum(outputs == labels, axis=None) / float(labels.size)
 
 
-def train():
+def train(config):
     #############################################################
     # Simple Lstm train script
     #############################################################
@@ -185,30 +219,18 @@ def train():
     Initialize
     """
 
-    wanted_words = ['bed', 'bird', 'cat', 'dog', 'down', 'eight', 'five', 'four', 'go', 'happy', 'house', 'left',
-                    'marvin',
-                    'nine', 'no', 'off', 'on', 'one', 'right', 'seven', 'sheila', 'six', 'stop', 'three', 'tree', 'two',
-                    'up', 'wow', 'yes', 'zero']
+    wanted_words = config['wanted_words']
 
     wanted_words_combined = wanted_words
 
-    model_settings = {
-        'dct_coefficient_count': 13,
-        'mfcc_num': 39,
-        'label_count': len(wanted_words_combined) + 2,
-        'hidden_reccurent_cells_count': 512,
-        'hidden_latent_count': 32,
-        'winlen': 0.02,
-        'winstep': 0.01,
-        'open_end': False,
-        'dist': 'l1',
-        'margin': 0.4
-    }
+    model_settings = config
+    model_settings['label_count'] = len(wanted_words_combined) + 2
+
     open_end = model_settings['open_end']
     dist = model_settings['dist']
     margin = model_settings['margin']
 
-    save_dir = r'C:\Study\SpeechAcquisitionModel\models\siamese_net_sound_similarity'
+    save_dir = config['save_dir']
     if not os.path.exists(save_dir):
         try:
             os.makedirs(save_dir)
@@ -229,12 +251,15 @@ def train():
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p"))
     writer = SummaryWriter(f'../../reports/seamise_net_{dt}')
 
+    with open(os.path.join(f'../../reports/seamise_net_{dt}/', 'config.yaml'), 'w') as f:
+        yaml.dump(config, f)
+
     # configure training procedure
-    n_train_steps = 100000
-    n_mini_batch_size = 64
+    n_train_steps = config['train_steps']
+    n_mini_batch_size = config['mini_batch_size']
 
     siamese_net = SiameseDeepLSTMNet(model_settings).to('cuda')
-    optimizer = torch.optim.Adam(siamese_net.parameters(), lr=0.0005)
+    optimizer = torch.optim.Adam(siamese_net.parameters(), lr=config['learning_rate'])
 
     soft_dtw_loss = SoftDTW(open_end=open_end, dist=dist)
 
@@ -243,7 +268,7 @@ def train():
     """
     Train 
     """
-    max_bce_acc = 0.
+    max_cce_acc = 0.
     for i in range(n_train_steps):
         # collect data
         data = data_iter.get_data(n_mini_batch_size, 0, 'training')
@@ -279,38 +304,60 @@ def train():
         # ce loss
         ce_loss = torch.nn.CrossEntropyLoss()(predicted_labels, target_labels)
 
-        Triplet_loss_weight = anneal_function('logistic', i, 0.0025, 2500)
-
+        Triplet_loss_weight = anneal_function('logistic', i, config['triplet_anneal_k'], config['triplet_anneal_b'])
         Triplet_loss = torch.tensor([0]).float().cuda()
 
-        # DTWLoss (want to minimize dtw between duplica)
-        DTW_loss = torch.tensor([0]).float().cuda()
-        for k in range(n_mini_batch_size):
-            DTW_loss += torch.nn.functional.relu(soft_dtw_loss(zs[0][k], zs[1][k]) -
-                                                 soft_dtw_loss(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
-                                                 + margin)
+        if config['loss_type'] == 'sdtw':
 
-        if open_end:
-            DTW_loss /= (n_mini_batch_size)
+            # DTWLoss (want to minimize dtw between duplica)
+            DTW_loss = torch.tensor([0]).float().cuda()
+            for k in range(n_mini_batch_size):
+                DTW_loss += torch.nn.functional.relu(soft_dtw_loss(zs[0][k], zs[1][k]) -
+                                                     soft_dtw_loss(zs[0][k + n_mini_batch_size], zs[1][k + n_mini_batch_size])
+                                                     + margin)
+
+            if open_end:
+                DTW_loss /= (n_mini_batch_size)
+            else:
+                # DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
+                DTW_loss /= (n_mini_batch_size)
+            Triplet_loss = DTW_loss
+            loss = 0.2 * ce_loss + 0.8 * Triplet_loss * Triplet_loss_weight
+
+        elif config['loss_type'] == 'l2':
+            L2_loss = torch.tensor([0]).float().cuda()
+            for k in range(n_mini_batch_size):
+                L2_loss += torch.nn.functional.relu(torch.sum((zs[0][k] - zs[1][k])**2, dim=-1)[-1] -
+                                                    torch.sum((zs[0][k + n_mini_batch_size] - zs[1][k + n_mini_batch_size]) ** 2, dim=-1)[-1] +
+                                                    margin)
+
+            if open_end:
+                L2_loss /= (n_mini_batch_size)
+            else:
+                L2_loss /= (n_mini_batch_size * zs[0].shape[1])
+            Triplet_loss = L2_loss
+            loss = 0.2 * ce_loss + 0.8 * Triplet_loss * Triplet_loss_weight
+
+        elif config['loss_type'] == 'cos_hinge':
+            Cos_hinge_loss = torch.tensor([0]).float().cuda()
+            for k in range(n_mini_batch_size):
+                Cos_hinge_loss += torch.nn.functional.relu(
+                    - torch.nn.CosineSimilarity(dim=0)(zs[0][k], zs[1][k]) +
+                    torch.nn.CosineSimilarity(dim=0)(zs[0][k + n_mini_batch_size],
+                                                     zs[1][k + n_mini_batch_size])
+                    + margin)
+
+            Cos_hinge_loss /= n_mini_batch_size
+            Triplet_loss = Cos_hinge_loss
+            loss = 0.2 * ce_loss + 0.8 * Cos_hinge_loss * Triplet_loss_weight
+        elif config['loss_type'] == 'ce':
+            loss = ce_loss
         else:
-            DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
-        Triplet_loss = DTW_loss
-
-        # L2_loss = torch.tensor([0]).float().cuda()
-        # for k in range(n_mini_batch_size):
-        #     L2_loss += torch.nn.functional.relu(torch.sum((zs[0][k] - zs[1][k])**2, dim=-1)[-1] -
-        #                                         torch.sum((zs[0][k + n_mini_batch_size] - zs[1][k + n_mini_batch_size]) ** 2, dim=-1)[-1] +
-        #                                         margin)
-        #
-        # if open_end:
-        #     L2_loss /= (n_mini_batch_size)
-        # else:
-        #     L2_loss /= (n_mini_batch_size * zs[0].shape[1])
-        # Triplet_loss = L2_loss
+            raise KeyError(f"Unknown loss type: {config['loss_type']}")
 
         # loss = bce_loss + ce_loss + KL_loss * KL_weight
         # loss = ce_loss
-        loss = 0.4 * ce_loss + 0.6 * Triplet_loss * Triplet_loss_weight
+        # loss = 0.2 * ce_loss + 0.8 * Triplet_loss * Triplet_loss_weight
         loss.backward()
         optimizer.step()
 
@@ -328,15 +375,14 @@ def train():
             for name, param in siamese_net.named_parameters():
                 writer.add_histogram("SiameseNet_" + name, param, i)
 
-        if bce_acc > max_bce_acc or i % 1000 == 0:
-            if bce_acc > max_bce_acc:
-                max_bce_acc = bce_acc
-            fname = os.path.join(f'../../reports/seamise_net_{dt}/net_{bce_acc}.net')
+        if cce_acc > max_cce_acc or i % 1000 == 0:
+            if cce_acc > max_cce_acc:
+                max_cce_acc = cce_acc
+            fname = os.path.join(f'../../reports/seamise_net_{dt}/net_{i}_{cce_acc}.net')
             torch.save(siamese_net, fname)
 
         print(f"{i} "
               f"| L: {loss.detach().cpu().numpy()} "
-              f"| BCE {bce_loss.detach().cpu().numpy()} "
               f"| CE {ce_loss.detach().cpu().numpy()} "
               f"| Triplet Loss {Triplet_loss.detach().cpu()}")
 
@@ -390,5 +436,12 @@ def train():
 
 
 if __name__ == '__main__':
-    train()
+    with open('configs/ce_dtw_settle_like.yaml', 'r') as data_file:
+        config = yaml.safe_load(data_file)
+    pprint(config)
+
+    train(config)
+
+
+
     print('done')

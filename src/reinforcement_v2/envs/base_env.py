@@ -29,7 +29,7 @@ class VTLEnvPreprocAudio(VTLEnv):
 
             cols_per_timestep = kwargs['timestep'] / 1000 / self.preproc_params['winstep']  # preproc could return more than 1 column of features per timestep
             self.audio_dim = kwargs["preproc_net"]["output_dim"] * int(cols_per_timestep)
-            self.audio_bound = [(-1., 1.)] * self.audio_dim
+            self.audio_bound = [(-10., 10.)] * self.audio_dim # CHANGE IT LATER
             self._hidden = None
 
         else:

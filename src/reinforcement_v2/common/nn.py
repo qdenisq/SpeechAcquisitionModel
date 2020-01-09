@@ -107,6 +107,44 @@ class PolicyNetwork(nn.Module):
         return action, mean, log_std, log_prob
 
 
+
+class DeterministicPolicyNetwork(nn.Module):
+    def __init__(self, *args, **kwargs):
+        super(DeterministicPolicyNetwork, self).__init__()
+
+        self.state_dim = kwargs['state_dim']
+        self.action_dim = kwargs['action_dim']
+        self.hidden_dim = kwargs['hidden_dim']
+
+        self.linears = nn.ModuleList([nn.Linear(self.state_dim, self.hidden_dim[0])])
+        self.linears.extend(
+            [nn.Linear(self.hidden_dim[i - 1], self.hidden_dim[i]) for i in range(1, len(self.hidden_dim))])
+
+        self.out = nn.Linear(self.hidden_dim[-1], self.action_dim)
+
+        self.apply(init_weights_xavier)
+        # with torch.no_grad():
+        #     self.mean_linear.bias = torch.nn.Parameter(-1 * torch.ones(self.mean_linear.bias.shape))
+        # with torch.no_grad():
+        #     self.log_std_linear.bias = torch.nn.Parameter(-3 * torch.ones(self.log_std_linear.bias.shape))
+
+    def forward(self, state):
+        x = state
+
+        for l in self.linears:
+            x = l(x)
+            x = F.tanh(x)
+
+        out = torch.tanh(self.out(x))
+
+        return out
+
+    def get_action(self, state, epsilon=1e-6):
+        state = torch.FloatTensor(state).to(next(self.parameters()).device)
+        action = self.forward(state)
+        return action
+
+
 class ModelDynamicsNetwork(nn.Module):
     def __init__(self, *args, init_w=3e-3, **kwargs):
         super(ModelDynamicsNetwork, self).__init__()

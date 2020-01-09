@@ -15,7 +15,7 @@ import torch.optim as optim
 from src.reinforcement_v2.envs.env import EnvironmentManager
 
 from src.reinforcement_v2.common.replay_buffer import ReplayBuffer
-from src.reinforcement_v2.common.nn import SoftQNetwork, PolicyNetwork, ModelDynamics
+from src.reinforcement_v2.common.nn import SoftQNetwork, PolicyNetwork, ModelDynamics, DeterministicPolicyNetwork
 
 from src.reinforcement_v2.common.tensorboard import DoubleSummaryWriter
 from src.reinforcement_v2.common.noise import OUNoise
@@ -46,7 +46,7 @@ class BackpropIntoPolicy(nn.Module):
             self.policy_net = torch.load(kwargs['pretrained_policy']).policy_net
             self.policy_net.to(self.device)
         else:
-            self.policy_net = PolicyNetwork(**kwargs['policy_network']).to(self.device)
+            self.policy_net = DeterministicPolicyNetwork(**kwargs['policy_network']).to(self.device)
 
         self.use_alpha = kwargs.get('use_alpha', True)
         if not self.use_alpha:
@@ -73,7 +73,7 @@ class BackpropIntoPolicy(nn.Module):
         self.replay_buffer = ReplayBuffer(self.replay_buffer_size, self.replay_buffer_csv_filename, init_data_fname)
 
         self.gamma = kwargs.get('gamma', 0.99)
-        self.num_updates_per_step = kwargs.get("num_updates_per_step", 5)
+        self.num_updates_per_step = kwargs.get("num_updates_per_step", 30)
         self.train_step = 0
         self.frame_idx = 0
 
@@ -107,15 +107,16 @@ class BackpropIntoPolicy(nn.Module):
         Policy loss
         """
 
-        new_action, log_prob, epsilon, mean, log_std = self.policy_net.evaluate(state)
+        new_action = self.policy_net(state)
         predicted_next_agent_state = self.model_dynamics(agent_state, new_action)
         predicted_next_agent_state_masked = predicted_next_agent_state[:, reference_mask]
-        state_masked = state[:, reference_mask]
+        state_masked = state[:, self.agent_state_dim:]
         policy_loss = torch.nn.SmoothL1Loss(reduction="sum")(predicted_next_agent_state_masked, state_masked) / batch_size
 
         self.md_optimizer.zero_grad()
         self.policy_optimizer.zero_grad()
         policy_loss.backward()
+        torch.nn.utils.clip_grad_norm_(self.policy_net.parameters(), 1)
         self.policy_optimizer.step()
 
         self.train_step += 1
@@ -200,24 +201,19 @@ class BackpropIntoPolicy(nn.Module):
 
             for step in range(max_steps):
                 timer['algo'].start()
-                action, pi_mean, pi_log_std, log_prob = self.policy_net.get_action(state)
-                log_prob = log_prob.sum(dim=1).detach().cpu().numpy()
-                action = action.detach()
-                # ??? not sure if pi_entropy is calculated correctly
-                pi_entropy = pi_log_std.sum(dim=1, keepdim=True)
-                pi_entropy = pi_entropy.detach().cpu().numpy()
-                pi_mean = pi_mean.detach().cpu().mean().numpy()
-                pi_log_std = pi_log_std.detach().cpu().mean().numpy()
-                # log_prob = Normal(pi_mean, pi_log_std.exp()).log_prob(action.to(self.device)).sum(dim=1).detach().cpu().numpy()
-                action = action.numpy()
+                action = self.policy_net.get_action(state)
+                action = action.detach().cpu().numpy()
                 if not self.use_alpha:
                     action = action + self.noise.sample().reshape(*action.shape) * self.noise_level
-                    # action = np.clip(action, 0, 1)
+                    # just for testing
+                    # action *= 0
+                    action = np.clip(action, -1, 1)
 
                 timer['algo'].stop()
                 timer['env'].start()
 
-                next_state, reward, done, _ = env.step(action)
+                next_state, reward, done, info = env.step(action)
+                # dtw_dist = info['dtw_dist']
                 if kwargs['visualize']:
                     env.render()
 
@@ -244,7 +240,7 @@ class BackpropIntoPolicy(nn.Module):
                 writer.add_histogram("Action", action, self.frame_idx)
                 timer['utils'].stop()
 
-                if len(self.replay_buffer) > 1 * batch_size:
+                if len(self.replay_buffer) > 3 * batch_size and self.frame_idx % 25 == 0:
                     timer['algo'].start()
                     for _ in range(self.num_updates_per_step):
                         _, policy_loss, md_loss = self.update(batch_size)
@@ -255,23 +251,21 @@ class BackpropIntoPolicy(nn.Module):
                         writer.add_scalar('Noise_level', self.noise_level, self.frame_idx)
                     writer.add_scalar('Policy_loss', policy_loss, self.frame_idx)
                     writer.add_scalar('Model Dynamics Loss', md_loss, self.frame_idx)
-                    writer.add_scalar('Policy entropy', pi_entropy.mean(), self.frame_idx)
-                    writer.add_scalar('Policy mean action', pi_mean, self.frame_idx)
-                    writer.add_scalar('Policy log std action', pi_log_std, self.frame_idx)
-                    writer.add_scalar('Action probability', log_prob.mean(), self.frame_idx)
-
+                    print(f"policy_loss: {policy_loss:.2f} | md_loss: {md_loss:.2f}")
                     # explicitly remove all tensor-related variables just to ensure well-behaved memory management
-                    del policy_loss, md_loss, pi_entropy,\
-                        pi_mean, pi_log_std, log_prob, action
+                    del policy_loss, md_loss, action
                     timer['utils'].stop()
 
 
                 # ADD termination condition:
+                current_steps = env.get_attr('current_step')
+                print(current_steps)
                 for w in range(kwargs['num_workers']):
-                    if reward[w] < 0.001 and reward[w] > 0: # dtw > 7
+                    if reward[w] < 0.001 and current_steps[w] > 3: # dtw > 7
                         done[w] = True
 
                 if any(done):
+
                     timer['utils'].start()
                     for i in range(kwargs['num_workers']):
                         if done[i]:
@@ -279,6 +273,7 @@ class BackpropIntoPolicy(nn.Module):
                             rewards.append(ep_reward[i])
                             ep_reward[i] = 0.
                             state[i] = env.reset([i])
+                    env.render()
 
                     writer.add_scalar("Reward", reward_running, self.frame_idx)
                     for k, v in timer.items():
@@ -371,7 +366,7 @@ if __name__ == '__main__':
         os.makedirs(run_dir)
     except:
         pass
-    with open(os.path.join(run_dir, 'SoftActorCritic.yaml'), 'w') as f:
+    with open(os.path.join(run_dir, 'md_backprop.yaml'), 'w') as f:
         yaml.dump(kwargs, f)
 
 
