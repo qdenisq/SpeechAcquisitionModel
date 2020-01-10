@@ -52,7 +52,7 @@ dropout: 0.3
 
 save_dir: r'C:\Study\SpeechAcquisitionModel\models\siamese_net_sound_similarity'
 
-loss_type: 'sdtw'
+loss_type: 'cos_hinge' # cos_hinge, sdtw, l2, ce
 
 triplet_anneal_k: 0.0025
 triplet_anneal_b: 1500

@@ -2,20 +2,10 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v3_adopted_from_settle.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/precision_recall_mAP-v2-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/precision_recall_mAP-v2-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/prefix_identification_noELBO-v2-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/prefix_identification_noELBO-v2-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/notebook.tex" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/notebook.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/precision_recall_mAP-v2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/precision_recall_mAP-v2.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/prefix_identification_noELBO-v2.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/prefix_identification_noELBO-v2.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/configs/BackpropIntoPolicy_e0.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/BackpropIntoPolicy_e0.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/configs/ce_dtw_settle_like.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/configs/ce_dtw_settle_like.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2_with_settle_structure.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2_with_settle_structure.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -886,6 +876,11 @@
           <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/soft_dtw.py</url>
           <line>8</line>
           <option name="timeStamp" value="969" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2_with_settle_structure.py</url>
+          <line>341</line>
+          <option name="timeStamp" value="971" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

@@ -342,9 +342,9 @@ def train(config):
             Cos_hinge_loss = torch.tensor([0]).float().cuda()
             for k in range(n_mini_batch_size):
                 Cos_hinge_loss += torch.nn.functional.relu(
-                    - torch.nn.CosineSimilarity(dim=0)(zs[0][k], zs[1][k]) +
-                    torch.nn.CosineSimilarity(dim=0)(zs[0][k + n_mini_batch_size],
-                                                     zs[1][k + n_mini_batch_size])
+                    - torch.nn.CosineSimilarity(dim=0)(zs[0][k, -1, :], zs[1][k, -1, :]) +
+                    torch.nn.CosineSimilarity(dim=0)(zs[0][k + n_mini_batch_size, -1, :],
+                                                     zs[1][k + n_mini_batch_size, -1, :])
                     + margin)
 
             Cos_hinge_loss /= n_mini_batch_size
