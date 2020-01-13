@@ -36,13 +36,12 @@ dct_coefficient_count: 13
 mfcc_num: 39
 #  label_count: len(wanted_words_combined) + 2,
 hidden_reccurent:
-  - 512
-  - 512
-  - 512
+  - 256
+  - 256
+  - 256
 hidden_fc:
-  - 1024
-  - 1024
-  - 1024
+  - 512
+  - 512
 winlen: 0.02
 winstep: 0.01
 open_end: False
@@ -52,12 +51,15 @@ dropout: 0.3
 
 save_dir: r'C:\Study\SpeechAcquisitionModel\models\siamese_net_sound_similarity'
 
-loss_type: 'cos_hinge' # cos_hinge, sdtw, l2, ce
+loss_type: 'sdtw' # cos_hinge, sdtw, l2, ce
+alpha: 0.2
 
 triplet_anneal_k: 0.0025
-triplet_anneal_b: 1500
+triplet_anneal_b: 2500
 
-train_steps: 100000
+train_steps: 50000
 mini_batch_size: 64
 
 learning_rate: 0.0005
+
+

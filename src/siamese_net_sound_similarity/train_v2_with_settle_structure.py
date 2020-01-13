@@ -128,7 +128,7 @@ class SiameseDeepLSTMNet(nn.Module):
         self.linears = nn.ModuleList(
             [nn.Linear(self.__n_hidden_reccurent[-1], self.__n_hidden_fc[0])])
         self.linears.extend(
-            [nn.Linear(self.__n_hidden_fc[i-1], self.__n_hidden_fc[i]) for i in range(1, len(self.__n_hidden_reccurent))])
+            [nn.Linear(self.__n_hidden_fc[i-1], self.__n_hidden_fc[i]) for i in range(1, len(self.__n_hidden_fc))])
 
         # # self.__compress_layer = nn.Linear(self.__n_hidden_cells, 10)
         # self.__lstm_0 = nn.LSTM(self.__n_window_height, self.__n_hidden_reccurent_cells, batch_first=True, bidirectional=False)
@@ -307,6 +307,8 @@ def train(config):
         Triplet_loss_weight = anneal_function('logistic', i, config['triplet_anneal_k'], config['triplet_anneal_b'])
         Triplet_loss = torch.tensor([0]).float().cuda()
 
+        alpha = config['alpha']
+
         if config['loss_type'] == 'sdtw':
 
             # DTWLoss (want to minimize dtw between duplica)
@@ -322,7 +324,7 @@ def train(config):
                 # DTW_loss /= (n_mini_batch_size * zs[0].shape[1])
                 DTW_loss /= (n_mini_batch_size)
             Triplet_loss = DTW_loss
-            loss = 0.2 * ce_loss + 0.8 * Triplet_loss * Triplet_loss_weight
+            loss = alpha * ce_loss + (1. - alpha) * Triplet_loss * Triplet_loss_weight
 
         elif config['loss_type'] == 'l2':
             L2_loss = torch.tensor([0]).float().cuda()
@@ -336,7 +338,7 @@ def train(config):
             else:
                 L2_loss /= (n_mini_batch_size * zs[0].shape[1])
             Triplet_loss = L2_loss
-            loss = 0.2 * ce_loss + 0.8 * Triplet_loss * Triplet_loss_weight
+            loss = alpha * ce_loss + (1. - alpha) * Triplet_loss * Triplet_loss_weight
 
         elif config['loss_type'] == 'cos_hinge':
             Cos_hinge_loss = torch.tensor([0]).float().cuda()
@@ -349,7 +351,7 @@ def train(config):
 
             Cos_hinge_loss /= n_mini_batch_size
             Triplet_loss = Cos_hinge_loss
-            loss = 0.2 * ce_loss + 0.8 * Cos_hinge_loss * Triplet_loss_weight
+            loss = alpha * ce_loss + (1. - alpha) * Cos_hinge_loss * Triplet_loss_weight
         elif config['loss_type'] == 'ce':
             loss = ce_loss
         else:
@@ -362,13 +364,9 @@ def train(config):
         optimizer.step()
 
         cce_acc = accuracy(predicted_labels.detach().cpu().numpy(), target_labels.detach().cpu().numpy())
-        y = np.array([[1.0 - v, v] for v in y.detach().cpu().numpy()]).squeeze()
-        bce_acc = accuracy(y, y_target.detach().cpu().numpy())
-        writer.add_scalar('BCE', bce_loss.detach().cpu(), i)
         writer.add_scalar('CCE', ce_loss.detach().cpu(), i)
         writer.add_scalar('Triplet Loss', Triplet_loss.detach().cpu(), i)
         writer.add_scalar('CCE_Accuracy', cce_acc, i)
-        writer.add_scalar('BCE_Accuracy', bce_acc, i)
         writer.add_scalar('Triplet_loss_weight', Triplet_loss_weight, i)
 
         if i % 500 == 0:
