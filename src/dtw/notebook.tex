@@ -141,7 +141,7 @@
     \def\gt{>}
     \def\lt{<}
     % Document parameters
-    \title{prefix\_identification\_noELBO-v2}
+    \title{mAP}
     
     
     
@@ -287,6 +287,11 @@
         \PY{n+nb}{print}\PY{p}{(}\PY{n}{os}\PY{o}{.}\PY{n}{getcwd}\PY{p}{(}\PY{p}{)}\PY{p}{)}
         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
         \PY{k+kn}{from} \PY{n+nn}{scipy}\PY{n+nn}{.}\PY{n+nn}{spatial}\PY{n+nn}{.}\PY{n+nn}{distance} \PY{k}{import} \PY{n}{euclidean}\PY{p}{,} \PY{n}{minkowski}
+        \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{metrics} \PY{k}{import} \PY{n}{precision\PYZus{}recall\PYZus{}curve}\PY{p}{,} \PY{n}{average\PYZus{}precision\PYZus{}score}
+        \PY{k+kn}{import} \PY{n+nn}{yaml}
+        \PY{k+kn}{from} \PY{n+nn}{pprint} \PY{k}{import} \PY{n}{pprint}
+        
+        \PY{k+kn}{import} \PY{n+nn}{random}
         \PY{k+kn}{import} \PY{n+nn}{scipy}
         \PY{k+kn}{import} \PY{n+nn}{torch}
         
@@ -297,11 +302,12 @@
         \PY{k+kn}{from} \PY{n+nn}{sklearn}\PY{n+nn}{.}\PY{n+nn}{manifold} \PY{k}{import} \PY{n}{TSNE}
         \PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
         
-        \PY{k+kn}{from} \PY{n+nn}{src}\PY{n+nn}{.}\PY{n+nn}{speech\PYZus{}classification}\PY{n+nn}{.}\PY{n+nn}{audio\PYZus{}processing} \PY{k}{import} \PY{n}{AudioPreprocessorMFCCDeltaDelta}\PY{p}{,} \PY{n}{SpeechCommandsDataCollector}
-        \PY{k+kn}{from} \PY{n+nn}{src}\PY{n+nn}{.}\PY{n+nn}{siamese\PYZus{}net\PYZus{}sound\PYZus{}similarity}\PY{n+nn}{.}\PY{n+nn}{slstm\PYZus{}train} \PY{k}{import} \PY{n}{SiameseSpeechCommandsDataCollector}\PY{p}{,} \PY{n}{StochasticSiameseLSTMNet}
-        \PY{k+kn}{from} \PY{n+nn}{src}\PY{n+nn}{.}\PY{n+nn}{siamese\PYZus{}net\PYZus{}sound\PYZus{}similarity}\PY{n+nn}{.}\PY{n+nn}{train\PYZus{}v2} \PY{k}{import} \PY{n}{SiameseDeepLSTMNet}
-        \PY{k+kn}{from} \PY{n+nn}{src}\PY{n+nn}{.}\PY{n+nn}{siamese\PYZus{}net\PYZus{}sound\PYZus{}similarity}\PY{n+nn}{.}\PY{n+nn}{soft\PYZus{}dtw} \PY{k}{import} \PY{n}{SoftDTW}
+        \PY{k+kn}{from} \PY{n+nn}{src}\PY{n+nn}{.}\PY{n+nn}{speech\PYZus{}classification}\PY{n+nn}{.}\PY{n+nn}{audio\PYZus{}processing} \PY{k}{import} \PY{n}{SpeechCommandsDataCollector}\PY{p}{,} \PY{n}{AudioPreprocessorMFCCDeltaDelta}
+        \PY{k+kn}{from} \PY{n+nn}{src}\PY{n+nn}{.}\PY{n+nn}{siamese\PYZus{}net\PYZus{}sound\PYZus{}similarity}\PY{n+nn}{.}\PY{n+nn}{slstm\PYZus{}train} \PY{k}{import} \PY{n}{SiameseSpeechCommandsDataCollector}
+        \PY{k+kn}{from} \PY{n+nn}{src}\PY{n+nn}{.}\PY{n+nn}{siamese\PYZus{}net\PYZus{}sound\PYZus{}similarity}\PY{n+nn}{.}\PY{n+nn}{train\PYZus{}v2\PYZus{}with\PYZus{}settle\PYZus{}structure} \PY{k}{import} \PY{n}{SiameseDeepLSTMNet}
+        \PY{k+kn}{from} \PY{n+nn}{src}\PY{n+nn}{.}\PY{n+nn}{siamese\PYZus{}net\PYZus{}sound\PYZus{}similarity}\PY{n+nn}{.}\PY{n+nn}{train} \PY{k}{import} \PY{n}{SiameseLSTMNet}
         
+        \PY{k+kn}{from} \PY{n+nn}{src}\PY{n+nn}{.}\PY{n+nn}{siamese\PYZus{}net\PYZus{}sound\PYZus{}similarity}\PY{n+nn}{.}\PY{n+nn}{soft\PYZus{}dtw} \PY{k}{import} \PY{n}{SoftDTW}
         
         
         \PY{k+kn}{import} \PY{n+nn}{matplotlib}\PY{n+nn}{.}\PY{n+nn}{pyplot} \PY{k}{as} \PY{n+nn}{plt}
@@ -331,26 +337,77 @@ C:\textbackslash{}Study\textbackslash{}SpeechAcquisitionModel\textbackslash{}src
     \subsection{Load data}\label{load-data}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}3}]:} \PY{n}{wanted\PYZus{}words} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bed}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{bird}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cat}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dog}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{down}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{eight}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{five}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{four}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{go}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{happy}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{house}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{left}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-                        \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{marvin}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-                        \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{nine}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{no}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{off}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{on}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{one}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{right}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{seven}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sheila}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{six}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{stop}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{three}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{tree}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{two}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,}
-                        \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{up}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{wow}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{yes}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{zero}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+{\color{incolor}In [{\color{incolor}3}]:} \PY{n}{config\PYZus{}path} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C:}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{Study}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{SpeechAcquisitionModel}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{reports}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{seamise\PYZus{}net\PYZus{}01\PYZus{}09\PYZus{}2020\PYZus{}05\PYZus{}52\PYZus{}PM}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{config.yaml}\PY{l+s+s1}{\PYZsq{}}
+        \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{n}{config\PYZus{}path}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{data\PYZus{}file}\PY{p}{:}
+            \PY{n}{config} \PY{o}{=} \PY{n}{yaml}\PY{o}{.}\PY{n}{safe\PYZus{}load}\PY{p}{(}\PY{n}{data\PYZus{}file}\PY{p}{)}
+        \PY{n}{pprint}\PY{p}{(}\PY{n}{config}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+\{'dct\_coefficient\_count': 13,
+ 'dist': 'l1',
+ 'dropout': 0.3,
+ 'hidden\_fc': [1024, 1024, 1024],
+ 'hidden\_reccurent': [512, 512, 512],
+ 'label\_count': 32,
+ 'learning\_rate': 0.0005,
+ 'loss\_type': 'sdtw',
+ 'margin': 0.4,
+ 'mfcc\_num': 39,
+ 'mini\_batch\_size': 64,
+ 'open\_end': False,
+ 'save\_dir': "r'C:\textbackslash{}\textbackslash{}Study\textbackslash{}\textbackslash{}SpeechAcquisitionModel\textbackslash{}\textbackslash{}models\textbackslash{}\textbackslash{}siamese\_net\_sound\_similarity'",
+ 'train\_steps': 100000,
+ 'triplet\_anneal\_b': 1500,
+ 'triplet\_anneal\_k': 0.0025,
+ 'wanted\_words': ['bed',
+                  'bird',
+                  'cat',
+                  'dog',
+                  'down',
+                  'eight',
+                  'five',
+                  'four',
+                  'go',
+                  'happy',
+                  'house',
+                  'left',
+                  'marvin',
+                  'nine',
+                  'no',
+                  'off',
+                  'on',
+                  'one',
+                  'right',
+                  'seven',
+                  'sheila',
+                  'six',
+                  'stop',
+                  'three',
+                  'tree',
+                  'two',
+                  'up',
+                  'wow',
+                  'yes',
+                  'zero'],
+ 'winlen': 0.02,
+ 'winstep': 0.01\}
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}4}]:} \PY{n}{wanted\PYZus{}words} \PY{o}{=} \PY{n}{config}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{wanted\PYZus{}words}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
         
         \PY{n}{wanted\PYZus{}words\PYZus{}combined} \PY{o}{=} \PY{n}{wanted\PYZus{}words}
         
-        \PY{n}{model\PYZus{}settings} \PY{o}{=} \PY{p}{\PYZob{}}
-            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dct\PYZus{}coefficient\PYZus{}count}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{13}\PY{p}{,}
-            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{label\PYZus{}count}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n+nb}{len}\PY{p}{(}\PY{n}{wanted\PYZus{}words\PYZus{}combined}\PY{p}{)} \PY{o}{+} \PY{l+m+mi}{2}\PY{p}{,}
-            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{hidden\PYZus{}reccurent\PYZus{}cells\PYZus{}count}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mi}{128}\PY{p}{,}
-            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{winlen}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mf}{0.02}\PY{p}{,}
-            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{winstep}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{l+m+mf}{0.01}
-        \PY{p}{\PYZcb{}}
+        \PY{n}{model\PYZus{}settings} \PY{o}{=} \PY{n}{config}
         \PY{n}{query\PYZus{}length} \PY{o}{=} \PY{l+m+mi}{100}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}4}]:} \PY{n}{preproc} \PY{o}{=} \PY{n}{AudioPreprocessorMFCCDeltaDelta}\PY{p}{(}\PY{n}{numcep}\PY{o}{=}\PY{n}{model\PYZus{}settings}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dct\PYZus{}coefficient\PYZus{}count}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{winlen}\PY{o}{=}\PY{n}{model\PYZus{}settings}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{winlen}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
+{\color{incolor}In [{\color{incolor}5}]:} \PY{n}{preproc} \PY{o}{=} \PY{n}{AudioPreprocessorMFCCDeltaDelta}\PY{p}{(}\PY{n}{numcep}\PY{o}{=}\PY{n}{model\PYZus{}settings}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{dct\PYZus{}coefficient\PYZus{}count}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,} \PY{n}{winlen}\PY{o}{=}\PY{n}{model\PYZus{}settings}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{winlen}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{,}
                                              \PY{n}{winstep}\PY{o}{=}\PY{n}{model\PYZus{}settings}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{winstep}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
         
         \PY{n}{data\PYZus{}iter} \PY{o}{=} \PY{n}{SiameseSpeechCommandsDataCollector}\PY{p}{(}\PY{n}{preproc}\PY{p}{,}
@@ -364,590 +421,184 @@ C:\textbackslash{}Study\textbackslash{}SpeechAcquisitionModel\textbackslash{}src
 \end{Verbatim}
 
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}5}]:} \PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{1}
-        \PY{n}{data} \PY{o}{=} \PY{n}{data\PYZus{}iter}\PY{o}{.}\PY{n}{get\PYZus{}data}\PY{p}{(}\PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{training}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        \PY{n}{labels} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-        
-        \PY{n}{duplicates} \PY{o}{=} \PY{n}{data\PYZus{}iter}\PY{o}{.}\PY{n}{get\PYZus{}duplicates}\PY{p}{(}\PY{n}{labels}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{training}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        \PY{k}{assert} \PY{n}{np}\PY{o}{.}\PY{n}{any}\PY{p}{(}\PY{n}{labels} \PY{o}{==} \PY{n}{duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
-        
-        \PY{n}{non\PYZus{}duplicates} \PY{o}{=} \PY{n}{data\PYZus{}iter}\PY{o}{.}\PY{n}{get\PYZus{}nonduplicates}\PY{p}{(}\PY{n}{labels}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{training}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        \PY{k}{assert} \PY{n}{np}\PY{o}{.}\PY{n}{any}\PY{p}{(}\PY{n}{labels} \PY{o}{!=} \PY{n}{non\PYZus{}duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}6}]:} \PY{n}{i} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{shape}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
-        \PY{n}{sample\PYZus{}idx} \PY{o}{=} \PY{n}{i}
-        
-        \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{2}\PY{p}{,} \PY{l+m+mi}{3}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{15}\PY{p}{,}\PY{l+m+mi}{10}\PY{p}{)}\PY{p}{)}
-        
-        \PY{c+c1}{\PYZsh{} plt.figure()}
-        \PY{n}{im} \PY{o}{=} \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{imshow}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{T}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{} fig.colorbar(im)}
-        \PY{n}{label} \PY{o}{=} \PY{n}{index\PYZus{}to\PYZus{}word}\PY{p}{[}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}
-        \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{title}\PY{o}{.}\PY{n}{set\PYZus{}text}\PY{p}{(}\PY{n}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}label\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        
-        \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{imshow}\PY{p}{(}\PY{n}{duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{T}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{} plt.colorbar()}
-        \PY{n}{label} \PY{o}{=} \PY{n}{index\PYZus{}to\PYZus{}word}\PY{p}{[}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}
-        \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{title}\PY{o}{.}\PY{n}{set\PYZus{}text}\PY{p}{(}\PY{n}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}label\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        
-        
-        \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{o}{.}\PY{n}{imshow}\PY{p}{(}\PY{n}{non\PYZus{}duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{T}\PY{p}{)}
-        \PY{c+c1}{\PYZsh{} plt.colorbar()}
-        \PY{n}{label} \PY{o}{=} \PY{n}{index\PYZus{}to\PYZus{}word}\PY{p}{[}\PY{n}{non\PYZus{}duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{]}
-        \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{o}{.}\PY{n}{title}\PY{o}{.}\PY{n}{set\PYZus{}text}\PY{p}{(}\PY{n}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}label\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        
-        \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{} DTW}
-        
-        \PY{n}{x} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}
-        
-        \PY{c+c1}{\PYZsh{} self dtw (extpected to be 0)}
-        
-        \PY{n}{y} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}
-        \PY{n}{res} \PY{o}{=} \PY{n}{dtwalign}\PY{o}{.}\PY{n}{dtw}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{dist}\PY{o}{=}\PY{n}{DISTANCE}\PY{p}{,} \PY{n}{step\PYZus{}pattern}\PY{o}{=}\PY{n}{STEP\PYZus{}PATTERN}\PY{p}{,} \PY{n}{open\PYZus{}end}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-        \PY{n}{res}\PY{o}{.}\PY{n}{plot\PYZus{}path}\PY{p}{(}\PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{p}{)}
-        \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{anchor DTW = }\PY{l+s+si}{\PYZob{}res.normalized\PYZus{}distance:.4f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        
-        
-        \PY{c+c1}{\PYZsh{} positive dtw}
-        
-        \PY{n}{y} \PY{o}{=} \PY{n}{duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{sample\PYZus{}idx}\PY{p}{]}
-        \PY{n}{res} \PY{o}{=} \PY{n}{dtwalign}\PY{o}{.}\PY{n}{dtw}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{dist}\PY{o}{=}\PY{n}{DISTANCE}\PY{p}{,} \PY{n}{step\PYZus{}pattern}\PY{o}{=}\PY{n}{STEP\PYZus{}PATTERN}\PY{p}{,} \PY{n}{open\PYZus{}end}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-        \PY{n}{res}\PY{o}{.}\PY{n}{plot\PYZus{}path}\PY{p}{(}\PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{)}
-        \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{positive DTW = }\PY{l+s+si}{\PYZob{}res.normalized\PYZus{}distance:.4f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        
-        
-        \PY{c+c1}{\PYZsh{} negative dtw}
-        
-        \PY{n}{y} \PY{o}{=} \PY{n}{non\PYZus{}duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{sample\PYZus{}idx}\PY{p}{]}
-        \PY{n}{res} \PY{o}{=} \PY{n}{dtwalign}\PY{o}{.}\PY{n}{dtw}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{dist}\PY{o}{=}\PY{n}{DISTANCE}\PY{p}{,} \PY{n}{step\PYZus{}pattern}\PY{o}{=}\PY{n}{STEP\PYZus{}PATTERN}\PY{p}{,} \PY{n}{open\PYZus{}end}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}
-        \PY{n}{res}\PY{o}{.}\PY{n}{plot\PYZus{}path}\PY{p}{(}\PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{p}{)}
-        \PY{n}{axes}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{[}\PY{l+m+mi}{2}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}title}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{negative DTW = }\PY{l+s+si}{\PYZob{}res.normalized\PYZus{}distance:.4f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-\begin{Verbatim}[commandchars=\\\{\}]
-{\color{outcolor}Out[{\color{outcolor}6}]:} Text(0.5,1,'negative DTW = 69.5494')
-\end{Verbatim}
-            
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_6_1.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
     \section{Gather Data for analysis}\label{gather-data-for-analysis}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}7}]:} \PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{2000}
+{\color{incolor}In [{\color{incolor}6}]:} \PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size} \PY{o}{=} \PY{l+m+mi}{4000}
         
         \PY{c+c1}{\PYZsh{} gather data}
         
         
-        \PY{n}{data} \PY{o}{=} \PY{n}{data\PYZus{}iter}\PY{o}{.}\PY{n}{get\PYZus{}data}\PY{p}{(}\PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{training}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{data} \PY{o}{=} \PY{n}{data\PYZus{}iter}\PY{o}{.}\PY{n}{get\PYZus{}data}\PY{p}{(}\PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{validation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
         \PY{n}{labels} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
         
-        \PY{n}{duplicates} \PY{o}{=} \PY{n}{data\PYZus{}iter}\PY{o}{.}\PY{n}{get\PYZus{}duplicates}\PY{p}{(}\PY{n}{labels}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{training}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        \PY{k}{assert} \PY{n}{np}\PY{o}{.}\PY{n}{any}\PY{p}{(}\PY{n}{labels} \PY{o}{==} \PY{n}{duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+        \PY{n}{data1} \PY{o}{=} \PY{n}{data\PYZus{}iter}\PY{o}{.}\PY{n}{get\PYZus{}data}\PY{p}{(}\PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{validation}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{labels1} \PY{o}{=} \PY{n}{data1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+        \PY{n}{idx} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{random}\PY{o}{.}\PY{n}{randint}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{labels1}\PY{p}{)}\PY{p}{,} \PY{n+nb}{len}\PY{p}{(}\PY{n}{labels1}\PY{p}{)}\PY{p}{)}
+        \PY{n}{data1\PYZus{}x} \PY{o}{=} \PY{n}{data1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{idx}\PY{p}{]}
+        \PY{n}{data1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{data1\PYZus{}x}
+        \PY{n}{labels1} \PY{o}{=}  \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{data1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{p}{[}\PY{n}{idx}\PY{p}{]}
+        \PY{n}{data1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]} \PY{o}{=} \PY{n}{labels1}
         
-        \PY{n}{non\PYZus{}duplicates} \PY{o}{=} \PY{n}{data\PYZus{}iter}\PY{o}{.}\PY{n}{get\PYZus{}nonduplicates}\PY{p}{(}\PY{n}{labels}\PY{p}{,} \PY{l+m+mi}{0}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{training}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        \PY{k}{assert} \PY{n}{np}\PY{o}{.}\PY{n}{any}\PY{p}{(}\PY{n}{labels} \PY{o}{!=} \PY{n}{non\PYZus{}duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}
+        \PY{c+c1}{\PYZsh{} labesl1 = data1[\PYZsq{}y\PYZsq{}]}
+        
+        \PY{c+c1}{\PYZsh{} duplicates = data\PYZus{}iter.get\PYZus{}duplicates(labels, 0, \PYZsq{}testing\PYZsq{})}
+        \PY{c+c1}{\PYZsh{} assert np.any(labels == duplicates[\PYZsq{}y\PYZsq{}])}
+        \PY{c+c1}{\PYZsh{} duplicates[\PYZsq{}x\PYZsq{}] = duplicates[\PYZsq{}x\PYZsq{}][:n\PYZus{}duplicates\PYZus{}size]}
+        \PY{c+c1}{\PYZsh{} print(duplicates[\PYZsq{}x\PYZsq{}].shape)}
+        
+        \PY{c+c1}{\PYZsh{} non\PYZus{}duplicates = data\PYZus{}iter.get\PYZus{}nonduplicates(labels, 0, \PYZsq{}testing\PYZsq{})}
+        \PY{c+c1}{\PYZsh{} assert np.any(labels != non\PYZus{}duplicates[\PYZsq{}y\PYZsq{}])}
+        
+        \PY{c+c1}{\PYZsh{} y\PYZus{}true = np.concatenate((np.ones((n\PYZus{}duplicates\PYZus{}size)), np.zeros((n\PYZus{}mini\PYZus{}batch\PYZus{}size))))}
+        \PY{n}{y\PYZus{}true} \PY{o}{=} \PY{n}{labels}\PY{o}{==}\PY{n}{labels1}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{labels}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{labels1}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n+nb}{sum}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{p}{)}\PY{p}{)}
+        \PY{n+nb}{print}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{shape}\PY{p}{)}
+        \PY{n}{dists} \PY{o}{=} \PY{p}{[}\PY{p}{]}
 \end{Verbatim}
 
 
-    \subsection{1. DTW distribution on raw
-data}\label{dtw-distribution-on-raw-data}
+    \begin{Verbatim}[commandchars=\\\{\}]
+[False False False {\ldots} False False False]
+[17. 23.  9. {\ldots} 26.  9. 15.]
+[ 7.  5. 29. {\ldots} 18. 10.  2.]
+135
+(4000, 99, 39)
+
+    \end{Verbatim}
+
+    \subsection{1. MFCC Precision/Recall}\label{mfcc-precisionrecall}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}8}]:} \PY{c+c1}{\PYZsh{} initialize dist\PYZus{}lists}
+{\color{incolor}In [{\color{incolor}7}]:} \PY{c+c1}{\PYZsh{} initialize dist\PYZus{}lists}
         
-        \PY{n}{duplicates\PYZus{}dtw} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-        \PY{n}{non\PYZus{}duplicates\PYZus{}dtw} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        \PY{n}{dtw} \PY{o}{=} \PY{p}{[}\PY{p}{]}
         
         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size}\PY{p}{)}\PY{p}{:}
             \PY{n+nb}{print}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{end}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
             \PY{n}{x} \PY{o}{=} \PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-            
-            \PY{n}{y\PYZus{}duplicate} \PY{o}{=} \PY{n}{duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-            \PY{n}{duplicates\PYZus{}dtw}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{dtwalign}\PY{o}{.}\PY{n}{dtw}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y\PYZus{}duplicate}\PY{p}{,} \PY{n}{dist}\PY{o}{=}\PY{n}{DISTANCE}\PY{p}{,} \PY{n}{step\PYZus{}pattern}\PY{o}{=}\PY{n}{STEP\PYZus{}PATTERN}\PY{p}{,} \PY{n}{open\PYZus{}end}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{dist\PYZus{}only}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{normalized\PYZus{}distance}\PY{p}{)}
+            \PY{n}{y} \PY{o}{=} \PY{n}{data1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
+            \PY{n}{dtw}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{dtwalign}\PY{o}{.}\PY{n}{dtw}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{,} \PY{n}{dist}\PY{o}{=}\PY{n}{DISTANCE}\PY{p}{,} \PY{n}{step\PYZus{}pattern}\PY{o}{=}\PY{n}{STEP\PYZus{}PATTERN}\PY{p}{,} \PY{n}{open\PYZus{}end}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{dist\PYZus{}only}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{normalized\PYZus{}distance}\PY{p}{)}
         
-            \PY{n}{y\PYZus{}non\PYZus{}duplicate} \PY{o}{=} \PY{n}{non\PYZus{}duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-            \PY{n}{non\PYZus{}duplicates\PYZus{}dtw}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{dtwalign}\PY{o}{.}\PY{n}{dtw}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y\PYZus{}non\PYZus{}duplicate}\PY{p}{,} \PY{n}{dist}\PY{o}{=}\PY{n}{DISTANCE}\PY{p}{,} \PY{n}{step\PYZus{}pattern}\PY{o}{=}\PY{n}{STEP\PYZus{}PATTERN}\PY{p}{,} \PY{n}{open\PYZus{}end}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{dist\PYZus{}only}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{o}{.}\PY{n}{normalized\PYZus{}distance}\PY{p}{)}    
+        \PY{n}{mfcc\PYZus{}dtw\PYZus{}dist} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{dtw}\PY{p}{)}
+        \PY{n}{dists}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{mfcc\PYZus{}dtw\PYZus{}dist}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
-1999
+3999
     \end{Verbatim}
 
+    \section{2. Improving DTW using latent variables from LSTM classifier as
+a
+signal}\label{improving-dtw-using-latent-variables-from-lstm-classifier-as-a-signal}
+
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{bins} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{l+m+mi}{0}\PY{p}{,} \PY{n+nb}{min}\PY{p}{(}\PY{n+nb}{max}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{l+m+mf}{150.}\PY{p}{)}\PY{p}{,} \PY{n}{num}\PY{o}{=}\PY{l+m+mi}{100}\PY{p}{)}
-        \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}8}]:} \PY{c+c1}{\PYZsh{} load nn}
+        \PY{n}{nn\PYZus{}ce} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C:}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{Study}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{SpeechAcquisitionModel}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{reports}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{seamise\PYZus{}net\PYZus{}01\PYZus{}09\PYZus{}2020\PYZus{}05\PYZus{}52\PYZus{}PM}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{net\PYZus{}43000\PYZus{}0.921875.net}\PY{l+s+s1}{\PYZsq{}}
+        \PY{n}{nn\PYZus{}ce\PYZus{}l2} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C:}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{Study}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{SpeechAcquisitionModel}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{reports}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{seamise\PYZus{}net\PYZus{}01\PYZus{}15\PYZus{}2020\PYZus{}04\PYZus{}09\PYZus{}PM}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{net\PYZus{}2000\PYZus{}0.9453125.net}\PY{l+s+s1}{\PYZsq{}}
+        \PY{n}{nn\PYZus{}ce\PYZus{}dtw} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C:}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{Study}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{SpeechAcquisitionModel}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{reports}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{seamise\PYZus{}net\PYZus{}01\PYZus{}13\PYZus{}2020\PYZus{}03\PYZus{}27\PYZus{}PM}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{net\PYZus{}49000\PYZus{}0.9140625.net}\PY{l+s+s1}{\PYZsq{}}
+        \PY{n}{nn\PYZus{}ce\PYZus{}cos} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C:}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{Study}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{SpeechAcquisitionModel}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{reports}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{seamise\PYZus{}net\PYZus{}01\PYZus{}15\PYZus{}2020\PYZus{}03\PYZus{}09\PYZus{}PM}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{net\PYZus{}1981\PYZus{}0.9453125.net}\PY{l+s+s1}{\PYZsq{}}
         
-        \PY{n}{duplicates\PYZus{}dtw\PYZus{}filtered} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw}\PY{p}{)}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{where}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw}\PY{p}{)} \PY{o}{\PYZlt{}} \PY{l+m+mf}{150.}\PY{p}{)}\PY{p}{]}
-        \PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}filtered} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw}\PY{p}{)}\PY{p}{[}\PY{n}{np}\PY{o}{.}\PY{n}{where}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw}\PY{p}{)} \PY{o}{\PYZlt{}} \PY{l+m+mf}{150.}\PY{p}{)}\PY{p}{]}
+        \PY{n}{nn\PYZus{}dtw} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C:}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{Study}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{SpeechAcquisitionModel}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{reports}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{seamise\PYZus{}net\PYZus{}01\PYZus{}15\PYZus{}2020\PYZus{}05\PYZus{}18\PYZus{}PM}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{net\PYZus{}46000\PYZus{}0.0234375.net}\PY{l+s+s1}{\PYZsq{}}
         
+        \PY{c+c1}{\PYZsh{} net\PYZus{}237\PYZus{}0.10546875}
         
-        \PY{n}{sns}\PY{o}{.}\PY{n}{distplot}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw}\PY{p}{,}  \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Positives}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        \PY{n}{axes}\PY{o}{.}\PY{n}{title}\PY{o}{.}\PY{n}{set\PYZus{}text}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{duplicates DTW}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        
-        \PY{n}{sns}\PY{o}{.}\PY{n}{distplot}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{,}  \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Negatives}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-        \PY{n}{axes}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Normalized DTW\PYZhy{}distance}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Density}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-        \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+        \PY{n}{nn\PYZus{}fnames} \PY{o}{=} \PY{p}{[}\PY{n}{nn\PYZus{}ce\PYZus{}l2}\PY{p}{,} \PY{n}{nn\PYZus{}ce\PYZus{}cos}\PY{p}{,} \PY{n}{nn\PYZus{}ce\PYZus{}dtw}\PY{p}{,} \PY{n}{nn\PYZus{}dtw}\PY{p}{]}
+        \PY{n}{nn\PYZus{}names} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CE+L2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CE+COS\PYZus{}HINGE}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CE+DTW}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+        \PY{n}{model\PYZus{}names} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{MFCC}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+        \PY{n}{model\PYZus{}names}\PY{o}{.}\PY{n}{extend}\PY{p}{(}\PY{n}{nn\PYZus{}names}\PY{p}{)}
 \end{Verbatim}
 
 
-    \begin{Verbatim}[commandchars=\\\{\}]
-C:\textbackslash{}ProgramData\textbackslash{}Anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}scipy\textbackslash{}stats\textbackslash{}stats.py:1706: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
-  return np.add.reduce(sorted[indexer] * weights, axis=axis) / sumval
-
-    \end{Verbatim}
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_11_1.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \subsubsection{KL Divergence between two DTW
-distributions:}\label{kl-divergence-between-two-dtw-distributions}
+    \subsubsection{2.2 - SOFT-DTW}\label{soft-dtw}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{hist\PYZus{}dup}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{histogram}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw}\PY{p}{)}
-         \PY{n}{hist\PYZus{}dup} \PY{o}{=} \PY{n}{hist\PYZus{}dup} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{hist\PYZus{}dup}\PY{p}{)}
-         
-         \PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{histogram}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw}\PY{p}{)}
-         \PY{n}{hist\PYZus{}non\PYZus{}dup} \PY{o}{=} \PY{n}{hist\PYZus{}non\PYZus{}dup} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{p}{)}
-         
-         \PY{n}{dkl} \PY{o}{=} \PY{n}{scipy}\PY{o}{.}\PY{n}{special}\PY{o}{.}\PY{n}{kl\PYZus{}div}\PY{p}{(}\PY{n}{hist\PYZus{}dup}\PY{o}{+}\PY{l+m+mf}{1e\PYZhy{}5}\PY{p}{,} \PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{o}{+}\PY{l+m+mf}{1e\PYZhy{}5}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
-         \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{DKL is: }\PY{l+s+si}{\PYZob{}dkl:.4f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-DKL is: 0.0979
-
-    \end{Verbatim}
-
-    \subsubsection{As it can be seen, DTW calculated on MFCCs signals failed
-to capture different and similar samples showing no significant
-difference between duplicates and non-duplicates pairs. Kullback-Leibler
-divergence just proves this fact that P (distribution of distances
-between duplicate samples) and Q (non-duplicate ones) have no
-significant
-difference.}\label{as-it-can-be-seen-dtw-calculated-on-mfccs-signals-failed-to-capture-different-and-similar-samples-showing-no-significant-difference-between-duplicates-and-non-duplicates-pairs.-kullback-leibler-divergence-just-proves-this-fact-that-p-distribution-of-distances-between-duplicate-samples-and-q-non-duplicate-ones-have-no-significant-difference.}
-
-    \section{2. Improving DTW using AWEs}\label{improving-dtw-using-awes}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}11}]:} \PY{c+c1}{\PYZsh{} load nn}
-         
-         \PY{n}{nn\PYZus{}ce} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C:}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{Study}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{SpeechAcquisitionModel}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{reports}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{seamise\PYZus{}net\PYZus{}10\PYZus{}27\PYZus{}2019\PYZus{}04\PYZus{}37\PYZus{}PM}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{net\PYZus{}0.5.net}\PY{l+s+s1}{\PYZsq{}}
-         \PY{n}{nn\PYZus{}ce\PYZus{}l2} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C:}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{Study}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{SpeechAcquisitionModel}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{reports}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{seamise\PYZus{}net\PYZus{}10\PYZus{}27\PYZus{}2019\PYZus{}02\PYZus{}19\PYZus{}PM}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{net\PYZus{}0.40625.net}\PY{l+s+s1}{\PYZsq{}}
-         \PY{n}{nn\PYZus{}ce\PYZus{}dtw} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C:}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{Study}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{SpeechAcquisitionModel}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{reports}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{seamise\PYZus{}net\PYZus{}10\PYZus{}25\PYZus{}2019\PYZus{}01\PYZus{}55\PYZus{}PM}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{net\PYZus{}0.4609375.net}\PY{l+s+s1}{\PYZsq{}}
-         
-         \PY{n}{nn\PYZus{}fnames} \PY{o}{=} \PY{p}{[}\PY{n}{nn\PYZus{}ce}\PY{p}{,} \PY{n}{nn\PYZus{}ce\PYZus{}l2}\PY{p}{,} \PY{n}{nn\PYZus{}ce\PYZus{}dtw}\PY{p}{]}
-         \PY{n}{nn\PYZus{}names} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CE}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CE+L2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CE+DTW}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-\end{Verbatim}
-
-
-    \subsection{2.1 - DTW}\label{dtw}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}12}]:} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{nn\PYZus{}fnames}\PY{p}{)}\PY{p}{)}\PY{p}{:}
-             \PY{n}{nn\PYZus{}fname} \PY{o}{=} \PY{n}{nn\PYZus{}fnames}\PY{p}{[}\PY{n}{j}\PY{p}{]}
-             \PY{n}{nn} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{n}{nn\PYZus{}fname}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}
-             \PY{n}{nn}\PY{o}{.}\PY{n}{eval}\PY{p}{(}\PY{p}{)}
-         
-             \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
-         \PY{l+s+s2}{\PYZsh{} MODEL : }\PY{l+s+si}{\PYZob{}nn\PYZus{}names[j]\PYZcb{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
-         \PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-             
-             \PY{n}{PREFIX\PYZus{}LENS} \PY{o}{=} \PY{p}{[}\PY{n}{query\PYZus{}length}\PY{p}{]}
-         
-             \PY{k}{for} \PY{n}{PREFIX\PYZus{}LEN} \PY{o+ow}{in} \PY{n}{PREFIX\PYZus{}LENS}\PY{p}{:}
-                 \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
-         \PY{l+s+s2}{\PYZsh{} PREFIX LENGTH : }\PY{l+s+si}{\PYZob{}PREFIX\PYZus{}LEN\PYZcb{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
-         \PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-                 \PY{n}{nn\PYZus{}input} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{from\PYZus{}numpy}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{p}{:}\PY{n}{PREFIX\PYZus{}LEN}\PY{p}{,} \PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{float}\PY{p}{(}\PY{p}{)}
-         
-         
-                 \PY{n}{z}\PY{p}{,} \PY{o}{*}\PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{single\PYZus{}forward}\PY{p}{(}\PY{n}{nn\PYZus{}input}\PY{p}{)}
-                 \PY{n}{z} \PY{o}{=} \PY{n}{z}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}
-                 \PY{n}{z\PYZus{}detach} \PY{o}{=} \PY{n}{z}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}
-         
-                 \PY{n}{duplicates\PYZus{}z}\PY{p}{,} \PY{o}{*}\PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{single\PYZus{}forward}\PY{p}{(}\PY{n}{torch}\PY{o}{.}\PY{n}{from\PYZus{}numpy}\PY{p}{(}\PY{n}{duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{float}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-                 \PY{n}{duplicates\PYZus{}z} \PY{o}{=} \PY{n}{duplicates\PYZus{}z}
-         
-                 \PY{n}{non\PYZus{}duplicates\PYZus{}z}\PY{p}{,} \PY{o}{*}\PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{single\PYZus{}forward}\PY{p}{(}\PY{n}{torch}\PY{o}{.}\PY{n}{from\PYZus{}numpy}\PY{p}{(}\PY{n}{non\PYZus{}duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{float}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-                 \PY{n}{non\PYZus{}duplicates\PYZus{}z} \PY{o}{=} \PY{n}{non\PYZus{}duplicates\PYZus{}z}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}
-         
-                 \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
-                 \PY{c+c1}{\PYZsh{} Show example}
-                 \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
-         
-             \PY{c+c1}{\PYZsh{}     i = np.random.randint(data[\PYZsq{}y\PYZsq{}].shape[0])}
-             \PY{c+c1}{\PYZsh{}     sample\PYZus{}idx = i}
-         
-             \PY{c+c1}{\PYZsh{}     fig, axes = plt.subplots(1, 3, figsize=(15,10))}
-         
-             \PY{c+c1}{\PYZsh{}     \PYZsh{} plt.figure()}
-             \PY{c+c1}{\PYZsh{}     im = axes[0].imshow(z[i].T, vmin=\PYZhy{}1, vmax=1)}
-             \PY{c+c1}{\PYZsh{} \PYZsh{}     axes[0][0].colorbar()}
-             \PY{c+c1}{\PYZsh{}     label = index\PYZus{}to\PYZus{}word[data[\PYZsq{}y\PYZsq{}][i]]}
-             \PY{c+c1}{\PYZsh{}     axes[0].title.set\PYZus{}text(f\PYZsq{}\PYZob{}label\PYZcb{}\PYZsq{})}
-         
-             \PY{c+c1}{\PYZsh{}     axes[1].imshow(duplicates\PYZus{}z[i].T, vmin=\PYZhy{}1, vmax=1)}
-             \PY{c+c1}{\PYZsh{}     \PYZsh{} plt.colorbar()}
-             \PY{c+c1}{\PYZsh{}     label = index\PYZus{}to\PYZus{}word[data[\PYZsq{}y\PYZsq{}][i]]}
-             \PY{c+c1}{\PYZsh{}     axes[1].title.set\PYZus{}text(f\PYZsq{}\PYZob{}label\PYZcb{}\PYZsq{})}
-         
-         
-             \PY{c+c1}{\PYZsh{}     axes[2].imshow(non\PYZus{}duplicates\PYZus{}z[i].T, vmin=\PYZhy{}1, vmax=1)}
-             \PY{c+c1}{\PYZsh{}     \PYZsh{} plt.colorbar()}
-             \PY{c+c1}{\PYZsh{}     label = index\PYZus{}to\PYZus{}word[non\PYZus{}duplicates[\PYZsq{}y\PYZsq{}][i]]}
-             \PY{c+c1}{\PYZsh{}     axes[2].title.set\PYZus{}text(f\PYZsq{}\PYZob{}label\PYZcb{}\PYZsq{})}
-         
-             \PY{c+c1}{\PYZsh{}     \PYZsh{} DTW}
-         
-             \PY{c+c1}{\PYZsh{}     x = z[sample\PYZus{}idx]}
-         
-             \PY{c+c1}{\PYZsh{}     \PYZsh{} self dtw (extpected to be 0)}
-         
-             \PY{c+c1}{\PYZsh{}     y = z[sample\PYZus{}idx]}
-             \PY{c+c1}{\PYZsh{}     res = dtwalign.dtw(x, y, dist=DISTANCE, step\PYZus{}pattern=STEP\PYZus{}PATTERN, open\PYZus{}end=True)}
-             \PY{c+c1}{\PYZsh{}     res.plot\PYZus{}path(ax=axes[1][0])}
-             \PY{c+c1}{\PYZsh{}     axes[1][0].set\PYZus{}title(f\PYZdq{}anchor DTW = \PYZob{}res.normalized\PYZus{}distance:.4f\PYZcb{}\PYZdq{})}
-         
-         
-             \PY{c+c1}{\PYZsh{}     \PYZsh{} positive dtw}
-         
-             \PY{c+c1}{\PYZsh{}     y = duplicates\PYZus{}z[sample\PYZus{}idx]}
-             \PY{c+c1}{\PYZsh{}     res = dtwalign.dtw(x, y, dist=DISTANCE, step\PYZus{}pattern=STEP\PYZus{}PATTERN, open\PYZus{}end=True)}
-             \PY{c+c1}{\PYZsh{}     res.plot\PYZus{}path(ax=axes[1][1])}
-             \PY{c+c1}{\PYZsh{}     axes[1][1].set\PYZus{}title(f\PYZdq{}positive DTW = \PYZob{}res.normalized\PYZus{}distance:.4f\PYZcb{}\PYZdq{})}
-         
-         
-             \PY{c+c1}{\PYZsh{}     \PYZsh{} negative dtw}
-         
-             \PY{c+c1}{\PYZsh{}     y = non\PYZus{}duplicates\PYZus{}z[sample\PYZus{}idx]}
-             \PY{c+c1}{\PYZsh{}     res = dtwalign.dtw(x, y, dist=DISTANCE, step\PYZus{}pattern=STEP\PYZus{}PATTERN, open\PYZus{}end=True)}
-             \PY{c+c1}{\PYZsh{}     res.plot\PYZus{}path(ax=axes[1][2])}
-             \PY{c+c1}{\PYZsh{}     axes[1][2].set\PYZus{}title(f\PYZdq{}negative DTW = \PYZob{}res.normalized\PYZus{}distance:.4f\PYZcb{}\PYZdq{})}
-         
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
-         
-                 \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
-                 \PY{c+c1}{\PYZsh{} DTW}
-                 \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
-         
-                 \PY{n}{soft\PYZus{}dtw\PYZus{}loss\PYZus{}open\PYZus{}end} \PY{o}{=} \PY{n}{SoftDTW}\PY{p}{(}\PY{n}{open\PYZus{}end}\PY{o}{=}\PY{k+kc}{True}\PY{p}{,} \PY{n}{dist}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{l1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                 \PY{n}{soft\PYZus{}dtw\PYZus{}loss\PYZus{}close\PYZus{}end} \PY{o}{=} \PY{n}{SoftDTW}\PY{p}{(}\PY{n}{open\PYZus{}end}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{dist}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{l1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         
-         
-                 \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
-                 \PY{c+c1}{\PYZsh{}OPEN END = TRUE}
-                 \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
-         
-                 \PY{c+c1}{\PYZsh{} initialize dist\PYZus{}lists}
-         
-                 \PY{n}{duplicates\PYZus{}dtw\PYZus{}z} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-                 \PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-         
-                 \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size}\PY{p}{)}\PY{p}{:}
-                     \PY{n+nb}{print}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{end}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                     \PY{n}{x} \PY{o}{=} \PY{n}{z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-         
-                     \PY{n}{y\PYZus{}duplicate} \PY{o}{=} \PY{n}{duplicates\PYZus{}z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-                     \PY{n}{d} \PY{o}{=} \PY{n}{soft\PYZus{}dtw\PYZus{}loss\PYZus{}open\PYZus{}end}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y\PYZus{}duplicate}\PY{p}{)}
-                     \PY{n}{duplicates\PYZus{}dtw\PYZus{}z}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{d}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-         
-                     \PY{n}{y\PYZus{}non\PYZus{}duplicate} \PY{o}{=} \PY{n}{non\PYZus{}duplicates\PYZus{}z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-                     \PY{n}{d} \PY{o}{=} \PY{n}{soft\PYZus{}dtw\PYZus{}loss\PYZus{}open\PYZus{}end}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y\PYZus{}non\PYZus{}duplicate}\PY{p}{)}
-                     \PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{d}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-         
-                 \PY{c+c1}{\PYZsh{} Show DTW}
-         
-                 \PY{n}{bins} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{n+nb}{min}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{min}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{min}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{)}\PY{p}{)}\PY{p}{,}
-                                    \PY{n+nb}{max}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{)}\PY{p}{)}\PY{p}{,}
-                                    \PY{l+m+mi}{100}\PY{p}{)}
-                 \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
-         
-                 \PY{n}{sns}\PY{o}{.}\PY{n}{distplot}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Positives}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-                 \PY{n}{axes}\PY{o}{.}\PY{n}{title}\PY{o}{.}\PY{n}{set\PYZus{}text}\PY{p}{(}\PY{n}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW (open\PYZus{}end = True, query length = }\PY{l+s+si}{\PYZob{}PREFIX\PYZus{}LEN\PYZcb{}}\PY{l+s+s1}{)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Normalized DTW\PYZhy{}distance}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Density}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         
-         
-                 \PY{n}{sns}\PY{o}{.}\PY{n}{distplot}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Negatives}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                 \PY{n}{axes}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
-                 \PY{c+c1}{\PYZsh{} axes[1].title.set\PYZus{}text(\PYZsq{}non\PYZhy{}duplicates DTW\PYZsq{})}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
-         
-                 \PY{n}{hist\PYZus{}dup}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{histogram}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{)}
-                 \PY{n}{hist\PYZus{}dup} \PY{o}{=} \PY{n}{hist\PYZus{}dup} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{hist\PYZus{}dup}\PY{p}{)}
-         
-                 \PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{histogram}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{)}
-                 \PY{n}{hist\PYZus{}non\PYZus{}dup} \PY{o}{=} \PY{n}{hist\PYZus{}non\PYZus{}dup} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{p}{)}
-         
-                 \PY{n}{dkl} \PY{o}{=} \PY{n}{scipy}\PY{o}{.}\PY{n}{special}\PY{o}{.}\PY{n}{kl\PYZus{}div}\PY{p}{(}\PY{n}{hist\PYZus{}dup}\PY{o}{+}\PY{l+m+mf}{1e\PYZhy{}5}\PY{p}{,} \PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{o}{+}\PY{l+m+mf}{1e\PYZhy{}5}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
-                 \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{DKL is: }\PY{l+s+si}{\PYZob{}dkl:.4f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-         
-             \PY{c+c1}{\PYZsh{}     \PYZsh{} plot matching segment length}
-         
-             \PY{c+c1}{\PYZsh{}     bins = np.linspace(0, 50., 50)}
-             \PY{c+c1}{\PYZsh{}     fig, axes = plt.subplots(1, 1, figsize=(15,8))}
-         
-             \PY{c+c1}{\PYZsh{}     sns.distplot(duplicates\PYZus{}bmis, ax=axes,  label=\PYZdq{}Positives\PYZdq{}, kde=False, bins=bins)}
-             \PY{c+c1}{\PYZsh{}     axes.title.set\PYZus{}text(f\PYZsq{}Matching segment length (open\PYZus{}end = True, query length = \PYZob{}PREFIX\PYZus{}LEN\PYZcb{})\PYZsq{})}
-         
-             \PY{c+c1}{\PYZsh{}     sns.distplot(non\PYZus{}duplicates\PYZus{}bmis,   color=\PYZsq{}y\PYZsq{}, ax=axes, label=\PYZsq{}Negatives\PYZsq{}, kde=False, bins=bins)}
-             \PY{c+c1}{\PYZsh{}     axes.legend()}
-             \PY{c+c1}{\PYZsh{}     plt.xlabel(\PYZsq{}Best matching segment length (number of frames)\PYZsq{})}
-             \PY{c+c1}{\PYZsh{}     plt.ylabel(\PYZsq{}Density\PYZsq{})}
-             \PY{c+c1}{\PYZsh{}     plt.show()}
-         
-                 \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
-                 \PY{c+c1}{\PYZsh{} OPEN END = False}
-                 \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
-         
-                 \PY{c+c1}{\PYZsh{} initialize dist\PYZus{}lists}
-         
-                 \PY{n}{duplicates\PYZus{}dtw\PYZus{}z} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-                 \PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-         
-                 \PY{n}{duplicates\PYZus{}bmis} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-                 \PY{n}{non\PYZus{}duplicates\PYZus{}bmis} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-         
-                 \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size}\PY{p}{)}\PY{p}{:}
-                     \PY{n+nb}{print}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{end}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                     \PY{n}{x} \PY{o}{=} \PY{n}{z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-         
-                     \PY{n}{y\PYZus{}duplicate} \PY{o}{=} \PY{n}{duplicates\PYZus{}z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-                     \PY{n}{d} \PY{o}{=} \PY{n}{soft\PYZus{}dtw\PYZus{}loss\PYZus{}close\PYZus{}end}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y\PYZus{}duplicate}\PY{p}{)}
-                     \PY{n}{duplicates\PYZus{}dtw\PYZus{}z}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{d}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-         
-                     \PY{n}{y\PYZus{}non\PYZus{}duplicate} \PY{o}{=} \PY{n}{non\PYZus{}duplicates\PYZus{}z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-                     \PY{n}{d} \PY{o}{=} \PY{n}{soft\PYZus{}dtw\PYZus{}loss\PYZus{}close\PYZus{}end}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y\PYZus{}non\PYZus{}duplicate}\PY{p}{)}
-                     \PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{d}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-         
-         
-                 \PY{n}{bins} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{n+nb}{min}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{min}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{min}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{)}\PY{p}{)}\PY{p}{,}
-                                    \PY{n+nb}{max}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{)}\PY{p}{)}\PY{p}{,}
-                                    \PY{l+m+mi}{100}\PY{p}{)}
-                 \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
-         
-                 \PY{n}{sns}\PY{o}{.}\PY{n}{distplot}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Positives}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-                 \PY{n}{axes}\PY{o}{.}\PY{n}{title}\PY{o}{.}\PY{n}{set\PYZus{}text}\PY{p}{(}\PY{n}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{DTW + }\PY{l+s+si}{\PYZob{}nn\PYZus{}names[j]\PYZcb{}}\PY{l+s+s1}{ (open\PYZus{}end = False, query length = }\PY{l+s+si}{\PYZob{}PREFIX\PYZus{}LEN\PYZcb{}}\PY{l+s+s1}{)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         
-                 \PY{n}{sns}\PY{o}{.}\PY{n}{distplot}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Negatives}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                 \PY{n}{axes}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Normalized DTW\PYZhy{}distance}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Density}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                 \PY{c+c1}{\PYZsh{} axes[1].title.set\PYZus{}text(\PYZsq{}non\PYZhy{}duplicates DTW\PYZsq{})}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
-         
-                 \PY{n}{hist\PYZus{}dup}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{histogram}\PY{p}{(}\PY{n}{duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{)}
-                 \PY{n}{hist\PYZus{}dup} \PY{o}{=} \PY{n}{hist\PYZus{}dup} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{hist\PYZus{}dup}\PY{p}{)}
-         
-                 \PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{histogram}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}dtw\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{)}
-                 \PY{n}{hist\PYZus{}non\PYZus{}dup} \PY{o}{=} \PY{n}{hist\PYZus{}non\PYZus{}dup} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{p}{)}
-         
-                 \PY{n}{dkl} \PY{o}{=} \PY{n}{scipy}\PY{o}{.}\PY{n}{special}\PY{o}{.}\PY{n}{kl\PYZus{}div}\PY{p}{(}\PY{n}{hist\PYZus{}dup}\PY{o}{+}\PY{l+m+mf}{1e\PYZhy{}5}\PY{p}{,} \PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{o}{+}\PY{l+m+mf}{1e\PYZhy{}5}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
-                 \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{DKL is: }\PY{l+s+si}{\PYZob{}dkl:.4f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+{\color{incolor}In [{\color{incolor}9}]:} \PY{n}{soft\PYZus{}dtw\PYZus{}loss\PYZus{}close\PYZus{}end} \PY{o}{=} \PY{n}{SoftDTW}\PY{p}{(}\PY{n}{open\PYZus{}end}\PY{o}{=}\PY{k+kc}{False}\PY{p}{,} \PY{n}{dist}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{l1}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+        \PY{n}{dist\PYZus{}funcs} \PY{o}{=} \PY{p}{\PYZob{}}
+            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{sdtw}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{soft\PYZus{}dtw\PYZus{}loss\PYZus{}close\PYZus{}end}\PY{p}{,}
+            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{l2}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k}{lambda} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{:} \PY{n}{torch}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{(}\PY{n}{x} \PY{o}{\PYZhy{}} \PY{n}{y}\PY{p}{)}\PY{o}{*}\PY{o}{*}\PY{l+m+mi}{2}\PY{p}{,} \PY{n}{dim}\PY{o}{=}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}\PY{p}{,}
+            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{cos\PYZus{}hinge}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{k}{lambda} \PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{:} \PY{l+m+mi}{1} \PY{o}{\PYZhy{}} \PY{n}{torch}\PY{o}{.}\PY{n}{nn}\PY{o}{.}\PY{n}{CosineSimilarity}\PY{p}{(}\PY{n}{dim}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{(}\PY{n}{x}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{p}{:}\PY{p}{]}\PY{p}{,} \PY{n}{y}\PY{p}{[}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{,} \PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{p}{,}
+            \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{ce}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:} \PY{n}{soft\PYZus{}dtw\PYZus{}loss\PYZus{}close\PYZus{}end}
+        \PY{p}{\PYZcb{}}
+        
+        
+        \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{nn\PYZus{}fnames}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+            \PY{n}{nn\PYZus{}fname} \PY{o}{=} \PY{n}{nn\PYZus{}fnames}\PY{p}{[}\PY{n}{i}\PY{p}{]}
+            \PY{n}{config\PYZus{}path} \PY{o}{=} \PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{join}\PY{p}{(}\PY{n}{os}\PY{o}{.}\PY{n}{path}\PY{o}{.}\PY{n}{dirname}\PY{p}{(}\PY{n}{nn\PYZus{}fname}\PY{p}{)}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{config.yaml}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+            \PY{k}{with} \PY{n+nb}{open}\PY{p}{(}\PY{n}{config\PYZus{}path}\PY{p}{,} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)} \PY{k}{as} \PY{n}{data\PYZus{}file}\PY{p}{:}
+                \PY{n}{config} \PY{o}{=} \PY{n}{yaml}\PY{o}{.}\PY{n}{safe\PYZus{}load}\PY{p}{(}\PY{n}{data\PYZus{}file}\PY{p}{)}
+           
+            \PY{n}{loss\PYZus{}type} \PY{o}{=} \PY{n}{config}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{loss\PYZus{}type}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+            \PY{n}{dist\PYZus{}func} \PY{o}{=} \PY{n}{dist\PYZus{}funcs}\PY{p}{[}\PY{n}{loss\PYZus{}type}\PY{p}{]}
+            \PY{n}{nn} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{n}{nn\PYZus{}fname}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}
+            \PY{n}{nn}\PY{o}{.}\PY{n}{eval}\PY{p}{(}\PY{p}{)}
+        
+            \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
+        \PY{l+s+s2}{\PYZsh{} Model }\PY{l+s+si}{\PYZob{}model\PYZus{}names[i+1]\PYZcb{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
+        \PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+        
+            \PY{n}{PREFIX\PYZus{}LENS} \PY{o}{=} \PY{p}{[}\PY{l+m+mi}{100}\PY{p}{]}
+        
+            \PY{k}{for} \PY{n}{PREFIX\PYZus{}LEN} \PY{o+ow}{in} \PY{n}{PREFIX\PYZus{}LENS}\PY{p}{:}
+                \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
+        \PY{l+s+s2}{\PYZsh{} PREFIX LENGTH : }\PY{l+s+si}{\PYZob{}PREFIX\PYZus{}LEN\PYZcb{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
+        \PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+                \PY{n}{nn\PYZus{}input} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{from\PYZus{}numpy}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{p}{:}\PY{n}{PREFIX\PYZus{}LEN}\PY{p}{,} \PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{float}\PY{p}{(}\PY{p}{)}
+        
+        
+                \PY{n}{z}\PY{p}{,} \PY{o}{*}\PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{single\PYZus{}forward}\PY{p}{(}\PY{n}{nn\PYZus{}input}\PY{p}{)}
+                \PY{n}{z} \PY{o}{=} \PY{n}{z}
+        
+                \PY{n}{z1}\PY{p}{,} \PY{o}{*}\PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{single\PYZus{}forward}\PY{p}{(}\PY{n}{torch}\PY{o}{.}\PY{n}{from\PYZus{}numpy}\PY{p}{(}\PY{n}{data1}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{float}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+                \PY{n}{z1} \PY{o}{=} \PY{n}{z1}
+        
+        
+                \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+                \PY{c+c1}{\PYZsh{} DTW}
+                \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+        
+        \PY{c+c1}{\PYZsh{}         soft\PYZus{}dtw\PYZus{}loss\PYZus{}open\PYZus{}end = SoftDTW(open\PYZus{}end=True, dist=\PYZsq{}l1\PYZsq{})}
+        \PY{c+c1}{\PYZsh{}         soft\PYZus{}dtw\PYZus{}loss\PYZus{}close\PYZus{}end = SoftDTW(open\PYZus{}end=False, dist=\PYZsq{}l1\PYZsq{})}
+        
+                \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+                \PY{c+c1}{\PYZsh{} OPEN END = False}
+                \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
+        
+                \PY{c+c1}{\PYZsh{} initialize dist\PYZus{}lists}
+        
+                \PY{n}{dtw\PYZus{}z} \PY{o}{=} \PY{p}{[}\PY{p}{]}
+        
+                \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size}\PY{p}{)}\PY{p}{:}
+                    \PY{n+nb}{print}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{end}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+                    \PY{n}{x} \PY{o}{=} \PY{n}{z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
+                    \PY{n}{y} \PY{o}{=} \PY{n}{z1}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
+        
+                    \PY{n}{d} \PY{o}{=} \PY{n}{dist\PYZus{}func}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y}\PY{p}{)}
+                    \PY{n}{dtw\PYZus{}z}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{d}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
+        
+                \PY{n}{dtw\PYZus{}dist} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{array}\PY{p}{(}\PY{n}{dtw\PYZus{}z}\PY{p}{)}
+                \PY{n}{dists}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{dtw\PYZus{}dist}\PY{p}{)}
 \end{Verbatim}
 
 
     \begin{Verbatim}[commandchars=\\\{\}]
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-\# MODEL : CE
+\# Model CE+L2
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
 \# PREFIX LENGTH : 100
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-1999
-    \end{Verbatim}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-C:\textbackslash{}ProgramData\textbackslash{}Anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}scipy\textbackslash{}stats\textbackslash{}stats.py:1706: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
-  return np.add.reduce(sorted[indexer] * weights, axis=axis) / sumval
-
-    \end{Verbatim}
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_18_2.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \begin{Verbatim}[commandchars=\\\{\}]
-DKL is: 6.0604
-1999
-    \end{Verbatim}
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_18_4.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \begin{Verbatim}[commandchars=\\\{\}]
-DKL is: 7.0746
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-\# MODEL : CE+L2
+\# Model CE+COS\_HINGE
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
 \# PREFIX LENGTH : 100
 \#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-1999
-    \end{Verbatim}
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_18_6.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \begin{Verbatim}[commandchars=\\\{\}]
-DKL is: 3.7308
-1999
-    \end{Verbatim}
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_18_8.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \begin{Verbatim}[commandchars=\\\{\}]
-DKL is: 5.8033
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-\# MODEL : CE+DTW
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-\# PREFIX LENGTH : 100
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-1999
-    \end{Verbatim}
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_18_10.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \begin{Verbatim}[commandchars=\\\{\}]
-DKL is: 6.8923
-1999
-    \end{Verbatim}
-
-    \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_18_12.png}
-    \end{center}
-    { \hspace*{\fill} \\}
-    
-    \begin{Verbatim}[commandchars=\\\{\}]
-DKL is: 7.7105
-
-    \end{Verbatim}
-
-    \subsection{Shane Settle Network}\label{shane-settle-network}
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}19}]:} \PY{k+kn}{from} \PY{n+nn}{src}\PY{n+nn}{.}\PY{n+nn}{siamese\PYZus{}net\PYZus{}sound\PYZus{}similarity}\PY{n+nn}{.}\PY{n+nn}{train\PYZus{}v3\PYZus{}adopted\PYZus{}from\PYZus{}settle} \PY{k}{import} \PY{n}{SiameseDeepLSTMNet}
-         \PY{n}{nn\PYZus{}settle} \PY{o}{=} \PY{l+s+sa}{r}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{C:}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{Study}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{SpeechAcquisitionModel}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{reports}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{seamise\PYZus{}net\PYZus{}01\PYZus{}08\PYZus{}2020\PYZus{}04\PYZus{}28\PYZus{}PM}\PY{l+s+s1}{\PYZbs{}}\PY{l+s+s1}{net\PYZus{}0.6484375.net}\PY{l+s+s1}{\PYZsq{}}
-         
-         \PY{n}{nn\PYZus{}fnames} \PY{o}{=} \PY{p}{[}\PY{n}{nn\PYZus{}settle}\PY{p}{]}
-         \PY{n}{nn\PYZus{}names} \PY{o}{=} \PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Settle}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-{\color{incolor}In [{\color{incolor}20}]:} \PY{k}{for} \PY{n}{j} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{nn\PYZus{}fnames}\PY{p}{)}\PY{p}{)}\PY{p}{:}
-             \PY{n}{nn\PYZus{}fname} \PY{o}{=} \PY{n}{nn\PYZus{}fnames}\PY{p}{[}\PY{n}{j}\PY{p}{]}
-             \PY{n}{nn} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{load}\PY{p}{(}\PY{n}{nn\PYZus{}fname}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}
-             \PY{n}{nn}\PY{o}{.}\PY{n}{eval}\PY{p}{(}\PY{p}{)}
-         
-             \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
-         \PY{l+s+s2}{\PYZsh{} MODEL : }\PY{l+s+si}{\PYZob{}nn\PYZus{}names[j]\PYZcb{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
-         \PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-             
-             \PY{n}{PREFIX\PYZus{}LENS} \PY{o}{=} \PY{p}{[}\PY{n}{query\PYZus{}length}\PY{p}{]}
-         
-             \PY{k}{for} \PY{n}{PREFIX\PYZus{}LEN} \PY{o+ow}{in} \PY{n}{PREFIX\PYZus{}LENS}\PY{p}{:}
-                 \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
-         \PY{l+s+s2}{\PYZsh{} PREFIX LENGTH : }\PY{l+s+si}{\PYZob{}PREFIX\PYZus{}LEN\PYZcb{}}\PY{l+s+se}{\PYZbs{}n}\PY{l+s+se}{\PYZbs{}}
-         \PY{l+s+s2}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-                 \PY{n}{nn\PYZus{}input} \PY{o}{=} \PY{n}{torch}\PY{o}{.}\PY{n}{from\PYZus{}numpy}\PY{p}{(}\PY{n}{data}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{[}\PY{p}{:}\PY{p}{,} \PY{p}{:}\PY{n}{PREFIX\PYZus{}LEN}\PY{p}{,} \PY{p}{:}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{float}\PY{p}{(}\PY{p}{)}
-         
-         
-                 \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{z} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{single\PYZus{}forward}\PY{p}{(}\PY{n}{nn\PYZus{}input}\PY{p}{)}
-                 \PY{n}{z} \PY{o}{=} \PY{n}{z}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}
-                 
-                 \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{duplicates\PYZus{}z} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{single\PYZus{}forward}\PY{p}{(}\PY{n}{torch}\PY{o}{.}\PY{n}{from\PYZus{}numpy}\PY{p}{(}\PY{n}{duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{float}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-                 \PY{n}{duplicates\PYZus{}z} \PY{o}{=} \PY{n}{duplicates\PYZus{}z}
-         
-                 \PY{n}{\PYZus{}}\PY{p}{,} \PY{n}{non\PYZus{}duplicates\PYZus{}z} \PY{o}{=} \PY{n}{nn}\PY{o}{.}\PY{n}{single\PYZus{}forward}\PY{p}{(}\PY{n}{torch}\PY{o}{.}\PY{n}{from\PYZus{}numpy}\PY{p}{(}\PY{n}{non\PYZus{}duplicates}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{x}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{float}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-                 \PY{n}{non\PYZus{}duplicates\PYZus{}z} \PY{o}{=} \PY{n}{non\PYZus{}duplicates\PYZus{}z}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}
-         
-                 
-                 \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
-                 \PY{c+c1}{\PYZsh{} Cosine distance}
-                 \PY{c+c1}{\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}\PYZsh{}}
-         
-                 \PY{c+c1}{\PYZsh{} initialize dist\PYZus{}lists}
-         
-                 \PY{n}{duplicates\PYZus{}cos\PYZus{}z} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-                 \PY{n}{non\PYZus{}duplicates\PYZus{}cos\PYZus{}z} \PY{o}{=} \PY{p}{[}\PY{p}{]}
-         
-                 \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n}{n\PYZus{}mini\PYZus{}batch\PYZus{}size}\PY{p}{)}\PY{p}{:}
-                     \PY{n+nb}{print}\PY{p}{(}\PY{n}{i}\PY{p}{,} \PY{n}{end}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+se}{\PYZbs{}r}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                     \PY{n}{x} \PY{o}{=} \PY{n}{z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-         
-                     \PY{n}{y\PYZus{}duplicate} \PY{o}{=} \PY{n}{duplicates\PYZus{}z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-                     \PY{n}{d} \PY{o}{=} \PY{l+m+mf}{1.} \PY{o}{\PYZhy{}} \PY{n}{torch}\PY{o}{.}\PY{n}{nn}\PY{o}{.}\PY{n}{CosineSimilarity}\PY{p}{(}\PY{n}{dim}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y\PYZus{}duplicate}\PY{p}{)}
-                     \PY{n}{duplicates\PYZus{}cos\PYZus{}z}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{d}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-         
-                     \PY{n}{y\PYZus{}non\PYZus{}duplicate} \PY{o}{=} \PY{n}{non\PYZus{}duplicates\PYZus{}z}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{o}{.}\PY{n}{squeeze}\PY{p}{(}\PY{p}{)}
-                     \PY{n}{d} \PY{o}{=} \PY{l+m+mf}{1.} \PY{o}{\PYZhy{}} \PY{n}{torch}\PY{o}{.}\PY{n}{nn}\PY{o}{.}\PY{n}{CosineSimilarity}\PY{p}{(}\PY{n}{dim}\PY{o}{=}\PY{l+m+mi}{0}\PY{p}{)}\PY{p}{(}\PY{n}{x}\PY{p}{,} \PY{n}{y\PYZus{}non\PYZus{}duplicate}\PY{p}{)}
-                     \PY{n}{non\PYZus{}duplicates\PYZus{}cos\PYZus{}z}\PY{o}{.}\PY{n}{append}\PY{p}{(}\PY{n}{d}\PY{o}{.}\PY{n}{detach}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{cpu}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{numpy}\PY{p}{(}\PY{p}{)}\PY{p}{)}
-         
-                 \PY{c+c1}{\PYZsh{} Show DTW}
-         \PY{c+c1}{\PYZsh{}         print(duplicates\PYZus{}cos\PYZus{}z.shape)}
-                 \PY{n}{bins} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{linspace}\PY{p}{(}\PY{n+nb}{min}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{min}\PY{p}{(}\PY{n}{duplicates\PYZus{}cos\PYZus{}z}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{min}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}cos\PYZus{}z}\PY{p}{)}\PY{p}{)}\PY{p}{,}
-                                    \PY{n+nb}{max}\PY{p}{(}\PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{duplicates\PYZus{}cos\PYZus{}z}\PY{p}{)}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{max}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}cos\PYZus{}z}\PY{p}{)}\PY{p}{)}\PY{p}{,}
-                                    \PY{l+m+mi}{100}\PY{p}{)}
-         \PY{c+c1}{\PYZsh{}         print(bins)}
-                 \PY{n}{fig}\PY{p}{,} \PY{n}{axes} \PY{o}{=} \PY{n}{plt}\PY{o}{.}\PY{n}{subplots}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{7}\PY{p}{,}\PY{l+m+mi}{5}\PY{p}{)}\PY{p}{)}
-         
-                 \PY{n}{sns}\PY{o}{.}\PY{n}{distplot}\PY{p}{(}\PY{n}{duplicates\PYZus{}cos\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Positives}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-                 \PY{n}{axes}\PY{o}{.}\PY{n}{title}\PY{o}{.}\PY{n}{set\PYZus{}text}\PY{p}{(}\PY{n}{f}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cosine distance(query length = }\PY{l+s+si}{\PYZob{}PREFIX\PYZus{}LEN\PYZcb{}}\PY{l+s+s1}{)}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{xlabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Cosine distance}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{ylabel}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Density}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-         
-         
-                 \PY{n}{sns}\PY{o}{.}\PY{n}{distplot}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}cos\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{,} \PY{n}{color}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{y}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{ax}\PY{o}{=}\PY{n}{axes}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{Negatives}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
-                 \PY{n}{axes}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{p}{)}
-                 \PY{c+c1}{\PYZsh{} axes[1].title.set\PYZus{}text(\PYZsq{}non\PYZhy{}duplicates DTW\PYZsq{})}
-                 \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
-         
-                 \PY{n}{hist\PYZus{}dup}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{histogram}\PY{p}{(}\PY{n}{duplicates\PYZus{}cos\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{)}
-                 \PY{n}{hist\PYZus{}dup} \PY{o}{=} \PY{n}{hist\PYZus{}dup} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{hist\PYZus{}dup}\PY{p}{)}
-         
-                 \PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{np}\PY{o}{.}\PY{n}{histogram}\PY{p}{(}\PY{n}{non\PYZus{}duplicates\PYZus{}cos\PYZus{}z}\PY{p}{,} \PY{n}{bins}\PY{o}{=}\PY{n}{bins}\PY{p}{)}
-                 \PY{n}{hist\PYZus{}non\PYZus{}dup} \PY{o}{=} \PY{n}{hist\PYZus{}non\PYZus{}dup} \PY{o}{/} \PY{n}{np}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{p}{)}
-         
-                 \PY{n}{dkl} \PY{o}{=} \PY{n}{scipy}\PY{o}{.}\PY{n}{special}\PY{o}{.}\PY{n}{kl\PYZus{}div}\PY{p}{(}\PY{n}{hist\PYZus{}dup}\PY{o}{+}\PY{l+m+mf}{1e\PYZhy{}5}\PY{p}{,} \PY{n}{hist\PYZus{}non\PYZus{}dup}\PY{o}{+}\PY{l+m+mf}{1e\PYZhy{}5}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}
-                 \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{DKL is: }\PY{l+s+si}{\PYZob{}dkl:.4f\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
-\end{Verbatim}
-
-
-    \begin{Verbatim}[commandchars=\\\{\}]
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-\# MODEL : Settle
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-\# PREFIX LENGTH : 100
-\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
-1500
+2335
     \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\}]
@@ -965,16 +616,69 @@ NotebookApp.rate\_limit\_window=3.0 (secs)
     \end{Verbatim}
 
     \begin{Verbatim}[commandchars=\\\{\}]
-1999
+\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
+\# Model CE+DTW
+\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
+\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
+\# PREFIX LENGTH : 100
+\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
+\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
+\# Model DTW
+\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
+\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
+\# PREFIX LENGTH : 100
+\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#\#
+3999
+    \end{Verbatim}
+
+    \section{3. mAP}\label{map}
+
+    \subsection{3.1 Precision\_Recall Curve}\label{precision_recall-curve}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}10}]:} \PY{n}{plt}\PY{o}{.}\PY{n}{figure}\PY{p}{(}\PY{n}{figsize}\PY{o}{=}\PY{p}{(}\PY{l+m+mi}{10}\PY{p}{,}\PY{l+m+mi}{8}\PY{p}{)}\PY{p}{)}
+         
+         \PY{c+c1}{\PYZsh{} no skill model}
+         \PY{n}{precision}\PY{p}{,} \PY{n}{recall}\PY{p}{,} \PY{n}{\PYZus{}} \PY{o}{=} \PY{n}{precision\PYZus{}recall\PYZus{}curve}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{p}{,} \PY{n}{np}\PY{o}{.}\PY{n}{zeros}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{p}{)}\PY{p}{)}\PY{p}{,} \PY{n}{pos\PYZus{}label}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+         \PY{n}{ax} \PY{o}{=} \PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{recall}\PY{p}{,} \PY{n}{precision}\PY{p}{)}
+         \PY{n}{ax}\PY{o}{.}\PY{n}{lines}\PY{p}{[}\PY{l+m+mi}{0}\PY{p}{]}\PY{o}{.}\PY{n}{set\PYZus{}linestyle}\PY{p}{(}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{\PYZhy{}\PYZhy{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         
+         
+         \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{model\PYZus{}names}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+             \PY{n}{precision}\PY{p}{,} \PY{n}{recall}\PY{p}{,} \PY{n}{thresholds} \PY{o}{=} \PY{n}{precision\PYZus{}recall\PYZus{}curve}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{n}{dists}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{pos\PYZus{}label}\PY{o}{=}\PY{l+m+mi}{1}\PY{p}{)}
+             \PY{n}{sns}\PY{o}{.}\PY{n}{lineplot}\PY{p}{(}\PY{n}{recall}\PY{p}{,} \PY{n}{precision}\PY{p}{,} \PY{n}{label}\PY{o}{=}\PY{n}{model\PYZus{}names}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{linewidth}\PY{o}{=}\PY{l+m+mi}{3}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{legend}\PY{p}{(}\PY{n}{bbox\PYZus{}to\PYZus{}anchor}\PY{o}{=}\PY{p}{(}\PY{l+m+mf}{1.05}\PY{p}{,} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{,} \PY{n}{loc}\PY{o}{=}\PY{l+m+mi}{2}\PY{p}{)}
+         \PY{n}{plt}\PY{o}{.}\PY{n}{show}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+C:\textbackslash{}ProgramData\textbackslash{}Anaconda3\textbackslash{}lib\textbackslash{}site-packages\textbackslash{}scipy\textbackslash{}stats\textbackslash{}stats.py:1706: FutureWarning: Using a non-tuple sequence for multidimensional indexing is deprecated; use `arr[tuple(seq)]` instead of `arr[seq]`. In the future this will be interpreted as an array index, `arr[np.array(seq)]`, which will result either in an error or a different result.
+  return np.add.reduce(sorted[indexer] * weights, axis=axis) / sumval
+
     \end{Verbatim}
 
     \begin{center}
-    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_21_3.png}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_16_1.png}
     \end{center}
     { \hspace*{\fill} \\}
     
+    \subsection{3.2 Average Precision}\label{average-precision}
+
     \begin{Verbatim}[commandchars=\\\{\}]
-DKL is: 7.3997
+{\color{incolor}In [{\color{incolor}11}]:} \PY{k}{for} \PY{n}{i} \PY{o+ow}{in} \PY{n+nb}{range}\PY{p}{(}\PY{n+nb}{len}\PY{p}{(}\PY{n}{model\PYZus{}names}\PY{p}{)}\PY{p}{)}\PY{p}{:}
+             \PY{n}{average\PYZus{}precision} \PY{o}{=} \PY{n}{average\PYZus{}precision\PYZus{}score}\PY{p}{(}\PY{n}{y\PYZus{}true}\PY{p}{,} \PY{o}{\PYZhy{}}\PY{n}{dists}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{)}
+             \PY{n+nb}{print}\PY{p}{(}\PY{n}{model\PYZus{}names}\PY{p}{[}\PY{n}{i}\PY{p}{]}\PY{p}{,} \PY{n}{average\PYZus{}precision}\PY{p}{)}
+         \PY{c+c1}{\PYZsh{}     precision, recall, thresholds = precision\PYZus{}recall\PYZus{}curve(y\PYZus{}true, models\PYZus{}dists[i])}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+MFCC 0.060774529333485906
+CE+L2 0.8524344947859209
+CE+COS\_HINGE 0.8513471565045289
+CE+DTW 0.8685916363622025
+DTW 0.8934153139497293
 
     \end{Verbatim}
 

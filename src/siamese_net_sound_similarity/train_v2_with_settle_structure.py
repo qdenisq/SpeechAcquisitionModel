@@ -108,6 +108,12 @@ class SiameseSpeechCommandsDataCollector(SpeechCommandsDataCollector):
                 'seq_len': seq_lens}
 
 
+def init_weights(m):
+    if type(m) == nn.Linear:
+        torch.nn.init.xavier_uniform_(m.weight)
+        m.bias.data.fill_(0.01)
+
+
 class SiameseDeepLSTMNet(nn.Module):
     def __init__(self, model_settings):
         super(SiameseDeepLSTMNet, self).__init__()
@@ -115,65 +121,56 @@ class SiameseDeepLSTMNet(nn.Module):
         self.__n_classes = model_settings['label_count']
 
         self.__dropout = nn.Dropout(p=model_settings['dropout'])
-        self.__bn1 = nn.BatchNorm1d(self.__n_window_height)
+
+        if 'batch_norm' in model_settings and model_settings['batch_norm'] == True:
+            self.__bn1 = nn.BatchNorm1d(self.__n_window_height)
 
         self.__n_hidden_reccurent = model_settings['hidden_reccurent']
         self.__n_hidden_fc = model_settings['hidden_fc']
-
-        self.lstms = nn.ModuleList([nn.LSTM(self.__n_window_height, self.__n_hidden_reccurent[0], batch_first=True, bidirectional=False)])
+        if 'bidirectional' in model_settings:
+            bidirectional = model_settings['bidirectional']
+        else:
+            bidirectional = False
+        k = 2 if bidirectional else 1
+        self.lstms = nn.ModuleList([nn.LSTM(self.__n_window_height, self.__n_hidden_reccurent[0], batch_first=True, bidirectional=bidirectional)])
         self.lstms.extend(
-            [nn.LSTM(self.__n_hidden_reccurent[i-1], self.__n_hidden_reccurent[i], batch_first=True, bidirectional=False)
+            [nn.LSTM(self.__n_hidden_reccurent[i-1]*k, self.__n_hidden_reccurent[i], batch_first=True, bidirectional=bidirectional)
              for i in range(1, len(self.__n_hidden_reccurent))])
 
-        self.linears = nn.ModuleList(
-            [nn.Linear(self.__n_hidden_reccurent[-1], self.__n_hidden_fc[0])])
-        self.linears.extend(
-            [nn.Linear(self.__n_hidden_fc[i-1], self.__n_hidden_fc[i]) for i in range(1, len(self.__n_hidden_fc))])
+        if self.__n_hidden_fc is not None:
+            self.linears = nn.ModuleList(
+                [nn.Linear(self.__n_hidden_reccurent[-1]*k, self.__n_hidden_fc[0])])
+            self.linears.extend(
+                [nn.Linear(self.__n_hidden_fc[i-1], self.__n_hidden_fc[i]) for i in range(1, len(self.__n_hidden_fc))])
 
-        # # self.__compress_layer = nn.Linear(self.__n_hidden_cells, 10)
-        # self.__lstm_0 = nn.LSTM(self.__n_window_height, self.__n_hidden_reccurent_cells, batch_first=True, bidirectional=False)
-        # self.__lstm_1 = nn.LSTM(self.__n_hidden_reccurent_cells, self.__n_hidden_reccurent_cells, batch_first=True,
-        #                         bidirectional=False)
-        # self.__lstm_2 = nn.LSTM(self.__n_hidden_reccurent_cells, self.__n_hidden_reccurent_cells, batch_first=True,
-        #                         bidirectional=False)
-        #
-        # self.__linear_0 = nn.Linear(self.__n_hidden_reccurent_cells, self.__n_hidden_cells)
-        # self.__linear_1 = nn.Linear(self.__n_hidden_cells, self.__n_hidden_cells)
-        # self.__linear_2 = nn.Linear(self.__n_hidden_cells, self.__n_hidden_cells)
-
-        self.__output_layer = nn.Linear(self.__n_hidden_fc[-1] * 2, 1)
-
-        self.__output_layer_cce = nn.Linear(self.__n_hidden_fc[-1], self.__n_classes)
+            self.__output_layer = nn.Linear(self.__n_hidden_fc[-1] * 2, 1)
+            self.__output_layer_cce = nn.Linear(self.__n_hidden_fc[-1], self.__n_classes)
+        else:
+            self.__output_layer = nn.Linear(self.__n_hidden_reccurent[-1] * 2 * k, 1)
+            self.__output_layer_cce = nn.Linear(self.__n_hidden_reccurent[-1] * k, self.__n_classes)
+        
+        # self.apply(init_weights)
 
     def single_forward(self, input, hidden=None):
         x = input
-        orig_shape = x.shape
-        x = x.view(-1, self.__n_window_height)
-        x = self.__bn1(x)
+        if hasattr(self, '__bn1'):
+            orig_shape = x.shape
+            x = x.view(-1, self.__n_window_height)
+            x = self.__bn1(x)
+            x = x.view(orig_shape)
         x = self.__dropout(x)
-        x = x.view(orig_shape)
 
         for i in range(len(self.__n_hidden_reccurent) - 1):
             x, hidden = self.lstms[i](x, None)
             x = self.__dropout(x)
         x, hidden = self.lstms[-1](x, None)
 
-        for i in range(len(self.__n_hidden_fc) - 1):
-            x = torch.relu(self.linears[i](x))
-            x = self.__dropout(x)
-        x = torch.relu(self.linears[-1](x))
-
-        # x, hidden = self.__lstm_0(x, None)
-        # x = self.__dropout(x)
-        # x, hidden = self.__lstm_1(x, None)
-        # x = self.__dropout(x)
-        # x, hidden = self.__lstm_2(x, None)
-        # x = torch.relu(self.__linear_0(x))
-        # x = self.__dropout(x)
-        # x = torch.relu(self.__linear_1(x))
-        # x = self.__dropout(x)
-        # x = torch.relu(self.__linear_2(x))
-
+        if self.__n_hidden_fc is not None:
+            for i in range(len(self.__n_hidden_fc)-1):
+                x = torch.relu(self.linears[i](x))
+                x = self.__dropout(x)
+            x = torch.tanh(self.linears[-1](x))
+            # x = self.linears[-1](x)
         hidden = x[:, -1, :]
         return x, hidden
 
@@ -259,7 +256,9 @@ def train(config):
     n_mini_batch_size = config['mini_batch_size']
 
     siamese_net = SiameseDeepLSTMNet(model_settings).to('cuda')
+    siamese_net.train()
     optimizer = torch.optim.Adam(siamese_net.parameters(), lr=config['learning_rate'])
+    # optimizer = torch.optim.SGD(siamese_net.parameters(), lr=config['learning_rate'])
 
     soft_dtw_loss = SoftDTW(open_end=open_end, dist=dist)
 
@@ -295,8 +294,7 @@ def train(config):
                                                                    non_duplicates['y']])]
                                                   )).long().to('cuda').squeeze()
 
-        # backward and update
-        optimizer.zero_grad()
+
 
         # bce loss
         bce_loss = nn.BCELoss()(y, y_target)
@@ -328,28 +326,36 @@ def train(config):
 
         elif config['loss_type'] == 'l2':
             L2_loss = torch.tensor([0]).float().cuda()
-            for k in range(n_mini_batch_size):
-                L2_loss += torch.nn.functional.relu(torch.sum((zs[0][k] - zs[1][k])**2, dim=-1)[-1] -
-                                                    torch.sum((zs[0][k + n_mini_batch_size] - zs[1][k + n_mini_batch_size]) ** 2, dim=-1)[-1] +
-                                                    margin)
 
-            if open_end:
-                L2_loss /= (n_mini_batch_size)
-            else:
-                L2_loss /= (n_mini_batch_size * zs[0].shape[1])
+            L2_loss = torch.nn.functional.relu(torch.sum((zs[0][:n_mini_batch_size, -1, :] - zs[1][:n_mini_batch_size, -1, :])**2, dim=-1) -
+                                               torch.sum((zs[0][:n_mini_batch_size, -1, :] - zs[1][n_mini_batch_size:, -1, :]) ** 2, dim=-1) +
+                                                    margin).sum()
+            L2_loss /= n_mini_batch_size
             Triplet_loss = L2_loss
             loss = alpha * ce_loss + (1. - alpha) * Triplet_loss * Triplet_loss_weight
 
         elif config['loss_type'] == 'cos_hinge':
             Cos_hinge_loss = torch.tensor([0]).float().cuda()
-            for k in range(n_mini_batch_size):
-                Cos_hinge_loss += torch.nn.functional.relu(
-                    - torch.nn.CosineSimilarity(dim=0)(zs[0][k, -1, :], zs[1][k, -1, :]) +
-                    torch.nn.CosineSimilarity(dim=0)(zs[0][k + n_mini_batch_size, -1, :],
-                                                     zs[1][k + n_mini_batch_size, -1, :])
-                    + margin)
 
-            Cos_hinge_loss /= n_mini_batch_size
+            Cos_hinge_loss = torch.clamp_min(
+                    - torch.nn.CosineSimilarity(dim=-1)(zs[0][:n_mini_batch_size, -1, :], zs[1][:n_mini_batch_size, -1, :])
+                    + torch.nn.CosineSimilarity(dim=-1)(zs[0][:n_mini_batch_size, -1, :], zs[1][n_mini_batch_size:, -1, :])
+                    + margin, 0).sum()
+
+            Cos_hinge_loss += torch.clamp_min(
+                    - torch.nn.CosineSimilarity(dim=-1)(zs[0][:n_mini_batch_size, -1, :], zs[1][:n_mini_batch_size, -1, :])
+                    + torch.nn.CosineSimilarity(dim=-1)(zs[1][:n_mini_batch_size, -1, :], zs[1][n_mini_batch_size:, -1, :])
+                    + margin, 0).sum()
+
+
+            # for k in range(n_mini_batch_size):
+            #     Cos_hinge_loss += torch.nn.functional.relu(
+            #         - torch.nn.CosineSimilarity(dim=0)(zs[0][k, -1, :], zs[1][k, -1, :]) +
+            #         torch.nn.CosineSimilarity(dim=0)(zs[0][k + n_mini_batch_size, -1, :],
+            #                                          zs[1][k + n_mini_batch_size, -1, :])
+            #         + margin)
+
+            Cos_hinge_loss /= (2*n_mini_batch_size)
             Triplet_loss = Cos_hinge_loss
             loss = alpha * ce_loss + (1. - alpha) * Cos_hinge_loss * Triplet_loss_weight
         elif config['loss_type'] == 'ce':
@@ -357,10 +363,16 @@ def train(config):
         else:
             raise KeyError(f"Unknown loss type: {config['loss_type']}")
 
+
+
         # loss = bce_loss + ce_loss + KL_loss * KL_weight
         # loss = ce_loss
         # loss = 0.2 * ce_loss + 0.8 * Triplet_loss * Triplet_loss_weight
+        # backward and update
+        optimizer.zero_grad()
+
         loss.backward()
+        # torch.nn.utils.clip_grad_norm_(siamese_net.parameters(), 1)
         optimizer.step()
 
         cce_acc = accuracy(predicted_labels.detach().cpu().numpy(), target_labels.detach().cpu().numpy())
@@ -373,7 +385,7 @@ def train(config):
             for name, param in siamese_net.named_parameters():
                 writer.add_histogram("SiameseNet_" + name, param, i)
 
-        if cce_acc > max_cce_acc or i % 1000 == 0:
+        if cce_acc > max_cce_acc or i % 500 == 0:
             if cce_acc > max_cce_acc:
                 max_cce_acc = cce_acc
             fname = os.path.join(f'../../reports/seamise_net_{dt}/net_{i}_{cce_acc}.net')
