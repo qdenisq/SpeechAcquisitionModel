@@ -51,11 +51,11 @@ bidirectional: False
 
 save_dir: r'C:\Study\SpeechAcquisitionModel\models\siamese_net_sound_similarity'
 
-loss_type: 'l2' # cos_hinge, sdtw, l2, ce
-alpha: 0.0
+loss_type: 'ce' # cos_hinge, sdtw, l2, ce
+alpha: 0.2
 
-triplet_anneal_k: 1000.0025
-triplet_anneal_b: 0
+triplet_anneal_k: 0.0025
+triplet_anneal_b: 2500
 
 train_steps: 50000
 mini_batch_size: 64
