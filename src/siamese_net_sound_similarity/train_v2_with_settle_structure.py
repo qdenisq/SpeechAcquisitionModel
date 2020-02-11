@@ -169,8 +169,8 @@ class SiameseDeepLSTMNet(nn.Module):
             for i in range(len(self.__n_hidden_fc)-1):
                 x = torch.relu(self.linears[i](x))
                 x = self.__dropout(x)
-            x = torch.tanh(self.linears[-1](x))
-            # x = self.linears[-1](x)
+            # x = torch.tanh(self.linears[-1](x))
+            x = self.linears[-1](x)
         hidden = x[:, -1, :]
         return x, hidden
 

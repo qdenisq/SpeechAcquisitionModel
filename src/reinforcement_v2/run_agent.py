@@ -25,8 +25,8 @@ from src.reinforcement_v2.algo import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Runs trained agent')
-    parser.add_argument('--config', default='configs/SoftActorCritic_e0.yaml', help='config to build environment')
-    parser.add_argument('--agent', default=r'C:\Study\SpeechAcquisitionModel\models\masked_dtw_we_vtl_AsyncSoftActorCritic_34.60.asac', help='path to the saved agent')
+    parser.add_argument('--config', default='configs/BackpropIntoPolicy_e0.yaml', help='config to build environment')
+    parser.add_argument('--agent', default=r'C:\Study\SpeechAcquisitionModel\models\ref_masked_dtw_we_vtl_backprop_02_11_2020_05_32_PM\ref_masked_dtw_we_vtl_BackpropIntoPolicy_0.05.bp', help='path to the saved agent')
 
     args = parser.parse_args()
 
@@ -54,8 +54,10 @@ if __name__ == '__main__':
         ref = env.get_attr('cur_reference')
         total_reward = 0.
         while True:
-            action, pi_mean, pi_log_std, log_prob = agent.policy_net.get_action(state)
-            action *= 0
+            # action, pi_mean, pi_log_std, log_prob = agent.policy_net.get_action(state)
+            action = agent.policy_net.get_action(state)
+
+            # action *= 0
             # action_noise = np.tile(env.action_space.sample(), (kwargs['env']['num_workers'], 1))
             # action = [ref[j]['action'][k, :] for j in range(kwargs['env']['num_workers'])]
 

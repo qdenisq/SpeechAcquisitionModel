@@ -24,6 +24,12 @@ from src.reinforcement_v2.utils.timer import Timer
 from src.siamese_net_sound_similarity.train_v2 import SiameseDeepLSTMNet
 
 
+def soft_update(from_net, target_net, soft_tau=0.1):
+    for target_param, param in zip(target_net.parameters(), from_net.parameters()):
+        target_param.data.copy_(
+            target_param.data * (1.0 - soft_tau) + param.data * soft_tau
+        )
+
 class BackpropIntoPolicy(nn.Module):
     def __init__(self, *args, **kwargs):
         super(BackpropIntoPolicy, self).__init__()
@@ -41,6 +47,7 @@ class BackpropIntoPolicy(nn.Module):
         self.reference_mask = kwargs['reference_mask']
 
         self.model_dynamics = ModelDynamics(**kwargs['model_dynamics']).to(self.device)
+        self.model_dynamics_target = copy.deepcopy(self.model_dynamics)
 
         if kwargs["pretrained_policy"] is not None:
             self.policy_net = torch.load(kwargs['pretrained_policy']).policy_net
@@ -102,16 +109,18 @@ class BackpropIntoPolicy(nn.Module):
         md_loss.backward()
         torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), 1)
         self.md_optimizer.step()
+        if self.train_step % 5 == 0:
+            self.soft_update(self.model_dynamics, self.model_dynamics_target, 0.1)
 
         """
         Policy loss
         """
 
         new_action = self.policy_net(state)
-        predicted_next_agent_state = self.model_dynamics(agent_state, new_action)
-        predicted_next_agent_state_masked = predicted_next_agent_state[:, reference_mask]
+        predicted_next_agent_state = self.model_dynamics_target(agent_state, new_action)
+        predicted_next_agent_state_masked = predicted_next_agent_state[:, self.reference_mask]
         state_masked = state[:, self.agent_state_dim:]
-        policy_loss = torch.nn.SmoothL1Loss(reduction="sum")(predicted_next_agent_state_masked, state_masked) / batch_size
+        policy_loss = torch.nn.MSELoss(reduction="sum")(predicted_next_agent_state_masked, state_masked) / batch_size
 
         self.md_optimizer.zero_grad()
         self.policy_optimizer.zero_grad()
@@ -240,7 +249,9 @@ class BackpropIntoPolicy(nn.Module):
                 writer.add_histogram("Action", action, self.frame_idx)
                 timer['utils'].stop()
 
-                if len(self.replay_buffer) > 3 * batch_size and self.frame_idx % 25 == 0:
+                # if len(self.replay_buffer) > 3 * batch_size and self.frame_idx % 25 == 0:
+                if len(self.replay_buffer) > 3 * batch_size:
+
                     timer['algo'].start()
                     for _ in range(self.num_updates_per_step):
                         _, policy_loss, md_loss = self.update(batch_size)
@@ -261,7 +272,11 @@ class BackpropIntoPolicy(nn.Module):
                 current_steps = env.get_attr('current_step')
                 print(current_steps)
                 for w in range(kwargs['num_workers']):
-                    if reward[w] < 0.001 and current_steps[w] > 3: # dtw > 7
+                    # if reward[w] < 0.001 and current_steps[w] > 3: # dtw > 7
+                    #     done[w] = True
+
+                    if np.mean(abs(info[w]['dtw_dist'])) > 5.0 and current_steps[w] > 3: # dtw > 7
+                        # continue
                         done[w] = True
 
                 if any(done):
@@ -283,7 +298,7 @@ class BackpropIntoPolicy(nn.Module):
                     # break
 
             # save best performing policy
-            if reward_running > best_total_reward or self.frame_idx % 10000 == 0:
+            if reward_running > best_total_reward or self.frame_idx % 200 == 0:
                 timer['utils'].start()
                 # self.save_networks(episode_reward)
                 name = f'{self._env_name}_BackpropIntoPolicy_' + f'{reward_running:.2f}'

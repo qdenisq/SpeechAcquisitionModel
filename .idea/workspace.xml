@@ -5,11 +5,21 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/Learned_embeddings_distance_distribution-DEBUG-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/Learned_embeddings_distance_distribution-DEBUG-checkpoint.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/Learned_embeddings_distance_distribution-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/Learned_embeddings_distance_distribution-checkpoint.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/embedding analysis_noELBO-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/embedding analysis_noELBO-checkpoint.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/mAP-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/mAP-checkpoint.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/Learned_embeddings_distance_distribution-DEBUG.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/Learned_embeddings_distance_distribution-DEBUG.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/Learned_embeddings_distance_distribution.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/Learned_embeddings_distance_distribution.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/dtw/mAP.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/mAP.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/dtw/notebook.tex" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/notebook.tex" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/algo/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/run_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/run_agent.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/configs/ce_dtw_settle_like.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/configs/ce_dtw_settle_like.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2_with_settle_structure.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2_with_settle_structure.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/speech_classification/audio_processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/audio_processing.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -37,19 +47,19 @@
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\algo" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_16_AM" />
-    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
       <recent name="C:\Study\SpeechAcquisitionModel\src" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\dtw" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\algo" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_16_AM" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -64,7 +74,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.train_v2_with_settle_structure">
+  <component name="RunManager" selected="Python.run_agent">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -143,7 +153,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" temporary="true">
+    <configuration name="run_agent" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -151,11 +161,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/../neural-acoustic-word-embeddings-master/code" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement_v2" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/../neural-acoustic-word-embeddings-master/code/main.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement_v2/run_agent.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -245,18 +255,18 @@
     </configuration>
     <list>
       <item itemvalue="Python.backprop_md" />
-      <item itemvalue="Python.main" />
       <item itemvalue="Python.train_v3_adopted_from_settle" />
       <item itemvalue="Python.train_v2_with_settle_structure" />
       <item itemvalue="Python.train_v2" />
+      <item itemvalue="Python.run_agent" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.run_agent" />
+        <item itemvalue="Python.backprop_md" />
         <item itemvalue="Python.train_v2_with_settle_structure" />
         <item itemvalue="Python.train_v2" />
         <item itemvalue="Python.train_v3_adopted_from_settle" />
-        <item itemvalue="Python.main" />
-        <item itemvalue="Python.backprop_md" />
       </list>
     </recent_temporary>
   </component>
@@ -476,7 +486,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/speech_classification/audio_processing.py</url>
-          <line>522</line>
+          <line>521</line>
           <option name="timeStamp" value="514" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -501,7 +511,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/speech_classification/audio_processing.py</url>
-          <line>516</line>
+          <line>515</line>
           <option name="timeStamp" value="554" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -747,7 +757,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/speech_classification/audio_processing.py</url>
-          <line>589</line>
+          <line>588</line>
           <option name="timeStamp" value="801" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -782,7 +792,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py</url>
-          <line>117</line>
+          <line>120</line>
           <option name="timeStamp" value="886" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -822,37 +832,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
-          <line>109</line>
-          <option name="timeStamp" value="950" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
-          <line>95</line>
-          <option name="timeStamp" value="951" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
-          <line>112</line>
-          <option name="timeStamp" value="952" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
-          <line>111</line>
-          <option name="timeStamp" value="953" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
-          <line>302</line>
+          <line>317</line>
           <option name="timeStamp" value="954" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
-          <line>194</line>
+          <line>203</line>
           <option name="timeStamp" value="955" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
-          <line>192</line>
+          <line>201</line>
           <option name="timeStamp" value="956" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -900,6 +890,16 @@
           <url>file://$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2_with_settle_structure.py</url>
           <line>339</line>
           <option name="timeStamp" value="980" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
+          <line>122</line>
+          <option name="timeStamp" value="993" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
+          <line>44</line>
+          <option name="timeStamp" value="994" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

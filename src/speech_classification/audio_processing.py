@@ -32,8 +32,7 @@ UNKNOWN_WORD_LABEL = '_unknown_'
 UNKNOWN_WORD_INDEX = 1
 BACKGROUND_NOISE_DIR_NAME = '_background_noise_'
 
-
-
+np.random.seed(RANDOM_SEED)
 
 def prepare_words_list(wanted_words):
   """Prepends common tokens to the custom word list.

@@ -1,17 +1,17 @@
 ---
 wanted_words:
-  - 'bed'
-  - 'bird'
-  - 'cat'
-  - 'dog'
-  - 'down'
-  - 'eight'
-  - 'five'
-  - 'four'
-  - 'go'
-  - 'happy'
-  - 'house'
-  - 'left'
+#  - 'bed'
+#  - 'bird'
+#  - 'cat'
+#  - 'dog'
+#  - 'down'
+#  - 'eight'
+#  - 'five'
+#  - 'four'
+#  - 'go'
+#  - 'happy'
+#  - 'house'
+#  - 'left'
   - 'marvin'
   - 'nine'
   - 'no'
@@ -36,8 +36,8 @@ dct_coefficient_count: 13
 mfcc_num: 39
 batch_norm: True
 hidden_fc:
-#- 256
-#- 256
+- 256
+- 256
 hidden_reccurent:
 - 256
 - 256
@@ -51,8 +51,8 @@ bidirectional: False
 
 save_dir: r'C:\Study\SpeechAcquisitionModel\models\siamese_net_sound_similarity'
 
-loss_type: 'ce' # cos_hinge, sdtw, l2, ce
-alpha: 0.2
+loss_type: 'sdtw' # cos_hinge, sdtw, l2, ce
+alpha: 0.0
 
 triplet_anneal_k: 0.0025
 triplet_anneal_b: 2500

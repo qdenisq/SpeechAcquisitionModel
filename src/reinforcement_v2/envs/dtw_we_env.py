@@ -38,6 +38,7 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
             zero_pad = np.zeros(int(self.audio_sampling_rate * (self.preproc_params['winlen'] - self.preproc_params['winstep'])))
             audio = np.concatenate((zero_pad, audio))
             preprocessed = self.preproc(audio, sr)[np.newaxis]
+            ref_item['mfcc'] = preprocessed
             # preprocessed = preprocessed[:, 10:, :] # skip weird clicking in the begining
             # preprocessed = self.preproc(fname)[np.newaxis]
             if self.preproc_net:
@@ -86,6 +87,7 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
 
             embeddings = embeddings.detach().cpu()
             embeddings = embeddings.numpy().squeeze()
+
         else:
             embeddings = preproc_audio.squeeze()
 
@@ -93,7 +95,7 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
 
         # calc open_end dtw distance between embeddings and current reference
         dist = self.calc_distance(embeddings, self.cur_reference['acoustics'])
-
+        l1_dist = self.cur_reference['mfcc'].squeeze()[:preproc_audio.shape[0], :] - preproc_audio
 
         # there is no reward and time limit constraint for this environment
         done = False
@@ -108,7 +110,8 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
             reward = np.exp(0. - reward)
         else:
             reward = 0.
-        info = {'dtw_dist': dist}
+        info = {'dtw_dist': dist,
+                'l1_dist': l1_dist}
         
         self.current_state = state_out
 
