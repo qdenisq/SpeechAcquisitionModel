@@ -3,23 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/Learned_embeddings_distance_distribution-DEBUG-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/Learned_embeddings_distance_distribution-DEBUG-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/Learned_embeddings_distance_distribution-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/Learned_embeddings_distance_distribution-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/embedding analysis_noELBO-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/embedding analysis_noELBO-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/mAP-checkpoint.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/.ipynb_checkpoints/mAP-checkpoint.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/Learned_embeddings_distance_distribution-DEBUG.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/Learned_embeddings_distance_distribution-DEBUG.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/Learned_embeddings_distance_distribution.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/Learned_embeddings_distance_distribution.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/embedding analysis_noELBO.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/mAP.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/mAP.ipynb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/dtw/notebook.tex" beforeDir="false" afterPath="$PROJECT_DIR$/src/dtw/notebook.tex" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/algo/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/run_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/run_agent.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/configs/ce_dtw_settle_like.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/configs/ce_dtw_settle_like.yaml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2_with_settle_structure.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v2_with_settle_structure.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/speech_classification/audio_processing.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/speech_classification/audio_processing.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -74,7 +58,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.run_agent">
+  <component name="RunManager" selected="Python.backprop_md">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -262,8 +246,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.run_agent" />
         <item itemvalue="Python.backprop_md" />
+        <item itemvalue="Python.run_agent" />
         <item itemvalue="Python.train_v2_with_settle_structure" />
         <item itemvalue="Python.train_v2" />
         <item itemvalue="Python.train_v3_adopted_from_settle" />
@@ -899,7 +883,12 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
           <line>44</line>
-          <option name="timeStamp" value="994" />
+          <option name="timeStamp" value="995" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
+          <line>52</line>
+          <option name="timeStamp" value="996" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

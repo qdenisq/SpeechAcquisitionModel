@@ -42,9 +42,10 @@ class VTLRefMaskedActionDTWEnv(VTLMaskedActionDTWEnv):
             self.state_bound.extend(self.audio_bound)
         self.observation_space = convert_to_gym(list(zip(*self.state_bound)))
 
-        self.reference_mask = self.selected_ref_param_idx
         if "ACOUSTICS" in self.selected_ref_params:
-            self.reference_mask += [i + len(vtl_names) for i in range(self.audio_dim)]
+            self.reference_mask = self.selected_ref_param_idx + [i + len(vtl_names) for i in range(self.audio_dim)]
+        else:
+            self.reference_mask = self.selected_ref_param_idx
 
     def get_current_ref_obs(self):
         ref_full_vtl_state = np.concatenate((self.cur_reference['tract_params'][self.current_step + 1, :],
