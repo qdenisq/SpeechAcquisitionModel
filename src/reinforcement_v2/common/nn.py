@@ -223,3 +223,61 @@ class ModelDynamics(nn.Module):
         out_states = states[:, :self.__state_dim] + states_delta
 
         return out_states
+
+class S2SModelDynamics(nn.Module):
+    def __init__(self, **kwargs):
+        super(ModelDynamics, self).__init__()
+        self.__action_dim = kwargs['action_dim']
+        self.__state_dim = kwargs['agent_state_dim']
+        self.__acoustic_dim = kwargs['acoustic_dim']
+        self.__linears_size = kwargs['hidden_dim']
+
+        # input_size = self.__acoustic_state_dim + self.__state_dim + self.__action_dim
+        input_size = self.__state_dim + self.__action_dim
+        self.__bn1 = torch.nn.BatchNorm1d(input_size)
+
+        self.drop = torch.nn.modules.Dropout(p=0.1)
+
+        # self.artic_state_0 = Linear(self.__state_dim + self.__action_dim - self.__acoustic_dim, 64)
+        # self.artic_state_1 = Linear(64, self.__state_dim - self.__acoustic_dim)
+        self.artic_state_0 = nn.Linear(self.__state_dim + self.__action_dim - self.__acoustic_dim, self.__state_dim - self.__acoustic_dim)
+        # self.artic_state_1 = Linear(64, )
+
+        self.linears = nn.ModuleList([nn.Linear(input_size, self.__linears_size[0])])
+        self.linears.extend(
+            [nn.Linear(self.__linears_size[i - 1], self.__linears_size[i]) for i in range(1, len(self.__linears_size))])
+
+        self.acoustic_state = nn.Linear(self.__linears_size[-1], self.__acoustic_dim)
+        self.state = nn.Linear(self.__state_dim, self.__state_dim)
+
+
+        self.relu = nn.ReLU()
+        self.tanh = nn.Tanh()
+
+        self.apply(init_weights_xavier)  # xavier uniform init
+
+    def forward(self, states, actions):
+        x = torch.cat((states[:, :self.__state_dim], actions), -1)
+        original_dim = x.shape
+        x = self.__bn1(x.view(-1, original_dim[-1]))
+        x = x.view(original_dim)
+        x = self.drop(x)
+
+        # artic
+        artic_x = x[:, :self.__state_dim - self.__acoustic_dim]
+        actions_x = x[:, -self.__action_dim:]
+        # artic_state_delta = self.artic_state_1(self.relu(self.artic_state_0(torch.cat((artic_x, actions_x), -1))))
+        artic_state_delta = self.artic_state_0(torch.cat((artic_x, actions_x), -1))
+
+        # acoustic
+        for linear in self.linears:
+            x = self.relu(linear(x))
+
+        # predict state
+        acoustic_state_delta = self.acoustic_state(x)
+
+        states_delta = torch.cat((artic_state_delta, acoustic_state_delta), -1)
+        # states_delta = self.tanh(torch.cat((artic_state_delta, acoustic_state_delta), -1))
+        out_states = states[:, :self.__state_dim] + states_delta
+
+        return out_states

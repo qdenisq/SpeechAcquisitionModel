@@ -3,6 +3,8 @@ import pandas as pd
 import numpy as np
 import os
 import warnings
+from collections import deque
+import random
 
 
 class ReplayBuffer:
@@ -71,6 +73,34 @@ class ReplayBuffer:
 
     def __len__(self):
         return self.capacity if self.full else self.position
+
+
+class SequenceReplayBuffer:
+    def __init__(self, capacity, columns=None):
+        if columns is None:
+            columns = ['state', 'action', 'reward', 'next_state', 'done']
+        self.columns = columns
+        self.data = deque(maxlen=capacity)
+
+    def append(self, episode):
+        self.data.append(episode)
+
+    def sample(self, batch_size):
+        if len(self.data) < batch_size:
+            batch = random.sample(self.data, len(self.data))
+        else:
+            batch = random.sample(self.data, batch_size)
+
+        # s_batch = np.array([_[0] for _ in batch])
+        # a_batch = np.array([_[1] for _ in batch])
+        # r_batch = np.array([_[2] for _ in batch])
+        # t_batch = np.array([_[3] for _ in batch])
+        # s2_batch = np.array([_[4] for _ in batch])
+
+        return batch
+
+    def __len__(self):
+        return len(self.data)
 
 
 if __name__ == '__main__':

@@ -26,7 +26,7 @@ from src.reinforcement_v2.algo import *
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Runs trained agent')
     parser.add_argument('--config', default='configs/BackpropIntoPolicy_e0.yaml', help='config to build environment')
-    parser.add_argument('--agent', default=r'C:\Study\SpeechAcquisitionModel\models\ref_masked_dtw_we_vtl_backprop_02_11_2020_05_32_PM\ref_masked_dtw_we_vtl_BackpropIntoPolicy_0.05.bp', help='path to the saved agent')
+    parser.add_argument('--agent', default=r'C:\Study\SpeechAcquisitionModel\models\ref_masked_dtw_we_vtl_backprop_02_11_2020_05_58_PM\ref_masked_dtw_we_vtl_BackpropIntoPolicy_0.01.bp', help='path to the saved agent')
 
     args = parser.parse_args()
 

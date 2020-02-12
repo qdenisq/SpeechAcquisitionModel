@@ -2,8 +2,13 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5751c805-762a-4965-9a51-661a33309ea1" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_v2.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/reinforcement_v2/configs/SequentialBackpropIntoPolicy_e0.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/nn.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/common/replay_buffer.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/common/replay_buffer.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/run_agent.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/run_agent.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -27,23 +32,23 @@
   </component>
   <component name="ProjectId" id="1TUk6WvAbJSyi1EJG4d6Go8nGGi" />
   <component name="PropertiesComponent">
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/siamese_net_sound_similarity" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/src/reinforcement_v2/configs" />
     <property name="settings.editor.selected.configurable" value="configurable.group.appearance" />
   </component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\algo" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
+      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
+      <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_16_AM" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
       <recent name="C:\Study\SpeechAcquisitionModel\src" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
       <recent name="C:\Study\SpeechAcquisitionModel\src\dtw" />
-    </key>
-    <key name="CopyFile.RECENT_KEYS">
-      <recent name="C:\Study\SpeechAcquisitionModel\src\siamese_net_sound_similarity" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\configs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\algo" />
-      <recent name="C:\Study\SpeechAcquisitionModel\src\reinforcement_v2\envs" />
-      <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_16_AM" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -58,7 +63,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.backprop_md">
+  <component name="RunManager" selected="Python.backprop_md_v2">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -137,6 +142,27 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="backprop_md_v2" type="PythonConfigurationType" factoryName="Python" temporary="true">
+      <module name="SpeechAcquisitionModel" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement_v2/algo" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_v2.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="run_agent" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="SpeechAcquisitionModel" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -200,27 +226,6 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="train_v3_adopted_from_settle" type="PythonConfigurationType" factoryName="Python" temporary="true">
-      <module name="SpeechAcquisitionModel" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/siamese_net_sound_similarity" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/src/siamese_net_sound_similarity/train_v3_adopted_from_settle.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
     <configuration name="SpeechAcquisitionModel" type="Python.Ipnb" factoryName="Jupyter Notebook">
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -239,18 +244,18 @@
     </configuration>
     <list>
       <item itemvalue="Python.backprop_md" />
-      <item itemvalue="Python.train_v3_adopted_from_settle" />
       <item itemvalue="Python.train_v2_with_settle_structure" />
       <item itemvalue="Python.train_v2" />
       <item itemvalue="Python.run_agent" />
+      <item itemvalue="Python.backprop_md_v2" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.backprop_md_v2" />
         <item itemvalue="Python.backprop_md" />
         <item itemvalue="Python.run_agent" />
         <item itemvalue="Python.train_v2_with_settle_structure" />
         <item itemvalue="Python.train_v2" />
-        <item itemvalue="Python.train_v3_adopted_from_settle" />
       </list>
     </recent_temporary>
   </component>
@@ -766,7 +771,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py</url>
-          <line>54</line>
+          <line>55</line>
           <option name="timeStamp" value="856" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -801,17 +806,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py</url>
-          <line>63</line>
+          <line>64</line>
           <option name="timeStamp" value="936" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py</url>
-          <line>76</line>
+          <line>77</line>
           <option name="timeStamp" value="939" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py</url>
-          <line>72</line>
+          <line>73</line>
           <option name="timeStamp" value="940" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -881,14 +886,54 @@
           <option name="timeStamp" value="993" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>44</line>
-          <option name="timeStamp" value="995" />
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/common/replay_buffer.py</url>
+          <line>93</line>
+          <option name="timeStamp" value="1001" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>52</line>
-          <option name="timeStamp" value="996" />
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/common/replay_buffer.py</url>
+          <line>99</line>
+          <option name="timeStamp" value="1002" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_v2.py</url>
+          <line>100</line>
+          <option name="timeStamp" value="1004" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_v2.py</url>
+          <line>107</line>
+          <option name="timeStamp" value="1005" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_v2.py</url>
+          <line>152</line>
+          <option name="timeStamp" value="1006" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_v2.py</url>
+          <line>137</line>
+          <option name="timeStamp" value="1008" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_v2.py</url>
+          <line>123</line>
+          <option name="timeStamp" value="1009" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_v2.py</url>
+          <line>157</line>
+          <option name="timeStamp" value="1010" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_v2.py</url>
+          <line>144</line>
+          <option name="timeStamp" value="1011" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_v2.py</url>
+          <line>159</line>
+          <option name="timeStamp" value="1012" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

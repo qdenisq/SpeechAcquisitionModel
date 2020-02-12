@@ -1,0 +1,127 @@
+---
+#agent_fname: "../../../models/walk_ref_osim_AsyncSoftActorCritic_3.95.asac"
+init_data_fname:
+pretrained_policy: #"../../../models/walk_ref_osim_AsyncSoftActorCritic_5.90.asac"
+collect_data: false
+log_mode: full
+use_alpha: false
+target_entropy: -70
+lr: 0.0003
+soft_tau: 0.005
+num_updates_per_step: 30
+soft_update_period: 1
+gamma: 0.96
+noise_init_level: 0.3
+noise_decay: 0.995
+noise_min: 0.05
+env:
+  env_id: ref_masked_dtw_we_vtl # vtl_base, dtw_we_vtl, masked_dtw_we_vtl
+  speaker_fname: "C:/Study/SpeechAcquisitionModel/src/VTL/JD2.speaker"
+  lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
+  selected_reference_state:
+    - "ACOUSTICS"
+    - "HX"
+    - "HY"
+    - "JX"
+    - "JA"
+    - "LP"
+    - "LD"
+    - "VS"
+    - "VO"
+    - "WC"
+    - "TCX"
+    - "TCY"
+    - "TTX"
+    - "TTY"
+    - "TBX"
+    - "TBY"
+    - "TRX"
+    - "TRY"
+    - "TS1"
+    - "TS2"
+    - "TS3"
+    - "TS4"
+    - "MA1"
+    - "MA2"
+    - "MA3"
+  selected_actions:
+    - "HX"
+    - "HY"
+    - "JX"
+    - "JA"
+    - "LP"
+    - "LD"
+    - "VS"
+    - "VO"
+    - "WC"
+    - "TCX"
+    - "TCY"
+    - "TTX"
+    - "TTY"
+    - "TBX"
+    - "TBY"
+    - "TRX"
+    - "TRY"
+    - "TS1"
+    - "TS2"
+    - "TS3"
+    - "TS4"
+    - "MA1"
+    - "MA2"
+    - "MA3"
+  norm_observation: true
+  norm_action: true
+  num_workers: 5
+  visualize: false
+  seed: 123456
+  timestep: 40 # in ms
+  max_episode_duration: 1000 # in ms
+  showControlPoints: True
+  showCenterLine: False
+  showCutVectors: True
+  renderBothSides: False
+  renderMode: 2
+  preprocessing_params:
+    name: AudioPreprocessorMFCCDeltaDelta
+    numcep: 13
+    winlen: 0.02
+    winstep: 0.01
+    sample_rate: 22050
+#    name: AudioPreprocessorMFCCDeltaDelta
+#    numcep: 12
+#    winlen: 0.02
+#    winstep: 0.02
+#    sample_rate: 22050
+
+  preproc_net:
+    preproc_net_fname: "C:/Study/SpeechAcquisitionModel/reports/seamise_net_10_25_2019_01_55_PM/net_0.4609375.net"
+    device: "cuda"
+    output_dim: 32
+  references:
+    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_a_2.pkl"
+  distance:
+#    name: 'soft-DTW'
+#    open_end: True
+#    dist: 'l1'
+
+    name: 'dtwalign'
+    open_end: True
+    dist: 'canberra'
+    step_pattern: 'symmetric2'
+
+
+train:
+  max_frames: 3000000
+  batch_size: 5
+replay_buffer:
+  size: 1000000
+model_dynamics:
+  hidden_dim:
+  - 256
+  - 256
+policy_network:
+  hidden_dim:
+  - 256
+  - 256
