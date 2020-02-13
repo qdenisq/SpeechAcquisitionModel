@@ -142,7 +142,9 @@ class SequentialBackpropIntoPolicy(nn.Module):
             # reward = torch.FloatTensor(reward).unsqueeze(1).to(self.device)
             done = torch.FloatTensor(np.float32(sample['done'])).unsqueeze(1).to(self.device)
 
-            ac_goal = torch.FloatTensor(sample['goal']['acoustics']).to(self.device)
+            ac_goal = torch.FloatTensor(sample['goal']['acoustics']).to(self.device) / 10.
+
+            # TODO: add articulatory goal and loss
             # ar_goal =
 
 
@@ -151,16 +153,34 @@ class SequentialBackpropIntoPolicy(nn.Module):
             predicted_next_agent_state = self.model_dynamics_target(agent_state, new_action)
             predicted_next_agent_state_masked = predicted_next_agent_state[:, self.reference_mask]
             state_masked = state[:, self.agent_state_dim:]
+            audio_dim = env.get_attr('audio_dim')[0]
+            ar_goal = state_masked[:, :-audio_dim]
+
 
             softDTW = SoftDTW(open_end=True, dist='l1')
             policy_loss = torch.tensor(0.).float().cuda()
-            for i in range(state.shape[0]):
-                predicted_seq = torch.cat([state_masked[:i+1, :], predicted_next_agent_state_masked[i,:].unsqueeze(0)], dim=0)
-                audio_dim = env.get_attr('audio_dim')[0]
+
+
+
+            for i in range(1, state.shape[0]):
+                predicted_seq = torch.cat([agent_state[:i, self.reference_mask], predicted_next_agent_state_masked[i,:].unsqueeze(0)], dim=0)
+
                 predicted_seq_ac = predicted_seq[:, -audio_dim:].reshape(-1, ac_goal.shape[-1])
 
-                # soft DTW loss
-                policy_loss += softDTW(predicted_seq_ac, ac_goal)
+                predicted_seq_ar = predicted_seq[:, :-audio_dim]
+
+                # soft DTW loss acoustic
+                ac_loss = softDTW(predicted_seq_ac, ac_goal)
+
+                # soft DTW loss articulatory
+                ar_loss = softDTW(predicted_seq_ar, ar_goal)
+
+                policy_loss += ac_loss
+                policy_loss += ar_loss
+
+                # print(ac_loss)
+                # print(ar_loss)
+
             policy_loss /= state.shape[0]
         policy_loss /= batch_size
 

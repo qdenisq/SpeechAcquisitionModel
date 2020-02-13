@@ -8,7 +8,7 @@ use_alpha: false
 target_entropy: -70
 lr: 0.0003
 soft_tau: 0.005
-num_updates_per_step: 30
+num_updates_per_step: 5
 soft_update_period: 1
 gamma: 0.96
 noise_init_level: 0.3
@@ -81,6 +81,8 @@ env:
   showCutVectors: True
   renderBothSides: False
   renderMode: 2
+
+  audio_upper_bound: 100.0
   preprocessing_params:
     name: AudioPreprocessorMFCCDeltaDelta
     numcep: 13

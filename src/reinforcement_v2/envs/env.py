@@ -10,7 +10,8 @@ from src.reinforcement_v2.envs import *
 class EnvironmentManager:
     def __init__(self):
         self.env = None
-        self.env_id_to_class_name = {"ref_masked_dtw_we_vtl": "VTLRefMaskedActionDTWEnv",
+        self.env_id_to_class_name = {"dynamic_ref_masked_dtw_we_vtl": "VTLDynamicRefMaskedActionDTWEnv",
+                                     "ref_masked_dtw_we_vtl": "VTLRefMaskedActionDTWEnv",
                                      "masked_dtw_we_vtl": "VTLMaskedActionDTWEnv",
                                      "vtl_base": "VTLEnvPreprocAudio",
                                      "dtw_we_vtl": "VTLDTWEnv"
