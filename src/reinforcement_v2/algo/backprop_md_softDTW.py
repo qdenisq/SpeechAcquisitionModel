@@ -21,8 +21,8 @@ from src.reinforcement_v2.common.tensorboard import DoubleSummaryWriter
 from src.reinforcement_v2.common.noise import OUNoise
 from src.reinforcement_v2.utils.timer import Timer
 
-from src.siamese_net_sound_similarity.train_v2 import SiameseDeepLSTMNet
-from src.siamese_net_sound_similarity.soft_dtw import SoftDTW
+from src.soft_dtw_awe.model import SiameseDeepLSTMNet
+from src.soft_dtw_awe.soft_dtw import SoftDTW
 
 
 

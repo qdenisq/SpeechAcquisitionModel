@@ -43,8 +43,7 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
             if self.preproc_net:
                 self.preproc_net.eval()
                 preproc_audio = torch.from_numpy(preprocessed).float().to(self.device)
-                reference, self._hidden = self.preproc_net.single_forward(preproc_audio,
-                                                                          hidden=self._hidden)
+                reference, self._hidden = self.preproc_net.single_forward(preproc_audio)
                 reference = reference.detach().cpu().numpy().squeeze()
                 ref_item['acoustics'] = reference
             else:

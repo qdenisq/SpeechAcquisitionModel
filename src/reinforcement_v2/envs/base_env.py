@@ -5,10 +5,11 @@ import random
 import pickle
 import os
 import datetime
+import yaml
 
-from src.speech_classification.pytorch_conv_lstm import LstmNet, LstmNetEnsemble
+from src.soft_dtw_awe.model import SiameseDeepLSTMNet
+from src.soft_dtw_awe.audio_processing import AudioPreprocessorMFCCDeltaDelta
 from src.VTL.vtl_environment import VTLEnv, convert_to_gym
-from src.speech_classification.audio_processing import AudioPreprocessorFbank, AudioPreprocessorMFCCDeltaDelta
 from src.reinforcement_v2.utils.utils import str_to_class
 
 
@@ -25,7 +26,12 @@ class VTLEnvPreprocAudio(VTLEnv):
         # self.audio_buffer = []
         if "preproc_net" in kwargs:
             self.device = kwargs["preproc_net"]['device']
-            self.preproc_net = torch.load(kwargs["preproc_net"]['preproc_net_fname']).to(self.device)
+            # load config
+            with open(kwargs["preproc_net"]['config'], 'r') as data_file:
+                net_kwargs = yaml.safe_load(data_file)['model']
+            self.preproc_net = SiameseDeepLSTMNet(net_kwargs)
+            self.preproc_net.load_state_dict(torch.load(kwargs["preproc_net"]['preproc_net_fname'], map_location=self.device))
+            # self.preproc_net = torch.load(kwargs["preproc_net"]['preproc_net_fname']).to(self.device)
 
             cols_per_timestep = kwargs['timestep'] / 1000 / self.preproc_params['winstep']  # preproc could return more than 1 column of features per timestep
             self.audio_dim = kwargs["preproc_net"]["output_dim"] * int(cols_per_timestep)

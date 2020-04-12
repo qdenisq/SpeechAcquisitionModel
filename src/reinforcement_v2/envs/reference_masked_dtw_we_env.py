@@ -9,9 +9,9 @@ import datetime
 
 from src.reinforcement_v2.envs.masked_dtw_we_env import VTLMaskedActionDTWEnv
 from src.VTL.vtl_environment import VTLEnv, convert_to_gym
-from src.soft_dtw_awe.audio_processing import AudioPreprocessorMFCCDeltaDelta
 from src.reinforcement_v2.utils.utils import str_to_class
 from src.reinforcement_v2.envs.base_env import VTLEnvPreprocAudio
+from src.soft_dtw_awe.audio_processing import AudioPreprocessorMFCCDeltaDelta
 from src.soft_dtw_awe.model import SiameseDeepLSTMNet
 from src.soft_dtw_awe.soft_dtw import SoftDTW
 
@@ -60,7 +60,7 @@ class VTLRefMaskedActionDTWEnv(VTLMaskedActionDTWEnv):
         return ref_obs
 
     def reset(self, state_to_reset=None, **kwargs):
-        obs = super().reset(state_to_reset, **kwargs)
+        obs = super(self).reset(state_to_reset, **kwargs)
         ref_obs = self.get_current_ref_obs()
         res = np.concatenate((obs, ref_obs))
         return res
