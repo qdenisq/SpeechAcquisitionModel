@@ -60,7 +60,7 @@ class VTLRefMaskedActionDTWEnv(VTLMaskedActionDTWEnv):
         return ref_obs
 
     def reset(self, state_to_reset=None, **kwargs):
-        obs = super(self).reset(state_to_reset, **kwargs)
+        obs = super(VTLRefMaskedActionDTWEnv, self).reset(state_to_reset, **kwargs)
         ref_obs = self.get_current_ref_obs()
         res = np.concatenate((obs, ref_obs))
         return res

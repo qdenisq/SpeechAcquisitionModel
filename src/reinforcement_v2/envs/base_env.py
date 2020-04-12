@@ -29,7 +29,7 @@ class VTLEnvPreprocAudio(VTLEnv):
             # load config
             with open(kwargs["preproc_net"]['config'], 'r') as data_file:
                 net_kwargs = yaml.safe_load(data_file)['model']
-            self.preproc_net = SiameseDeepLSTMNet(net_kwargs)
+            self.preproc_net = SiameseDeepLSTMNet(net_kwargs).to(self.device)
             self.preproc_net.load_state_dict(torch.load(kwargs["preproc_net"]['preproc_net_fname'], map_location=self.device))
             # self.preproc_net = torch.load(kwargs["preproc_net"]['preproc_net_fname']).to(self.device)
 

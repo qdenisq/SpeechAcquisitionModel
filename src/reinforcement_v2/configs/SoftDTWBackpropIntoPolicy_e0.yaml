@@ -107,7 +107,7 @@ env:
     name: 'dtwalign'
     open_end: True
     dist: 'minkowski'
-    step_pattern: 'symmetric1'
+    step_pattern: 'symmetric2'
 
 
 train:

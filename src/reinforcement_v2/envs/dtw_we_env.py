@@ -80,8 +80,7 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
         if self.preproc_net:
             self.preproc_net.eval()
             preproc_audio_tensor = torch.from_numpy(preproc_audio[np.newaxis]).float().to(self.device)
-            embeddings, self._hidden = self.preproc_net.single_forward(preproc_audio_tensor,
-                                                                       hidden=None)
+            embeddings, self._hidden = self.preproc_net.single_forward(preproc_audio_tensor)
 
             embeddings = embeddings.detach().cpu()
             embeddings = embeddings.numpy().squeeze()
