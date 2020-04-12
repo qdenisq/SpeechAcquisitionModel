@@ -28,8 +28,8 @@ class VTLDynamicRefMaskedActionDTWEnv(VTLRefMaskedActionDTWEnv):
 
     # dynamic reference frame based on dtw dist
     def get_current_ref_obs(self):
-
-        if self.current_step <= 1:
+        # print(self.current_step)
+        if self.current_step <= 2:
             ref_full_vtl_state = np.concatenate((self.cur_reference['tract_params'][self.current_step + 1, :],
                                                   self.cur_reference['glottis_params'][self.current_step + 1, :]))
             ref_obs = ref_full_vtl_state[self.selected_ref_param_idx]
@@ -44,10 +44,10 @@ class VTLDynamicRefMaskedActionDTWEnv(VTLRefMaskedActionDTWEnv):
 
             # ep_states = np.array(self.episode_states)[:, -self.audio_dim:]
             # acoustic dtw
-            
+
             ref_ac = self.cur_reference['acoustics']
             ep_ac = np.array(self.episode_states)[:, -self.audio_dim:].reshape(-1, ref_ac.shape[-1])
-            dtw_res_ac = dtwalign.dtw(ep_ac, ref_ac,open_end=True, step_pattern="asymmetric")
+            dtw_res_ac = dtwalign.dtw(ep_ac, ref_ac, open_end=True, step_pattern="symmetricP2")
             last_ref_matched_elem = dtw_res_ac.path[-1, 1]
 
             #artic dtw
@@ -56,7 +56,9 @@ class VTLDynamicRefMaskedActionDTWEnv(VTLRefMaskedActionDTWEnv):
                                                  self.cur_reference['glottis_params'][:, :]), axis=-1)
             ep_ar = np.array(self.episode_states)[:,  self.selected_ref_param_idx]
             ref_ar = ref_full_vtl_state[:, self.selected_ref_param_idx]
-            dtw_res_ar = dtwalign.dtw(ep_ar, ref_ar, open_end=True, step_pattern="asymmetric")
+            dtw_res_ar = dtwalign.dtw(ep_ar, ref_ar, open_end=True, step_pattern="symmetricP2")
+            print(dtw_res_ar.path)
+
             last_ref_matched_elem_ar = dtw_res_ar.path[-1, 1]
 
 
@@ -64,6 +66,10 @@ class VTLDynamicRefMaskedActionDTWEnv(VTLRefMaskedActionDTWEnv):
                 cols_per_step = int(self.timestep / 1000 / self.preproc_params['winstep'])
 
                 last_matched_step = (last_ref_matched_elem + 1) // cols_per_step
+                last_matched_step = last_ref_matched_elem_ar
+
+                last_matched_step = min(self.cur_reference['tract_params'].shape[0] - 2, last_matched_step)
+                print(last_matched_step, self.current_step)
 
                 ref_ac_obs = self.cur_reference['acoustics'][
                              (last_matched_step ) * cols_per_step: (last_matched_step + 1) * cols_per_step,
@@ -90,6 +96,17 @@ class VTLDynamicRefMaskedActionDTWEnv(VTLRefMaskedActionDTWEnv):
             ref_obs = np.zeros(self.state_dim - len(state_out))
         else:
             ref_obs = self.get_current_ref_obs()
+
+        ref_full_vtl_state = np.concatenate((self.cur_reference['tract_params'][:, :],
+                                             self.cur_reference['glottis_params'][:, :]), axis=-1)
+        ep_ar = np.array(self.episode_states)[:, self.selected_ref_param_idx]
+        ref_ar = ref_full_vtl_state[:, self.selected_ref_param_idx]
+        dtw_res_ar = dtwalign.dtw(ep_ar, ref_ar, open_end=True, step_pattern="symmetricP2")
+
+        # if max(abs(ref_ar[ep_ar.shape[0], :] - ep_ar[-1, :])) > 0.8:
+        #     done = True
+        if dtw_res_ar.distance > 5 and self.current_step > 2:
+            done = True
 
         state_out = np.concatenate((state_out, ref_obs))
         return state_out, reward, done, info

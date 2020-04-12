@@ -148,7 +148,6 @@ class VTLEnv(gym.Env):
 
 
     def _after_step(self):
-        self.episode_states.append(self.current_state)
         pass
 
     def _step(self, action, render=True):
@@ -179,6 +178,8 @@ class VTLEnv(gym.Env):
         self.current_step += 1
 
         self.current_state = np.concatenate((state_out, audio_out))
+        self.episode_states.append(self.current_state)
+
         return state_out, audio_out
 
     def step(self, action, render=True):
@@ -211,6 +212,7 @@ class VTLEnv(gym.Env):
 
         state_out = list(self.tract_params_out) + list(self.glottis_params_out)
         self.current_step = 0
+        # self.episode_states.append(state_out)
         return state_out
 
     def render(self, *args, **kwargs):

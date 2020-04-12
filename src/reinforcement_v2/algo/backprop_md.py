@@ -45,6 +45,7 @@ class BackpropIntoPolicy(nn.Module):
         self.state_dim = kwargs['state_dim']
         self.action_dim = kwargs['action_dim']
         self.reference_mask = kwargs['reference_mask']
+        self.acoustic_dim = kwargs['model_dynamics']['acoustic_dim']
 
         self.model_dynamics = ModelDynamics(**kwargs['model_dynamics']).to(self.device)
         self.model_dynamics_target = copy.deepcopy(self.model_dynamics)
@@ -105,7 +106,7 @@ class BackpropIntoPolicy(nn.Module):
         predicted_next_agent_state = self.model_dynamics(agent_state, action)
 
         self.md_optimizer.zero_grad()
-        md_loss = torch.nn.SmoothL1Loss(reduction="sum")(agent_next_state, predicted_next_agent_state) / batch_size
+        md_loss = torch.nn.SmoothL1Loss(reduction="sum")(predicted_next_agent_state, agent_next_state) / batch_size
         md_loss.backward()
         torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), 1)
         self.md_optimizer.step()
@@ -117,10 +118,14 @@ class BackpropIntoPolicy(nn.Module):
         """
 
         new_action = self.policy_net(state)
-        predicted_next_agent_state = self.model_dynamics_target(agent_state, new_action)
+        predicted_next_agent_state = self.model_dynamics(agent_state, new_action)
         predicted_next_agent_state_masked = predicted_next_agent_state[:, self.reference_mask]
         state_masked = state[:, self.agent_state_dim:]
-        policy_loss = torch.nn.MSELoss(reduction="sum")(predicted_next_agent_state_masked, state_masked) / batch_size
+
+        predicted_next_agent_state_masked = predicted_next_agent_state[:, self.reference_mask][:, : -self.acoustic_dim]
+        state_masked = state[:, self.agent_state_dim:][:, : -self.acoustic_dim]
+
+        policy_loss = torch.nn.SmoothL1Loss(reduction="sum")(predicted_next_agent_state_masked, state_masked) / batch_size
 
         self.md_optimizer.zero_grad()
         self.policy_optimizer.zero_grad()
