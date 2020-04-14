@@ -113,7 +113,7 @@ class AudioPreprocessor(object):
             Returns number of cepstral coefficients
         """
 
-        return self.__numcep
+        return self._numcep
 
 
 class AudioPreprocessorMFCCDeltaDelta(AudioPreprocessor):
@@ -157,7 +157,7 @@ class AudioPreprocessorMFCCDeltaDelta(AudioPreprocessor):
         int
             Returns number of output features
         """
-        return self.__numcep * 3
+        return self._numcep * 3
 
 #
 #

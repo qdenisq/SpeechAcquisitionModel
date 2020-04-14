@@ -99,6 +99,8 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
 
         # calc open_end dtw distance between embeddings and current reference
         dist = self.calc_distance(embeddings, self.cur_reference['acoustics'])
+        dtw_alignment = self.calc_alignment(embeddings, self.cur_reference['acoustics'])
+
         l1_dist = self.cur_reference['mfcc'].squeeze()[:preproc_audio.shape[0], :] - preproc_audio
 
         # there is no reward and time limit constraint for this environment
@@ -114,7 +116,8 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
             reward = np.exp(0. - reward)
         else:
             reward = 0.
-        info = {'dtw_dist': dist,
+        info = {'dtw_dist': dtw_alignment.distance,
+                'last_path_point': dtw_alignment.path[-1],
                 'l1_dist': l1_dist}
         
         self.current_state = state_out

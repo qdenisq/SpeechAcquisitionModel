@@ -10,6 +10,10 @@
 ## 6/12/2019
   - Add backprop into policy algorithm. It still updates policy with l1 distance between predicted state and reference (consider using dtw here somehow)
 
+## 14/04/2020
+  - IMPORTANT: change dtwalign plor_path by `return _, ax`
+  - IMPORTANT: subproc_vec_env comment `if done:` in `if cmd == 'step':`
+
 ### TODO:
  - In some cases DTW distance is NaN, need to consider this case
  - Check `env.action_space` (we normalize actions to be within (-1;1) range. So unnormalized actions should have sense (i.e. not too big, nor too small))

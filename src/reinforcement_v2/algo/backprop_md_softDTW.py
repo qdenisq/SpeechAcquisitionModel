@@ -359,7 +359,9 @@ class SequentialBackpropIntoPolicy(nn.Module):
                 # if reward[w] < 0.001 and current_steps[w] > 3: # dtw > 7
                 #     done[w] = True
 
-                if np.mean(abs(info[w]['dtw_dist'])) > 5.0 and current_steps[w] > 3: # dtw > 7
+                #TODO: study different stop conditions
+                last_path_point_diff = abs(info[w]['last_path_point'][0] - info[w]['last_path_point'][1])
+                if (np.mean(info[w]['dtw_dist']) > 10000 or last_path_point_diff > 8) and current_steps[w] > 2 : # dtw > 7
                     # continue
                     done[w] = True
 
@@ -412,11 +414,17 @@ class SequentialBackpropIntoPolicy(nn.Module):
         env.render()
 
         episode_done = [False]*kwargs['num_workers']
+        dtw_dists = [[] for _ in range(kwargs['num_workers'])]
+        last_path_points = [[] for _ in range(kwargs['num_workers'])]
         while not all(episode_done):
             action = self.policy_net.get_action(state)
             action = action.detach().cpu().numpy()
             action = np.clip(action, -1, 1)
             next_state, reward, done, info = env.step(action)
+            # for i in kwargs['num_workers']:
+            #     dtw_dists[i].append(info[i]['dtw_dist'])
+            #     ref_match_points[i].append(info[i]['last_path_point'])
+
             print(reward)
             # dtw_dist = info['dtw_dist']
             env.render()
@@ -424,6 +432,8 @@ class SequentialBackpropIntoPolicy(nn.Module):
             state = next_state
 
             for worker_idx in range(kwargs['num_workers']):
+                dtw_dists[worker_idx].append(info[worker_idx]['dtw_dist'])
+                last_path_points[worker_idx].append(info[worker_idx]['last_path_point'])
 
                 if done[worker_idx]:
                     episode_done[worker_idx] = True
@@ -440,10 +450,10 @@ class SequentialBackpropIntoPolicy(nn.Module):
                                  step_pattern=kwargs['distance']['step_pattern'],
                                  open_end=False)
 
-                    self.summarize(writer, episode_history, video_data, dtw_res)
+                    self.summarize(writer, episode_history, video_data, dtw_res, dtw_dists[worker_idx], last_path_points[worker_idx])
                     state[worker_idx] = env.reset([worker_idx])
 
-    def summarize(self, writer, episode_history, video_data, dtw_res):
+    def summarize(self, writer, episode_history, video_data, dtw_res, dtw_dists, last_path_points):
         fig = plt.figure()
         plt.matshow(episode_history['mfcc'].T, 0)
         plt.colorbar()
@@ -484,7 +494,15 @@ class SequentialBackpropIntoPolicy(nn.Module):
         fig, ax = dtw_res.plot_path()
         writer.add_figure('DTW/Embeddings', fig, self.step)
 
-        #TODO: add dtw alignment
+        fig = plt.figure()
+        plt.plot(np.array(dtw_dists))
+        writer.add_figure('DTW/distance_over_episode', fig, self.step)
+
+        fig = plt.figure()
+        points = np.array(last_path_points)
+        plt.plot(points[:, 0], points[:, 1])
+        writer.add_figure('DTW/path', fig, self.step)
+
 
 
 
