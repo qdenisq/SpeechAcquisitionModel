@@ -6,6 +6,7 @@ import pickle
 import os
 import datetime
 import yaml
+from collections import defaultdict
 
 from src.soft_dtw_awe.model import SiameseDeepLSTMNet
 from src.soft_dtw_awe.audio_processing import AudioPreprocessorMFCCDeltaDelta
@@ -25,7 +26,7 @@ class VTLEnvPreprocAudio(VTLEnv):
 
         # self.audio_buffer = []
         if "preproc_net" in kwargs:
-            self.device = kwargs["preproc_net"]['device']
+            self.device = 'cuda' if kwargs["preproc_net"]['device'] and torch.cuda.is_available() else 'cpu'
             # load config
             with open(kwargs["preproc_net"]['config'], 'r') as data_file:
                 net_kwargs = yaml.safe_load(data_file)['model']
@@ -99,6 +100,6 @@ class VTLEnvPreprocAudio(VTLEnv):
             fname = directory + '/videos/episode_' + str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S")) + str(self.id)
         else:
             fname += f'_{self.id}'
-        super(VTLEnvPreprocAudio, self).dump_episode(*args, fname=fname, **kwargs)
+        return super(VTLEnvPreprocAudio, self).dump_episode(*args, fname=fname, **kwargs)
 
 

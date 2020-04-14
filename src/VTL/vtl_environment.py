@@ -10,6 +10,8 @@ import numpy as np
 from gym import spaces
 import gym
 import pickle
+from collections import defaultdict
+import copy
 
 def convert_to_gym(space):
     return spaces.Box(np.array(space[0]), np.array(space[1]))
@@ -141,6 +143,8 @@ class VTLEnv(gym.Env):
         self.episode_states = []
 
         self.id = np.random.randint(0, 10000)
+
+        self.episode_history = defaultdict(list)
         return
 
     def _before_step(self):
@@ -179,7 +183,7 @@ class VTLEnv(gym.Env):
 
         self.current_state = np.concatenate((state_out, audio_out))
         self.episode_states.append(self.current_state)
-
+        self.episode_history['vt'].append(copy.deepcopy(state_out))
         return state_out, audio_out
 
     def step(self, action, render=True):
@@ -189,6 +193,7 @@ class VTLEnv(gym.Env):
         return res
 
     def reset(self, state_to_reset=None):
+        self.episode_history = defaultdict(list)
         self.episode_states = []
         if state_to_reset is not None:
             tract_params_to_reset = (ctypes.c_double * (self.number_vocal_tract_parameters))()
@@ -211,6 +216,7 @@ class VTLEnv(gym.Env):
                               )
 
         state_out = list(self.tract_params_out) + list(self.glottis_params_out)
+        self.episode_history['vt'].append(state_out)
         self.current_step = 0
         # self.episode_states.append(state_out)
         return state_out
@@ -265,8 +271,15 @@ class VTLEnv(gym.Env):
         cmd = 'ffmpeg -y -i {}.wav  -r 30 -i {}.mp4  -filter:a aresample=async=1 -c:v copy {}_v.mp4'.format(
             fname, fname, fname)
         with open(os.devnull, 'w') as devnull:
-            subprocess.call(cmd, shell=False, stdout=devnull, stderr=devnull)  # "Muxing Done
-        return
+            # subprocess.call(cmd, shell=False, stdout=devnull, stderr=devnull)  # "Muxing Done
+            p = subprocess.Popen(cmd, shell=False, stdout=devnull, stderr=devnull)  # "Muxing Done
+            p.communicate()
+            p.wait()
+        return fname+"_v"
+
+    def get_episode_history(self, *args, **kwargs):
+        self.episode_history['vt'] = np.array(self.episode_history['vt'])
+        return self.episode_history
 
     def get_cf(self, sound_name):
         shape_name = ctypes.c_char_p(sound_name.encode())

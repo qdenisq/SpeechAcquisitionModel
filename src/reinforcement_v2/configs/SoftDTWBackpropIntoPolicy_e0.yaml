@@ -71,8 +71,8 @@ env:
     - "MA3"
   norm_observation: true
   norm_action: true
-  num_workers: 5
-  visualize: false
+  num_workers: 2
+  visualize: true
   seed: 123456
   timestep: 40 # in ms
   max_episode_duration: 1000 # in ms
@@ -111,8 +111,10 @@ env:
 
 
 train:
-  max_frames: 3000000
+  max_steps: 3000000
   batch_size: 5
+  sync_every: 200
+  validate_every: 200
 replay_buffer:
   size: 1000000
 model_dynamics:

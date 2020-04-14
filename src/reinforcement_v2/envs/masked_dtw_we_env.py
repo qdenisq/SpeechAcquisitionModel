@@ -16,7 +16,6 @@ from src.soft_dtw_awe.model import SiameseDeepLSTMNet
 from src.soft_dtw_awe.soft_dtw import SoftDTW
 
 
-
 class VTLMaskedActionDTWEnv(VTLDTWEnv):
     """
     This env allows agent to articulate only selected actions (the rest is substituted with ground-truth actions from the reference)

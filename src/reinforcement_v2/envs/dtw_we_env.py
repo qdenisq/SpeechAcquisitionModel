@@ -38,6 +38,8 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
             audio = np.concatenate((zero_pad, audio))
             preprocessed = self.preproc(audio, sr)[np.newaxis]
             ref_item['mfcc'] = preprocessed
+            ref_item['vt'] = np.concatenate([ref['tract_params'], ref['glottis_params']], axis=-1)
+
             # preprocessed = preprocessed[:, 10:, :] # skip weird clicking in the begining
             # preprocessed = self.preproc(fname)[np.newaxis]
             if self.preproc_net:
@@ -58,11 +60,15 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
     def reset(self, state_to_reset=None, **kwargs):
         self.cur_reference = self.references[np.random.randint(0, len(self.references))]
 
+
+
         if state_to_reset is None:
             state_to_reset = np.concatenate((self.cur_reference['tract_params'][0, :],
                                              self.cur_reference['glottis_params'][0, :]))
 
         res = super().reset(state_to_reset, **kwargs)
+
+        self.episode_history['ref'] = self.cur_reference
         return res
 
     def _step(self, action, render=True):
@@ -87,7 +93,8 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
 
         else:
             embeddings = preproc_audio.squeeze()
-
+        self.episode_history['embeds'].append(embeddings[-int(self.timestep / 1000 / self.preproc_params['winstep']):])
+        self.episode_history['mfcc'].append(preproc_audio[-int(self.timestep / 1000 / self.preproc_params['winstep']):])
         state_out.extend(embeddings[-int(self.timestep / 1000 / self.preproc_params['winstep']):].flatten())
 
         # calc open_end dtw distance between embeddings and current reference
@@ -125,6 +132,12 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
         with open(f'{fname}.pkl', 'wb') as f:
             pickle.dump(self.cur_reference, f)
 
+    def get_episode_history(self, *args, **kwargs):
+        self.episode_history['embeds'] = np.concatenate(self.episode_history['embeds'])
+        self.episode_history['mfcc'] = np.concatenate(self.episode_history['mfcc'])
+
+        return super(VTLDTWEnv, self).get_episode_history(*args, **kwargs)
+
     def calc_distance(self, s, reference):
         if self.dist_params['name'] == 'soft-DTW':
             dist_func = SoftDTW(open_end=self.dist_params['open_end'], dist=self.dist_params['dist'])
@@ -135,3 +148,9 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
                          open_end=self.dist_params['open_end'], dist_only=True).normalized_distance
         else:
             raise KeyError(f"unknown name of the dist:  {self.dist_params['name']}")
+
+    def calc_alignment(self, s, reference):
+            return dtwalign.dtw(s, reference, dist=self.dist_params['dist'], step_pattern=self.dist_params['step_pattern'],
+                         open_end=self.dist_params['open_end'], dist_only=False)
+
+

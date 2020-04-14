@@ -8,9 +8,13 @@ from collections import defaultdict
 
 import numpy as np
 
+import matplotlib.pyplot as plt
+import dtwalign
+
 import torch
 import torch.nn as nn
 import torch.optim as optim
+import torchvision
 
 from src.reinforcement_v2.envs.env import EnvironmentManager
 
@@ -92,7 +96,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
         self.gamma = kwargs.get('gamma', 0.99)
         self.num_updates_per_step = kwargs.get("num_updates_per_step", 30)
         self.train_step = 0
-        self.frame_idx = 0
+        self.step = 0
 
     def forward(self, *input):
         return self.policy_net(*input)
@@ -158,7 +162,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
 
             softDTW = SoftDTW(open_end=True, dist='l1')
-            policy_loss = torch.tensor(0.).float().cuda()
+            policy_loss = torch.tensor(0.).float().to(self.device)
 
 
 
@@ -240,15 +244,14 @@ class SequentialBackpropIntoPolicy(nn.Module):
         dummy_input = torch.rand(1, self.state_dim).to(self.device)
         writer.add_graph(self.policy_net, dummy_input)
 
-        max_frames = kwargs.get('max_frames', 40000)
-        max_steps = kwargs.get('max_steps', 100)
         batch_size = kwargs.get('batch_size', 256)
 
         self.params['gamma'] = self.gamma
         self.params['use_alpha'] = self.use_alpha
         self.params['train'] = {
-            'max_frames': max_frames,
-            'max_steps': max_steps,
+            'validate_every': kwargs['validate_every'],
+            'sync_every': kwargs['sync_every'],
+            'max_steps': kwargs['max_steps'],
             'batch_size': batch_size
         }
 
@@ -263,123 +266,127 @@ class SequentialBackpropIntoPolicy(nn.Module):
         rewards = []
         best_total_reward = -10000.
         reward_running = 0.
-        while self.frame_idx < max_frames:
-            ep_reward = np.zeros(kwargs['num_workers'])
-            state = env.reset()
+        while self.step < self.params['train']['max_steps']:
 
+            if self.step % self.params['train']['sync_every'] == 0:
+                ep_reward = np.zeros(kwargs['num_workers'])
+                state = env.reset()
+                for i in range(kwargs['num_workers']):
+                    local_buffer[i] = get_empty_episode_entry()
+                    local_buffer[i]['goal'] = env.get_attr('cur_reference')[i]
 
-            for i in range(kwargs['num_workers']):
-                local_buffer[i] = get_empty_episode_entry()
-                local_buffer[i]['goal'] = env.get_attr('cur_reference')[i]
-
-            if not self.use_alpha:
-                self.noise.reset()
-                self.noise_level = max(self.noise_min, self.noise_level * self.noise_decay)
-
-            for step in range(max_steps):
-                timer['algo'].start()
-                action = self.policy_net.get_action(state)
-                action = action.detach().cpu().numpy()
                 if not self.use_alpha:
-                    action = action + self.noise.sample().reshape(*action.shape) * self.noise_level
-                    # just for testing
-                    # action *= 0
-                    action = np.clip(action, -1, 1)
+                    self.noise.reset()
+                    self.noise_level = max(self.noise_min, self.noise_level * self.noise_decay)
 
+            if self.step % self.params['train']['validate_every'] == 0:
+                self.validate_and_summarize(env, writer, **kwargs)
+
+
+            timer['algo'].start()
+            action = self.policy_net.get_action(state)
+            action = action.detach().cpu().numpy()
+            if not self.use_alpha:
+                action = action + self.noise.sample().reshape(*action.shape) * self.noise_level
+                # just for testing
+                # action *= 0
+                action = np.clip(action, -1, 1)
+
+            timer['algo'].stop()
+            timer['env'].start()
+
+            next_state, reward, done, info = env.step(action)
+            print(reward)
+            # dtw_dist = info['dtw_dist']
+            if kwargs['visualize']:
+                env.render()
+
+            timer['env'].stop()
+            timer['replay_buffer'].start()
+
+            for worker_idx in range(kwargs['num_workers']):
+                # skip steps with undefined reward
+                if np.isnan(reward[worker_idx]):
+
+                    continue
+
+                local_buffer[worker_idx]['actions'].append(action[worker_idx])
+                local_buffer[worker_idx]['states'].append(state[worker_idx])
+                local_buffer[worker_idx]['next_states'].append(next_state[worker_idx])
+                local_buffer[worker_idx]['done'].append(done[worker_idx])
+
+                # self.replay_buffer.push((list(state[worker_idx]),
+                #                          list(action[worker_idx]),
+                #                          reward[worker_idx],
+                #                          list(next_state[worker_idx]),
+                #                          done[worker_idx]))
+
+            timer['replay_buffer'].stop()
+
+            state = next_state
+            ep_reward += reward
+            self.step += 1
+
+
+
+            timer['utils'].start()
+            writer.add_histogram("Action", action, self.step)
+            timer['utils'].stop()
+
+            # if len(self.replay_buffer) > 3 * batch_size and self.frame_idx % 25 == 0:
+            if len(self.replay_buffer) > 3 * batch_size:
+
+                timer['algo'].start()
+                for _ in range(self.num_updates_per_step):
+                    _, policy_loss, md_loss = self.update(batch_size)
                 timer['algo'].stop()
-                timer['env'].start()
-
-                next_state, reward, done, info = env.step(action)
-                # dtw_dist = info['dtw_dist']
-                if kwargs['visualize']:
-                    env.render()
-
-                timer['env'].stop()
-                timer['replay_buffer'].start()
-
-                for worker_idx in range(kwargs['num_workers']):
-                    # skip steps with undefined reward
-                    if np.isnan(reward[worker_idx]):
-
-                        continue
-
-                    local_buffer[worker_idx]['actions'].append(action[worker_idx])
-                    local_buffer[worker_idx]['states'].append(state[worker_idx])
-                    local_buffer[worker_idx]['next_states'].append(next_state[worker_idx])
-                    local_buffer[worker_idx]['done'].append(done[worker_idx])
-
-                    # self.replay_buffer.push((list(state[worker_idx]),
-                    #                          list(action[worker_idx]),
-                    #                          reward[worker_idx],
-                    #                          list(next_state[worker_idx]),
-                    #                          done[worker_idx]))
-
-                timer['replay_buffer'].stop()
-
-                state = next_state
-                ep_reward += reward
-                self.frame_idx += 1
 
                 timer['utils'].start()
-                writer.add_histogram("Action", action, self.frame_idx)
+                if not self.use_alpha:
+                    writer.add_scalar('Noise_level', self.noise_level, self.step)
+                writer.add_scalar('Policy_loss', policy_loss, self.step)
+                writer.add_scalar('Model Dynamics Loss', md_loss, self.step)
+                print(f"policy_loss: {policy_loss:.2f} | md_loss: {md_loss:.2f}")
+                # explicitly remove all tensor-related variables just to ensure well-behaved memory management
+                del policy_loss, md_loss, action
                 timer['utils'].stop()
 
-                # if len(self.replay_buffer) > 3 * batch_size and self.frame_idx % 25 == 0:
-                if len(self.replay_buffer) > 3 * batch_size:
 
-                    timer['algo'].start()
-                    for _ in range(self.num_updates_per_step):
-                        _, policy_loss, md_loss = self.update(batch_size)
-                    timer['algo'].stop()
+            # ADD termination condition:
+            current_steps = env.get_attr('current_step')
+            print(current_steps)
+            for w in range(kwargs['num_workers']):
+                # if reward[w] < 0.001 and current_steps[w] > 3: # dtw > 7
+                #     done[w] = True
 
-                    timer['utils'].start()
-                    if not self.use_alpha:
-                        writer.add_scalar('Noise_level', self.noise_level, self.frame_idx)
-                    writer.add_scalar('Policy_loss', policy_loss, self.frame_idx)
-                    writer.add_scalar('Model Dynamics Loss', md_loss, self.frame_idx)
-                    print(f"policy_loss: {policy_loss:.2f} | md_loss: {md_loss:.2f}")
-                    # explicitly remove all tensor-related variables just to ensure well-behaved memory management
-                    del policy_loss, md_loss, action
-                    timer['utils'].stop()
+                if np.mean(abs(info[w]['dtw_dist'])) > 5.0 and current_steps[w] > 3: # dtw > 7
+                    # continue
+                    done[w] = True
 
+            if any(done):
+                timer['utils'].start()
+                for i in range(kwargs['num_workers']):
+                    if done[i]:
+                        self.replay_buffer.append(local_buffer[i])
 
-                # ADD termination condition:
-                current_steps = env.get_attr('current_step')
-                print(current_steps)
-                for w in range(kwargs['num_workers']):
-                    # if reward[w] < 0.001 and current_steps[w] > 3: # dtw > 7
-                    #     done[w] = True
+                        local_buffer[i] = get_empty_episode_entry()
 
-                    if np.mean(abs(info[w]['dtw_dist'])) > 5.0 and current_steps[w] > 3: # dtw > 7
-                        # continue
-                        done[w] = True
+                        reward_running = 0.90 * reward_running + 0.10 * ep_reward[i]
+                        rewards.append(ep_reward[i])
+                        ep_reward[i] = 0.
+                        state[i] = env.reset([i])
+                        local_buffer[i]['goal'] = env.get_attr('cur_reference')[i]
+                env.render()
 
-                if any(done):
-
-                    timer['utils'].start()
-                    for i in range(kwargs['num_workers']):
-                        if done[i]:
-
-                            self.replay_buffer.append(local_buffer[i])
-
-                            local_buffer[i] = get_empty_episode_entry()
-
-                            reward_running = 0.90 * reward_running + 0.10 * ep_reward[i]
-                            rewards.append(ep_reward[i])
-                            ep_reward[i] = 0.
-                            state[i] = env.reset([i])
-                            local_buffer[i]['goal'] = env.get_attr('cur_reference')[i]
-                    env.render()
-
-                    writer.add_scalar("Reward", reward_running, self.frame_idx)
-                    for k, v in timer.items():
-                        writer.add_scalar(f"Elapsed time: {k}", v.elapsed_time, self.frame_idx)
-                    self.add_weights_histogram(writer, self.frame_idx)
-                    timer['utils'].stop()
+                writer.add_scalar("Reward", reward_running, self.step)
+                for k, v in timer.items():
+                    writer.add_scalar(f"Elapsed time: {k}", v.elapsed_time, self.step)
+                self.add_weights_histogram(writer, self.step)
+                timer['utils'].stop()
                     # break
 
             # save best performing policy
-            if reward_running > best_total_reward or self.frame_idx % 200 == 0:
+            if reward_running > best_total_reward or self.step % 200 == 0:
                 timer['utils'].start()
                 # self.save_networks(episode_reward)
                 name = f'{self._env_name}_BackpropIntoPolicy_' + f'{reward_running:.2f}'
@@ -391,14 +398,95 @@ class SequentialBackpropIntoPolicy(nn.Module):
                 path_agent = f'{save_dir}{name}.bp'
                 torch.save(self, path_agent)
                 timer['utils'].stop()
-                print(f'step={self.frame_idx} | reward_avg={reward_running:.2f} | saving agent: {name}')
+                print(f'step={self.step} | reward_avg={reward_running:.2f} | saving agent: {name}')
                 if reward_running > best_total_reward:
                     best_total_reward = reward_running
 
-            if self.frame_idx % 100 == 0:
-                print(f'step={self.frame_idx} | reward_avg={reward_running:.2f} |')
+            if self.step % 100 == 0:
+                print(f'step={self.step} | reward_avg={reward_running:.2f} |')
 
         writer.close()
+
+    def validate_and_summarize(self, env, writer, **kwargs):
+        state = env.reset()
+        env.render()
+
+        episode_done = [False]*kwargs['num_workers']
+        while not all(episode_done):
+            action = self.policy_net.get_action(state)
+            action = action.detach().cpu().numpy()
+            action = np.clip(action, -1, 1)
+            next_state, reward, done, info = env.step(action)
+            print(reward)
+            # dtw_dist = info['dtw_dist']
+            env.render()
+
+            state = next_state
+
+            for worker_idx in range(kwargs['num_workers']):
+
+                if done[worker_idx]:
+                    episode_done[worker_idx] = True
+
+                    name = f'{self._env_name}_BackpropIntoPolicy_' + f'{self.step}'
+                    save_dir = f'../../../runs/{self._env_name}_backprop_{self._dt}/'
+                    fname = os.path.join(save_dir, name + ".mp4")
+                    fnames = env.dump_episode(fname=os.path.join(save_dir, name))
+
+                    episode_history = env.get_episode_history(remotes=[worker_idx])[0]
+                    video_data = torchvision.io.read_video(fnames[0]+".mp4", start_pts=0, end_pts=None, pts_unit='pts')
+
+                    dtw_res = dtwalign.dtw(episode_history['embeds'], episode_history['ref']['acoustics'], dist=kwargs['distance']['dist'],
+                                 step_pattern=kwargs['distance']['step_pattern'],
+                                 open_end=False)
+
+                    self.summarize(writer, episode_history, video_data, dtw_res)
+                    state[worker_idx] = env.reset([worker_idx])
+
+    def summarize(self, writer, episode_history, video_data, dtw_res):
+        fig = plt.figure()
+        plt.matshow(episode_history['mfcc'].T, 0)
+        plt.colorbar()
+        writer.add_figure('agent/MFCC', fig, self.step)
+
+        fig = plt.figure()
+        plt.matshow(episode_history['embeds'].T, 0)
+        plt.colorbar()
+        writer.add_figure('agent/Embeddings', fig, self.step)
+
+        fig = plt.figure()
+        plt.matshow(episode_history['vt'].T[:-6], 0)
+        plt.colorbar()
+        writer.add_figure('agent/VocalTract', fig, self.step)
+
+        fig = plt.figure()
+        plt.matshow(episode_history['ref']['mfcc'].squeeze().T, 0)
+        plt.colorbar()
+        writer.add_figure('reference/MFCC', fig, self.step)
+
+        fig = plt.figure()
+        plt.matshow(episode_history['ref']['acoustics'].T, 0)
+        plt.colorbar()
+        writer.add_figure('reference/Embeddings', fig, self.step)
+
+        fig = plt.figure()
+        plt.matshow(episode_history['ref']['vt'].T[:-6], 0)
+        plt.colorbar()
+        writer.add_figure('reference/VocalTract', fig, self.step)
+
+        if 'video_fps' in video_data[2]:
+            writer.add_video('agent/vt_video', video_data[0].unsqueeze(0).permute(0,1,4,2,3), fps=video_data[2]['video_fps'])
+
+        if 'audio_fps' in video_data[2]:
+            writer.add_audio('agent/audio', video_data[1], sample_rate=video_data[2]['audio_fps'])
+            writer.add_audio('ref/audio', episode_history['ref']['audio'].flatten(), sample_rate=video_data[2]['audio_fps'])
+
+        fig, ax = dtw_res.plot_path()
+        writer.add_figure('DTW/Embeddings', fig, self.step)
+
+        #TODO: add dtw alignment
+
+
 
 
 if __name__ == '__main__':
@@ -416,6 +504,8 @@ if __name__ == '__main__':
     kwargs['train'].update(kwargs['env'])
     kwargs['train']['collect_data'] = kwargs['collect_data']
     kwargs['train']['log_mode'] = kwargs['log_mode']
+
+    kwargs['train']['distance'] = kwargs['env']['distance']
 
     if kwargs["init_data_fname"] is not None:
         kwargs['train']['init_data_fname'] = kwargs['init_data_fname']

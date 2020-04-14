@@ -87,7 +87,15 @@ class VectorizedWrapper(SubprocVecEnv):
         for pipe in self.remotes:
             pipe.send(('env_method', ('dump_episode', args, {**kwargs})))
         res = [pipe.recv() for pipe in self.remotes]
-        return
+        return res
+
+    def get_episode_history(self, *args, remotes=None, **kwargs ):
+        if remotes is None:
+            remotes = np.arange(len(self.remotes))
+        for i in remotes:
+            self.remotes[i].send(('env_method', ('get_episode_history', args, {**kwargs})))
+        res = [self.remotes[i].recv() for i in remotes]
+        return res
 
     def reset(self, remotes=None):
         """Reset specified environments. If remotes is None, then all environments will be reseted"""
