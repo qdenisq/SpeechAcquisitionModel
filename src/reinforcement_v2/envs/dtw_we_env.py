@@ -23,6 +23,8 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
     def __init__(self, lib_path, speaker_fname, **kwargs):
         super(VTLDTWEnv, self).__init__(lib_path, speaker_fname, **kwargs)
 
+        self.random_offset = kwargs['random_offset']
+
         # load references
         self.references = []
         reference_fnames = kwargs['references']
@@ -60,13 +62,17 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
     def reset(self, state_to_reset=None, **kwargs):
         self.cur_reference = self.references[np.random.randint(0, len(self.references))]
 
-
-
         if state_to_reset is None:
             state_to_reset = np.concatenate((self.cur_reference['tract_params'][0, :],
                                              self.cur_reference['glottis_params'][0, :]))
 
         res = super().reset(state_to_reset, **kwargs)
+
+        if self.random_offset:
+            self.offset = np.random.randint(0, self.cur_reference['tract_params'].shape[0] - 2)
+            for i in range(self.offset):
+                action = self.cur_reference['action'][i][:self.action_dim]
+                res, *_ = VTLDTWEnv._step(self, action)
 
         self.episode_history['ref'] = self.cur_reference
         return res

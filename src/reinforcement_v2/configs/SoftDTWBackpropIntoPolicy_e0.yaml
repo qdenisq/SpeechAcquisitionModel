@@ -16,6 +16,7 @@ noise_decay: 0.995
 noise_min: 0.05
 env:
   env_id: ref_masked_dtw_we_vtl # vtl_base, dtw_we_vtl, masked_dtw_we_vtl
+  random_offset: false
   speaker_fname: "C:/Study/SpeechAcquisitionModel/src/VTL/JD2.speaker"
   lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
   selected_reference_state:
@@ -112,7 +113,7 @@ env:
 
 train:
   max_steps: 3000000
-  batch_size: 5
+  batch_size: 4
   sync_every: 200
   validate_every: 200
 replay_buffer:

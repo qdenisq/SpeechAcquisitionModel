@@ -11,7 +11,6 @@
       <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" beforeDir="false" afterPath="$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py" afterDir="false" />
     </list>
-    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -58,18 +57,6 @@
       <recent name="C:\Study\SpeechAcquisitionModel\runs\masked_dtw_we_vtl_asac_12_03_2019_09_16_AM" />
     </key>
   </component>
-  <component name="RunDashboard">
-    <option name="ruleStates">
-      <list>
-        <RuleState>
-          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
-        </RuleState>
-        <RuleState>
-          <option name="name" value="StatusDashboardGroupingRule" />
-        </RuleState>
-      </list>
-    </option>
-  </component>
   <component name="RunManager" selected="Python.backprop_md_softDTW">
     <configuration default="true" type="tests" factoryName="Attests">
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -105,6 +92,48 @@
       <option name="additionalOptions" value="" />
       <option name="ipnbHost" value="127.0.0.1" />
       <option name="ipnbPort" value="8888" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unnamed" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="SpeechAcquisitionModel" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Study\SpeechAcquisitionModel\venv\Scripts\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="Unnamed1" type="PythonConfigurationType" factoryName="Python">
+      <module name="SpeechAcquisitionModel" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="C:\Users\s3628075\Anaconda3\python.exe" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
     <configuration default="true" type="PythonConfigurationType" factoryName="Python">
@@ -156,7 +185,7 @@
       <envs>
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
-      <option name="SDK_HOME" value="C:\ProgramData\Anaconda3\python.exe" />
+      <option name="SDK_HOME" value="C:\Users\s3628075\Anaconda3\python.exe" />
       <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/src/reinforcement_v2/algo" />
       <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
@@ -250,6 +279,8 @@
       <option name="ipnbPort" value="8888" />
     </configuration>
     <list>
+      <item itemvalue="Python.Unnamed1" />
+      <item itemvalue="Python.Unnamed" />
       <item itemvalue="Python.backprop_md" />
       <item itemvalue="Python.backprop_md_softDTW" />
       <item itemvalue="Python.backprop_md_v2" />
@@ -297,42 +328,88 @@
       <screen x="0" y="0" width="1280" height="680" />
     </state>
     <state x="361" y="0" key="#backprop_md/0.0.1280.680@0.0.1280.680" timestamp="1585362906763" />
-    <state x="95" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585362705633">
-      <screen x="0" y="0" width="1280" height="680" />
+    <state x="114" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1586739024403">
+      <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="95" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1280.680@0.0.1280.680" timestamp="1585362705633" />
+    <state x="114" y="0" key="#com.intellij.execution.impl.EditConfigurationsDialog/0.0.1536.824@0.0.1536.824" timestamp="1586739024403" />
+    <state x="-101" y="70" width="599" height="231" key="#xdebugger.evaluate" timestamp="1587031572411">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="-101" y="70" width="599" height="231" key="#xdebugger.evaluate/0.0.1920.1040@0.0.1920.1040" timestamp="1587031572411" />
+    <state width="1501" height="466" key="DebuggerActiveHint" timestamp="1587036639394">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1501" height="466" key="DebuggerActiveHint/0.0.1920.1040@0.0.1920.1040" timestamp="1587036639394" />
     <state x="504" y="115" key="FileChooserDialogImpl" timestamp="1585798179412">
       <screen x="0" y="0" width="1536" height="824" />
     </state>
     <state x="420" y="95" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1585362954225" />
     <state x="504" y="115" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1585798179412" />
-    <state width="1364" height="195" key="GridCell.Tab.0.bottom" timestamp="1585536527416">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1364" height="195" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1585536527416" />
-    <state width="1364" height="195" key="GridCell.Tab.0.center" timestamp="1585536527415">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1364" height="195" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1585536527415" />
-    <state width="1364" height="195" key="GridCell.Tab.0.left" timestamp="1585536527415">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1364" height="195" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1585536527415" />
-    <state width="1364" height="195" key="GridCell.Tab.0.right" timestamp="1585536527416">
-      <screen x="0" y="0" width="1536" height="824" />
-    </state>
-    <state width="1364" height="195" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1585536527416" />
-    <state x="213" y="0" key="SettingsEditor" timestamp="1586667629950">
+    <state width="1899" height="261" key="GridCell.Tab.0.bottom" timestamp="1587037457862">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
+    <state width="1895" height="261" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1586933843690" />
+    <state width="1899" height="261" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1587037457862" />
+    <state width="1899" height="261" key="GridCell.Tab.0.center" timestamp="1587037457861">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1895" height="261" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1586933843689" />
+    <state width="1899" height="261" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1587037457861" />
+    <state width="1899" height="261" key="GridCell.Tab.0.left" timestamp="1587037457861">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1895" height="261" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1586933843689" />
+    <state width="1899" height="261" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1587037457861" />
+    <state width="1899" height="261" key="GridCell.Tab.0.right" timestamp="1587037457862">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1895" height="261" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1586933843690" />
+    <state width="1899" height="261" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1587037457862" />
+    <state width="1899" height="261" key="GridCell.Tab.1.bottom" timestamp="1587037457862">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1895" height="261" key="GridCell.Tab.1.bottom/0.0.1536.824@0.0.1536.824" timestamp="1586933843692" />
+    <state width="1899" height="261" key="GridCell.Tab.1.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1587037457862" />
+    <state width="1899" height="261" key="GridCell.Tab.1.center" timestamp="1587037457862">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1895" height="261" key="GridCell.Tab.1.center/0.0.1536.824@0.0.1536.824" timestamp="1586933843691" />
+    <state width="1899" height="261" key="GridCell.Tab.1.center/0.0.1920.1040@0.0.1920.1040" timestamp="1587037457862" />
+    <state width="1899" height="261" key="GridCell.Tab.1.left" timestamp="1587037457862">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1895" height="261" key="GridCell.Tab.1.left/0.0.1536.824@0.0.1536.824" timestamp="1586933843691" />
+    <state width="1899" height="261" key="GridCell.Tab.1.left/0.0.1920.1040@0.0.1920.1040" timestamp="1587037457862" />
+    <state width="1899" height="261" key="GridCell.Tab.1.right" timestamp="1587037457862">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="1895" height="261" key="GridCell.Tab.1.right/0.0.1536.824@0.0.1536.824" timestamp="1586933843692" />
+    <state width="1899" height="261" key="GridCell.Tab.1.right/0.0.1920.1040@0.0.1920.1040" timestamp="1587037457862" />
+    <state x="170" y="0" key="SettingsEditor" timestamp="1586739051473">
+      <screen x="0" y="0" width="1536" height="824" />
+    </state>
     <state x="142" y="0" key="SettingsEditor/0.0.1280.680@0.0.1280.680" timestamp="1585363006377" />
+    <state x="170" y="0" key="SettingsEditor/0.0.1536.824@0.0.1536.824" timestamp="1586739051473" />
     <state x="213" y="0" key="SettingsEditor/0.0.1920.1040@0.0.1920.1040" timestamp="1586667629950" />
-    <state x="511" y="251" key="com.intellij.ide.util.TipDialog" timestamp="1586667969895">
+    <state width="966" height="523" key="XDebugger.FullValuePopup" timestamp="1587036638222">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state width="966" height="523" key="XDebugger.FullValuePopup/0.0.1920.1040@0.0.1920.1040" timestamp="1587036638222" />
+    <state x="511" y="251" key="com.intellij.ide.util.TipDialog" timestamp="1587032455673">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state x="341" y="164" key="com.intellij.ide.util.TipDialog/0.0.1280.680@0.0.1280.680" timestamp="1585362887556" />
-    <state x="409" y="199" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1585798172556" />
-    <state x="511" y="251" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1586667969895" />
+    <state x="409" y="199" key="com.intellij.ide.util.TipDialog/0.0.1536.824@0.0.1536.824" timestamp="1586739525357" />
+    <state x="511" y="251" key="com.intellij.ide.util.TipDialog/0.0.1920.1040@0.0.1920.1040" timestamp="1587032455673" />
+    <state x="404" y="259" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2" timestamp="1586849984422">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="404" y="259" key="com.intellij.xdebugger.impl.breakpoints.ui.BreakpointsDialogFactory$2/0.0.1920.1040@0.0.1920.1040" timestamp="1586849984422" />
+    <state x="93" y="100" width="1733" height="847" key="dock-window-1" timestamp="1586782032817">
+      <screen x="0" y="0" width="1920" height="1040" />
+    </state>
+    <state x="93" y="100" width="1733" height="847" key="dock-window-1/0.0.1920.1040@0.0.1920.1040" timestamp="1586782032817" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -799,39 +876,9 @@
           <option name="timeStamp" value="801" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
-          <line>245</line>
-          <option name="timeStamp" value="839" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
-          <line>241</line>
-          <option name="timeStamp" value="842" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
-          <line>234</line>
-          <option name="timeStamp" value="843" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
-          <line>266</line>
-          <option name="timeStamp" value="854" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py</url>
-          <line>61</line>
+          <line>62</line>
           <option name="timeStamp" value="856" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/VTL/vtl_environment.py</url>
-          <line>232</line>
-          <option name="timeStamp" value="885" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/dtw_we_env.py</url>
-          <line>117</line>
-          <option name="timeStamp" value="886" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/VTL/create_reference.py</url>
@@ -855,17 +902,17 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py</url>
-          <line>70</line>
+          <line>71</line>
           <option name="timeStamp" value="936" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py</url>
-          <line>83</line>
+          <line>84</line>
           <option name="timeStamp" value="939" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/base_env.py</url>
-          <line>79</line>
+          <line>80</line>
           <option name="timeStamp" value="940" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -925,34 +972,9 @@
           <option name="timeStamp" value="1001" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
-          <line>165</line>
-          <option name="timeStamp" value="1013" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
-          <line>169</line>
-          <option name="timeStamp" value="1014" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
-          <line>172</line>
-          <option name="timeStamp" value="1015" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
-          <line>175</line>
-          <option name="timeStamp" value="1016" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/dynamic_reference_masked_dtw_we_env.py</url>
           <line>44</line>
           <option name="timeStamp" value="1017" />
-        </line-breakpoint>
-        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/reference_masked_dtw_we_env.py</url>
-          <line>73</line>
-          <option name="timeStamp" value="1028" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md.py</url>
@@ -978,6 +1000,33 @@
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/envs/dynamic_reference_masked_dtw_we_env.py</url>
           <line>106</line>
           <option name="timeStamp" value="1040" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <condition expression="np.max(abs(next_state[:, :24] - state[:, :24])) &gt; 0.21" language="Python" mode="CODE_FRAGMENT" />
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
+          <line>326</line>
+          <option name="timeStamp" value="1108" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <condition expression="np.max(abs(np.array(local_buffer[i]['next_states'])[:, :24] - np.array(local_buffer[i]['states'])[:, :24])) &gt; 0.21" language="Python" mode="CODE_FRAGMENT" />
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
+          <line>405</line>
+          <option name="timeStamp" value="1109" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
+          <line>132</line>
+          <option name="timeStamp" value="1118" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
+          <line>573</line>
+          <option name="timeStamp" value="1121" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
+          <line>547</line>
+          <option name="timeStamp" value="1122" />
         </line-breakpoint>
       </breakpoints>
       <default-breakpoints>

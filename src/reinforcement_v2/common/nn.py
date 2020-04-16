@@ -200,27 +200,32 @@ class ModelDynamics(nn.Module):
 
     def forward(self, states, actions):
         x = torch.cat((states[:, :self.__state_dim], actions), -1)
+        artic_x = x[:, :self.__state_dim - self.__acoustic_dim]
+        actions_x = x[:, -self.__action_dim:]
         original_dim = x.shape
         x = self.__bn1(x.view(-1, original_dim[-1]))
         x = x.view(original_dim)
         x = self.drop(x)
 
         # artic
-        artic_x = x[:, :self.__state_dim - self.__acoustic_dim]
-        actions_x = x[:, -self.__action_dim:]
         # artic_state_delta = self.artic_state_1(self.relu(self.artic_state_0(torch.cat((artic_x, actions_x), -1))))
-        artic_state_delta = self.artic_state_0(torch.cat((artic_x, actions_x), -1))
+        # DEBUG:
+        # artic_state_delta = torch.cat([actions_x / 5, torch.zeros((actions_x.shape[0]), 6)], -1)
+        artic_state_delta = torch.tanh(self.artic_state_0(torch.cat((artic_x, actions_x), -1)))
+
+
 
         # acoustic
         for linear in self.linears:
             x = self.relu(linear(x))
 
         # predict state
-        acoustic_state_delta = self.acoustic_state(x)
+        acoustic_state_delta = torch.tanh(self.acoustic_state(x))
+        # acoustic_state_delta = artic_x + actions_x
 
         states_delta = torch.cat((artic_state_delta, acoustic_state_delta), -1)
         # states_delta = self.tanh(torch.cat((artic_state_delta, acoustic_state_delta), -1))
-        out_states = states[:, :self.__state_dim] + states_delta
+        out_states = torch.clamp(states[:, :self.__state_dim] + states_delta, min=-1, max=1)
 
         return out_states
 

@@ -104,6 +104,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
     def update(self, batch_size):
         # state, action, reward, next_state, done = self.replay_buffer.sample(batch_size)
         batch = self.replay_buffer.sample(batch_size)
+        audio_dim = env.get_attr('audio_dim')[0]
 
         """
         Model Dynamics Update
@@ -111,12 +112,15 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
         self.md_optimizer.zero_grad()
         md_loss = torch.tensor(0).float().to(self.device)
+        num_samples = 0
+
         for sample in batch:
             state = torch.FloatTensor(sample['states']).to(self.device)
             next_state = torch.FloatTensor(sample['next_states']).to(self.device)
             action = torch.FloatTensor(sample['actions']).to(self.device)
             # reward = torch.FloatTensor(reward).unsqueeze(1).to(self.device)
             done = torch.FloatTensor(np.float32(sample['done'])).unsqueeze(1).to(self.device)
+            num_samples += state.shape[0]
 
 
 
@@ -124,13 +128,16 @@ class SequentialBackpropIntoPolicy(nn.Module):
             agent_next_state = next_state[:, :self.agent_state_dim]
             predicted_next_agent_state = self.model_dynamics(agent_state, action)
 
-            md_loss += torch.nn.SmoothL1Loss(reduction="sum")(agent_next_state, predicted_next_agent_state) / agent_state.shape[0]
-        md_loss /= batch_size
+            md_loss += torch.nn.SmoothL1Loss(reduction="sum")(agent_next_state, predicted_next_agent_state)
+            # md_loss += torch.nn.SmoothL1Loss(reduction="sum")(agent_next_state[:, :-audio_dim-6], predicted_next_agent_state[:, :-audio_dim-6])
+            # md_loss += torch.sum(torch.abs(agent_next_state[:, :-audio_dim-6] - predicted_next_agent_state[:, :-audio_dim-6]))
+
+        md_loss /= num_samples
         md_loss.backward()
         torch.nn.utils.clip_grad_norm_(self.model_dynamics.parameters(), 1)
         self.md_optimizer.step()
-        if self.train_step % 5 == 0:
-            self.soft_update(self.model_dynamics, self.model_dynamics_target, 0.1)
+        # if self.train_step % 5 == 0:
+        self.soft_update(self.model_dynamics, self.model_dynamics_target, 0.1)
 
         """
         Policy loss
@@ -138,6 +145,8 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
         self.md_optimizer.zero_grad()
         self.policy_optimizer.zero_grad()
+
+        policy_loss = torch.tensor(0.).float().to(self.device)
 
         for sample in batch:
             state = torch.FloatTensor(sample['states']).to(self.device)
@@ -148,6 +157,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
             ac_goal = torch.FloatTensor(sample['goal']['acoustics']).to(self.device) / 10.
 
+
             # TODO: add articulatory goal and loss
             # ar_goal =
 
@@ -157,12 +167,11 @@ class SequentialBackpropIntoPolicy(nn.Module):
             predicted_next_agent_state = self.model_dynamics_target(agent_state, new_action)
             predicted_next_agent_state_masked = predicted_next_agent_state[:, self.reference_mask]
             state_masked = state[:, self.agent_state_dim:]
-            audio_dim = env.get_attr('audio_dim')[0]
+
             ar_goal = state_masked[:, :-audio_dim]
 
 
             softDTW = SoftDTW(open_end=True, dist='l1')
-            policy_loss = torch.tensor(0.).float().to(self.device)
 
 
 
@@ -174,19 +183,24 @@ class SequentialBackpropIntoPolicy(nn.Module):
                 predicted_seq_ar = predicted_seq[:, :-audio_dim]
 
                 # soft DTW loss acoustic
-                ac_loss = softDTW(predicted_seq_ac, ac_goal)
+                # ac_loss = softDTW(predicted_seq_ac, ac_goal)
 
                 # soft DTW loss articulatory
-                ar_loss = softDTW(predicted_seq_ar, ar_goal)
+                # ar_loss = torch.nn.SmoothL1Loss(reduction="sum")(predicted_seq_ar[-1], ar_goal[-1])
+                ar_loss = torch.nn.SmoothL1Loss(reduction="sum")(predicted_seq_ar[-1].unsqueeze(0), ar_goal[i].unsqueeze(0))
+                # ar_loss = softDTW(predicted_seq_ar, ar_goal)
 
-                policy_loss += ac_loss
+
+
+
+                # policy_loss += ac_loss
                 policy_loss += ar_loss
 
                 # print(ac_loss)
                 # print(ar_loss)
 
-            policy_loss /= state.shape[0]
-        policy_loss /= batch_size
+            # policy_loss /= state.shape[0]
+        policy_loss /= num_samples
 
         policy_loss.backward()
         torch.nn.utils.clip_grad_norm_(self.policy_net.parameters(), 1)
@@ -268,9 +282,13 @@ class SequentialBackpropIntoPolicy(nn.Module):
         reward_running = 0.
         while self.step < self.params['train']['max_steps']:
 
-            if self.step % self.params['train']['sync_every'] == 0:
+            if self.step % self.params['train']['validate_every'] == 0:
+                self.validate_and_summarize(env, writer, **kwargs)
+
+            if self.step % self.params['train']['sync_every'] == 0 or self.step % self.params['train']['validate_every'] == 0:
                 ep_reward = np.zeros(kwargs['num_workers'])
                 state = env.reset()
+                env.render()
                 for i in range(kwargs['num_workers']):
                     local_buffer[i] = get_empty_episode_entry()
                     local_buffer[i]['goal'] = env.get_attr('cur_reference')[i]
@@ -279,8 +297,13 @@ class SequentialBackpropIntoPolicy(nn.Module):
                     self.noise.reset()
                     self.noise_level = max(self.noise_min, self.noise_level * self.noise_decay)
 
-            if self.step % self.params['train']['validate_every'] == 0:
-                self.validate_and_summarize(env, writer, **kwargs)
+
+                # ep_reward = np.zeros(kwargs['num_workers'])
+                # state = env.reset()
+                # env.render()
+                # for i in range(kwargs['num_workers']):
+                #     local_buffer[i] = get_empty_episode_entry()
+                #     local_buffer[i]['goal'] = env.get_attr('cur_reference')[i]
 
 
             timer['algo'].start()
@@ -296,7 +319,10 @@ class SequentialBackpropIntoPolicy(nn.Module):
             timer['env'].start()
 
             next_state, reward, done, info = env.step(action)
-            print(reward)
+
+            # print("ERROR", np.max(np.clip(state[:, :24] + action / 5, -1, 1) - next_state[:, : 24]))
+
+            # print(reward)
             # dtw_dist = info['dtw_dist']
             if kwargs['visualize']:
                 env.render()
@@ -306,10 +332,11 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
             for worker_idx in range(kwargs['num_workers']):
                 # skip steps with undefined reward
-                if np.isnan(reward[worker_idx]):
-
-                    continue
-
+                # if np.isnan(reward[worker_idx]):
+                #
+                #     continue
+                # if done[worker_idx]:
+                #     continue
                 local_buffer[worker_idx]['actions'].append(action[worker_idx])
                 local_buffer[worker_idx]['states'].append(state[worker_idx])
                 local_buffer[worker_idx]['next_states'].append(next_state[worker_idx])
@@ -361,7 +388,8 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
                 #TODO: study different stop conditions
                 last_path_point_diff = abs(info[w]['last_path_point'][0] - info[w]['last_path_point'][1])
-                if (np.mean(info[w]['dtw_dist']) > 10000 or last_path_point_diff > 8) and current_steps[w] > 2 : # dtw > 7
+                steps_made = len(local_buffer[w]['actions'])
+                if (np.mean(info[w]['dtw_dist']) > 10000 or last_path_point_diff > 8) and steps_made >= 2 : # dtw > 7
                     # continue
                     done[w] = True
 
@@ -369,7 +397,11 @@ class SequentialBackpropIntoPolicy(nn.Module):
                 timer['utils'].start()
                 for i in range(kwargs['num_workers']):
                     if done[i]:
-                        self.replay_buffer.append(local_buffer[i])
+                        self.replay_buffer.append(copy.deepcopy(local_buffer[i]))
+
+                        # print(np.max(abs(np.array(self.replay_buffer.data[-1]['states'])[:, :24] - np.array(
+                        #     self.replay_buffer.data[-1]['next_states'])[:, :24])))
+
 
                         local_buffer[i] = get_empty_episode_entry()
 
@@ -388,10 +420,10 @@ class SequentialBackpropIntoPolicy(nn.Module):
                     # break
 
             # save best performing policy
-            if reward_running > best_total_reward or self.step % 200 == 0:
+            if self.step % 200 == 0:
                 timer['utils'].start()
                 # self.save_networks(episode_reward)
-                name = f'{self._env_name}_BackpropIntoPolicy_' + f'{reward_running:.2f}'
+                name = f'{self._env_name}_BackpropIntoPolicy_' + f'{self.step}'
                 save_dir = f'../../../models/{self._env_name}_backprop_{self._dt}/'
                 try:
                     os.makedirs(save_dir)
@@ -416,16 +448,23 @@ class SequentialBackpropIntoPolicy(nn.Module):
         episode_done = [False]*kwargs['num_workers']
         dtw_dists = [[] for _ in range(kwargs['num_workers'])]
         last_path_points = [[] for _ in range(kwargs['num_workers'])]
+        vt_predictions = [[] for _ in range(kwargs['num_workers'])]
+        embeds_predictions = [[] for _ in range(kwargs['num_workers'])]
         while not all(episode_done):
             action = self.policy_net.get_action(state)
             action = action.detach().cpu().numpy()
             action = np.clip(action, -1, 1)
             next_state, reward, done, info = env.step(action)
-            # for i in kwargs['num_workers']:
-            #     dtw_dists[i].append(info[i]['dtw_dist'])
-            #     ref_match_points[i].append(info[i]['last_path_point'])
+            agent_state = state[:, :self.agent_state_dim]
 
-            print(reward)
+
+            predicted_next_agent_state = self.model_dynamics_target(torch.from_numpy(agent_state).float().to(self.device),
+                                       torch.from_numpy(action).float().to(self.device)).detach().cpu().numpy()
+            audio_dim = env.get_attr('audio_dim')[0]
+            vt_pred = predicted_next_agent_state[:, :-audio_dim]
+            embeds_pred = predicted_next_agent_state[:, -audio_dim:]
+
+            # print(reward)
             # dtw_dist = info['dtw_dist']
             env.render()
 
@@ -434,6 +473,9 @@ class SequentialBackpropIntoPolicy(nn.Module):
             for worker_idx in range(kwargs['num_workers']):
                 dtw_dists[worker_idx].append(info[worker_idx]['dtw_dist'])
                 last_path_points[worker_idx].append(info[worker_idx]['last_path_point'])
+                vt_predictions[worker_idx].append(vt_pred[worker_idx])
+                embeds_predictions[worker_idx].append((embeds_pred[worker_idx]))
+
 
                 if done[worker_idx]:
                     episode_done[worker_idx] = True
@@ -444,16 +486,35 @@ class SequentialBackpropIntoPolicy(nn.Module):
                     fnames = env.dump_episode(fname=os.path.join(save_dir, name))
 
                     episode_history = env.get_episode_history(remotes=[worker_idx])[0]
-                    video_data = torchvision.io.read_video(fnames[0]+".mp4", start_pts=0, end_pts=None, pts_unit='pts')
+                    video_data = torchvision.io.read_video(fnames[0]+".mp4", start_pts=0, end_pts=None, pts_unit='sec')
 
                     dtw_res = dtwalign.dtw(episode_history['embeds'], episode_history['ref']['acoustics'], dist=kwargs['distance']['dist'],
                                  step_pattern=kwargs['distance']['step_pattern'],
                                  open_end=False)
 
-                    self.summarize(writer, episode_history, video_data, dtw_res, dtw_dists[worker_idx], last_path_points[worker_idx])
-                    state[worker_idx] = env.reset([worker_idx])
+                    #prepare predictions
+                    vt_preds = np.array(vt_predictions[worker_idx])
+                    embeds_preds = np.array(embeds_predictions[worker_idx]).reshape(-1, episode_history['embeds'].shape[-1])
+                    if worker_idx == 0:
+                        self.summarize(writer,
+                                       episode_history,
+                                       video_data,
+                                       dtw_res,
+                                       dtw_dists[worker_idx],
+                                       last_path_points[worker_idx],
+                                       vt_preds,
+                                       embeds_preds)
+                        state[worker_idx] = env.reset([worker_idx])
 
-    def summarize(self, writer, episode_history, video_data, dtw_res, dtw_dists, last_path_points):
+
+    def summarize(self,
+                  writer,
+                  episode_history,
+                  video_data, dtw_res,
+                  dtw_dists,
+                  last_path_points,
+                  vt_predictions,
+                  embeddings_predictions):
         fig = plt.figure()
         plt.matshow(episode_history['mfcc'].T, 0)
         plt.colorbar()
@@ -485,11 +546,11 @@ class SequentialBackpropIntoPolicy(nn.Module):
         writer.add_figure('reference/VocalTract', fig, self.step)
 
         if 'video_fps' in video_data[2]:
-            writer.add_video('agent/vt_video', video_data[0].unsqueeze(0).permute(0,1,4,2,3), fps=video_data[2]['video_fps'])
+            writer.add_video('agent_video/vt_video', video_data[0].unsqueeze(0).permute(0,1,4,2,3), fps=video_data[2]['video_fps'], global_step=self.step)
 
         if 'audio_fps' in video_data[2]:
-            writer.add_audio('agent/audio', video_data[1], sample_rate=video_data[2]['audio_fps'])
-            writer.add_audio('ref/audio', episode_history['ref']['audio'].flatten(), sample_rate=video_data[2]['audio_fps'])
+            writer.add_audio('agent/audio', video_data[1], sample_rate=video_data[2]['audio_fps'], global_step=self.step)
+            writer.add_audio('ref/audio', episode_history['ref']['audio'].flatten(), sample_rate=video_data[2]['audio_fps'], global_step=self.step)
 
         fig, ax = dtw_res.plot_path()
         writer.add_figure('DTW/Embeddings', fig, self.step)
@@ -502,6 +563,16 @@ class SequentialBackpropIntoPolicy(nn.Module):
         points = np.array(last_path_points)
         plt.plot(points[:, 0], points[:, 1])
         writer.add_figure('DTW/path', fig, self.step)
+
+        fig = plt.figure()
+        plt.matshow(vt_predictions.T[:-6], 0)
+        plt.colorbar()
+        writer.add_figure('predictions/VocalTract', fig, self.step)
+
+        fig = plt.figure()
+        plt.matshow(embeddings_predictions.T, 0)
+        plt.colorbar()
+        writer.add_figure('predictions/Embeddings', fig, self.step)
 
 
 
