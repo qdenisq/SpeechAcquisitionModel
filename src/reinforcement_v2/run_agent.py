@@ -17,22 +17,22 @@ from src.reinforcement_v2.envs.env import EnvironmentManager
 
 from src.reinforcement_v2.utils.timer import Timer
 # from src.reinforcement_v2.common.tensorboard import DoubleSummaryWriter
-# from src.common.nn import SoftQNetwork, PolicyNetwork
+# from src.common.nn import *
 # from src.common.noise import OUNoise
 # from src.common.replay_buffer import ReplayBuffer
-from src.siamese_net_sound_similarity.train_v2 import SiameseDeepLSTMNet
-from src.reinforcement_v2.algo import *
+from src.reinforcement_v2.algo.backprop_md_softDTW import SequentialBackpropIntoPolicy
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Runs trained agent')
-    parser.add_argument('--config', default='configs/BackpropIntoPolicy_e0.yaml', help='config to build environment')
-    parser.add_argument('--agent', default=r'C:\Study\SpeechAcquisitionModel\models\dynamic_ref_masked_dtw_we_vtl_backprop_02_17_2020_12_28_PM\dynamic_ref_masked_dtw_we_vtl_BackpropIntoPolicy_0.02.bp', help='path to the saved agent')
+    parser.add_argument('--config', default=r'C:\Study\SpeechAcquisitionModel\runs\ref_masked_dtw_we_vtl_backprop_04_27_2020_07_32_PM\md_backprop.yaml', help='config to build environment')
+    parser.add_argument('--agent', default=r'C:\Study\SpeechAcquisitionModel\models\ref_masked_dtw_we_vtl_backprop_04_27_2020_07_32_PM\ref_masked_dtw_we_vtl_BackpropIntoPolicy_200.bp', help='path to the saved agent')
 
     args = parser.parse_args()
 
     with open(args.config, 'r') as data_file:
         kwargs = yaml.safe_load(data_file)
     pprint(kwargs)
+
 
     agent = torch.load(args.agent)
     agent.policy_net.eval()
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     env_id = env_kwargs.pop('env_id')
     env = env_mgr.make(env_id, *env_args, **env_kwargs)
 
-    for i in range(10):
+    for i in range(2):
 
         state = env.reset()
         env.render()

@@ -35,7 +35,7 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
             ref_item = copy.deepcopy(ref)
             ref_item['fname'] = fname
             audio = np.array(ref['audio']).flatten()
-            sr = 22050
+            sr = self.sr
             zero_pad = np.zeros(int(self.audio_sampling_rate * (self.preproc_params['winlen'] - self.preproc_params['winstep'])))
             audio = np.concatenate((zero_pad, audio))
             preprocessed = self.preproc(audio, sr)[np.newaxis]

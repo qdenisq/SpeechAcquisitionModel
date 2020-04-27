@@ -16,7 +16,7 @@ from python_speech_features import mfcc
 import scipy.io.wavfile as wav
 from six.moves import xrange
 
-from src.audio_processing import AudioPreprocessor, AudioPreprocessorMFCCDeltaDelta
+from src.soft_dtw_awe.audio_processing import AudioPreprocessor, AudioPreprocessorMFCCDeltaDelta
 
 RANDOM_SEED = 0
 MAX_NUM_WAVS_PER_CLASS = 2**27 - 1  # ~134M

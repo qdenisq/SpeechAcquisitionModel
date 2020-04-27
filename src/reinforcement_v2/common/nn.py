@@ -203,9 +203,10 @@ class ModelDynamics(nn.Module):
         artic_x = x[:, :self.__state_dim - self.__acoustic_dim]
         actions_x = x[:, -self.__action_dim:]
         original_dim = x.shape
-        x = self.__bn1(x.view(-1, original_dim[-1]))
-        x = x.view(original_dim)
-        x = self.drop(x)
+
+        # x = self.__bn1(x.view(-1, original_dim[-1]))
+        # x = x.view(original_dim)
+        # x = self.drop(x)
 
         # artic
         # artic_state_delta = self.artic_state_1(self.relu(self.artic_state_0(torch.cat((artic_x, actions_x), -1))))

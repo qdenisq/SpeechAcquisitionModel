@@ -1,0 +1,90 @@
+---
+data_root: 'C:\Study\SpeechAcquisitionModel\data\speech_dataset_extended' # directory with data
+model_root: 'C:\Study\SpeechAcquisitionModel\models' # directory with models
+report_root: 'C:\Study\SpeechAcquisitionModel\reports' # directory with reports
+
+labels: # list of words used for training
+  - 'bed'
+  - 'bird'
+  - 'cat'
+  - 'dog'
+  - 'down'
+  - 'eight'
+  - 'five'
+  - 'four'
+  - 'go'
+  - 'happy'
+  - 'house'
+  - 'left'
+  - 'marvin'
+  - 'nine'
+  - 'no'
+  - 'off'
+  - 'on'
+  - 'one'
+  - 'right'
+  - 'seven'
+  - 'sheila'
+  - 'six'
+  - 'stop'
+  - 'three'
+  - 'tree'
+  - 'two'
+  - 'up'
+  - 'wow'
+  - 'yes'
+  - 'zero'
+  - 'aa'
+  - 'ai'
+  - 'ao'
+  - 'au'
+  - 'ii'
+  - 'ia'
+  - 'iu'
+  - 'io'
+  - 'oo'
+  - 'ou'
+  - 'oi'
+  - 'oa'
+  - 'uu'
+  - 'ui'
+  - 'uo'
+  - 'ua'
+
+use_cuda: True
+
+preprocessing: # audio processing settings
+  numcep: 13
+  winlen: 0.02
+  winstep: 0.01
+  target_sample_rate: 8000
+
+model:
+  input_dim: 39
+  batch_norm: True
+  hidden_fc:
+  - 256
+  - 256
+  hidden_reccurent:
+  - 256
+  - 256
+  dropout: 0.3
+  bidirectional: False
+
+loss:
+  type: 'sdtw' # cos_hinge, sdtw, l2, ce
+  alpha: 0.0
+  dist: 'l1'
+  open_end: False
+  margin: 0.4
+  triplet_anneal_k: 0.0025
+  triplet_anneal_b: 2500
+
+training:
+  train_steps: 50000
+  mini_batch_size: 64
+  learning_rate: 0.001
+  save_each: 500 # save model each n steps
+  validate_each: 500 # validate model each n steps
+
+

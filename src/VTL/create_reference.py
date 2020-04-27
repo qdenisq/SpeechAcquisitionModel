@@ -7,7 +7,7 @@ import pandas as pd
 import pickle
 
 from src.VTL.vtl_environment import VTLEnv
-from src.speech_classification.audio_processing import AudioPreprocessorFbank
+from src.soft_dtw_awe.audio_processing import AudioPreprocessorMFCCDeltaDelta
 from python_speech_features.sigproc import framesig
 import librosa
 
@@ -29,7 +29,8 @@ def create_reference(env,
     num_steps_per_ep = ep_duration // timestep
     action_space = env.number_glottis_parameters + env.number_vocal_tract_parameters
 
-    init_state_sampled = np.random.normal(env.normalize(initial_state, env.state_bound), state_sigma, len(initial_state))
+    init_state_sampled = np.random.normal(env.normalize(initial_state, env.state_bound), state_sigma,
+                                          len(initial_state))
     init_state_sampled = env.denormalize(init_state_sampled, env.state_bound)
     init_state_sampled[24:] = initial_state[24:]
 
@@ -50,7 +51,7 @@ def create_reference(env,
 
     t1 = 2 * num_steps_per_ep // 3 + random.randint(0, 2 * time_shift_max) - time_shift_max
 
-    action_noise = lambda: np.random.normal(np.zeros(action_space), [action_sigma]*action_space, action_space)
+    action_noise = lambda: np.random.normal(np.zeros(action_space), [action_sigma] * action_space, action_space)
 
     for i in range(t0):
         action = np.zeros(action_space) + action_noise()
@@ -91,14 +92,14 @@ def create_reference(env,
     states = np.stack(states)
     audios = np.stack(audios)
 
-    with open(os.path.join(directory, name+'.pkl'), 'wb') as f:
+    with open(os.path.join(directory, name + '.pkl'), 'wb') as f:
         pickle.dump({"audio": audios,
                      "tract_params": states[:, :24],
                      "glottis_params": states[:, 24:],
                      "action": actions,
                      "labels": labels,
                      "class": class_label}, f, protocol=0)
-    env.dump_episode(os.path.join(directory, name))
+    env.dump_episode(fname=os.path.join(directory, name))
     # with open(os.path.join(directory, name + '.wav'), 'wb') as f:
     return audios, states, actions, labels
 
@@ -117,12 +118,11 @@ def create_datatset(**kwargs):
 
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
 
-
     dt = str(datetime.datetime.now().strftime("%m_%d_%Y_%I_%M_%p_%S"))
     save_dir = os.path.join(dir_name, dt)
     if not os.path.exists(save_dir):
         try:
-            os.makedirs(save_dir)
+            os.makedirs(save_dir, exist_ok=True)
         except:
             pass
     fname = os.path.join(save_dir, dt) + '.pd'
@@ -131,11 +131,11 @@ def create_datatset(**kwargs):
     i_g = 0
     for s0 in sound_names:
         for s1 in sound_names:
-            name = s0 + "_" + s1
+            name = s0 + s1
             sound_dir = os.path.join(save_dir, name)
             if not os.path.exists(sound_dir):
                 try:
-                    os.makedirs(sound_dir)
+                    os.makedirs(sound_dir, exist_ok=True)
                 except:
                     pass
             for i in range(num_samples_per_sound):
@@ -143,11 +143,14 @@ def create_datatset(**kwargs):
                 initial_state = env.get_cf(s0)
                 end_state = env.get_cf(s1)
                 audios, states, actions, labels = create_reference(env, ep_duration, timestep,
-                                                           initial_sound_name=s0,
-                                                           end_sound_name=s1,
-                                                           initial_state=initial_state, end_state=end_state, name=name, directory=sound_dir)
+                                                                   initial_sound_name=s0,
+                                                                   end_sound_name=s1,
+                                                                   initial_state=initial_state,
+                                                                   end_state=end_state,
+                                                                   name=name,
+                                                                   directory=sound_dir)
                 ep_name = os.path.join(sound_dir, str(i))
-                env.dump_episode(ep_name)
+                env.dump_episode(fname=ep_name)
                 rollouts.loc[i_g] = [name, np.array(audios), np.array(states), np.array(actions), np.array(labels)]
                 i_g += 1
 
@@ -158,14 +161,12 @@ def create_datatset(**kwargs):
 
 
 if __name__ == '__main__':
-    # kwargs = {
-    #     "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions_s2s",
-    #     "sound_names": ['a', 'i', 'u', 'o'],
-    #     "num_samples_per_sound": 300
-    # }
-    # create_datatset(**kwargs)
-
-
+    kwargs = {
+        "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions_s2s",
+        "sound_names": ['a', 'i', 'u', 'o'],
+        "num_samples_per_sound": 100
+    }
+    create_datatset(**kwargs)
 
 
     speaker_fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker')
@@ -183,7 +184,7 @@ if __name__ == '__main__':
     initial_state = env.get_cf(initial_sound_name)
     end_state = env.get_cf(end_sound_name)
 
-    directory = 'references'
+    directory = r'C:\Study\SpeechAcquisitionModel\data'
     # directory = 'N'
 
     audios, _, _, _ = create_reference(env, ep_duration, timestep, initial_state=initial_state,
@@ -200,7 +201,7 @@ if __name__ == '__main__':
     winlen = preproc_params['winlen']
     preproc = AudioPreprocessorFbank(**preproc_params)
 
-    audio_sin_wave = np.sin(np.arange(0, len(audios.flatten()))*np.pi / int(sr * 0.1*winlen))
+    audio_sin_wave = np.sin(np.arange(0, len(audios.flatten())) * np.pi / int(sr * 0.1 * winlen))
 
     flat_audio = audios.flatten()
     audio_framed = framesig(flat_audio, int(preproc_params['winlen'] * sr), int(preproc_params['winstep'] / 2 * sr))
@@ -210,12 +211,13 @@ if __name__ == '__main__':
     res_sin = preproc(audio_sin_wave, preproc_params['sample_rate'])
     res1 = np.stack([preproc(audios[i, :], preproc_params['sample_rate']) for i in range(audios.shape[0])]).squeeze()
 
-    res_lib_sin = librosa.feature.mfcc(y=audio_sin_wave, sr=sr, dct_type=1, n_mfcc=12, n_fft=int(sr*winlen), hop_length=int(sr*winlen), norm=None)[:,1:]
-    res_lib_0 = librosa.feature.mfcc(y=audios.flatten(), sr=sr, dct_type=1, n_mfcc=12, n_fft=int(sr*winlen-10), hop_length=int(sr*winlen+1), norm=None)[:,1:]
-    res_lib_1 = [librosa.feature.mfcc(y=audios[i, :], sr=sr, dct_type=1, n_mfcc=12, n_fft=int(sr*winlen-10), hop_length=int(sr*winlen+1), norm=None)[1:] for i in range(audios.shape[0])]
+    res_lib_sin = librosa.feature.mfcc(y=audio_sin_wave, sr=sr, dct_type=1, n_mfcc=12, n_fft=int(sr * winlen),
+                                       hop_length=int(sr * winlen), norm=None)[:, 1:]
+    res_lib_0 = librosa.feature.mfcc(y=audios.flatten(), sr=sr, dct_type=1, n_mfcc=12, n_fft=int(sr * winlen - 10),
+                                     hop_length=int(sr * winlen + 1), norm=None)[:, 1:]
+    res_lib_1 = [librosa.feature.mfcc(y=audios[i, :], sr=sr, dct_type=1, n_mfcc=12, n_fft=int(sr * winlen - 10),
+                                      hop_length=int(sr * winlen + 1), norm=None)[1:] for i in range(audios.shape[0])]
     res_lib_1 = np.array(res_lib_1).squeeze().T
-
-
 
     plt.figure()
     plt.imshow(res0.T)

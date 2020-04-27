@@ -2,7 +2,7 @@ import numpy as np
 import torch.nn as nn
 import torch
 
-from src.soft_dtw import SoftDTW
+from src.soft_dtw_awe.soft_dtw import SoftDTW
 
 
 def anneal_function(anneal_func, step, k, x0):

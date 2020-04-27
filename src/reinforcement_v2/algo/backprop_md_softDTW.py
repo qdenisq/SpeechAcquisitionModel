@@ -182,8 +182,13 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
                 predicted_seq_ar = predicted_seq[:, :-audio_dim]
 
-                # soft DTW loss acoustic
+                # 1. soft DTW loss acoustic
                 # ac_loss = softDTW(predicted_seq_ac, ac_goal)
+
+                # 2. L1 acoustic loss
+                ac_loss = torch.nn.SmoothL1Loss(reduction="sum")(predicted_seq_ac[-1].unsqueeze(0), ac_goal[i].unsqueeze(0))
+
+
 
                 # soft DTW loss articulatory
                 # ar_loss = torch.nn.SmoothL1Loss(reduction="sum")(predicted_seq_ar[-1], ar_goal[-1])
@@ -313,7 +318,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
                 action = action + self.noise.sample().reshape(*action.shape) * self.noise_level
                 # just for testing
                 # action *= 0
-                action = np.clip(action, -1, 1)
+            action = np.clip(action, -1, 1)
 
             timer['algo'].stop()
             timer['env'].start()
@@ -582,6 +587,11 @@ if __name__ == '__main__':
     with open('../configs/SoftDTWBackpropIntoPolicy_e0.yaml', 'r') as data_file:
         kwargs = yaml.safe_load(data_file)
     pprint(kwargs)
+
+    seed = kwargs['seed']
+    kwargs['env']['seed'] = seed
+    torch.manual_seed(seed)
+    np.random.seed(seed)
 
     # create env
     env_mgr = EnvironmentManager()

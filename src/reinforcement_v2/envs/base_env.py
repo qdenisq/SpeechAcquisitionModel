@@ -23,6 +23,7 @@ class VTLEnvPreprocAudio(VTLEnv):
         self.preproc = str_to_class(__name__, preproc_name)(**self.preproc_params)
 
         self.sr = kwargs['preprocessing_params']['sample_rate']
+        self.target_sr = kwargs['preprocessing_params']['target_sample_rate']
 
         # self.audio_buffer = []
         if "preproc_net" in kwargs:
@@ -44,7 +45,7 @@ class VTLEnvPreprocAudio(VTLEnv):
             self.preproc_net = None
             cols_per_timestep = kwargs['timestep'] / 1000 / self.preproc_params['winstep'] # preproc could return more than 1 column of features per timestep
             self.audio_dim = self.preproc.get_dim() * int(cols_per_timestep)
-            self.audio_bound = [(-400.01, 400.01)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
+            self.audio_bound = [(-40.01, 40.01)] * self.audio_dim  # should be changed (whats the bound of MFCC values?)
 
         self.state_dim += self.audio_dim
         self.state_bound.extend(self.audio_bound)
