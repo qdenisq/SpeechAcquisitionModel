@@ -93,11 +93,11 @@ env:
     sample_rate: 22050
     target_sample_rate: 8000
 
-#preproc_net:
-      ##    config: "C:/Study/SpeechAcquisitionModel/models/soft_dtw_awe/config.yaml"
-      ##    preproc_net_fname: "C:/Study/SpeechAcquisitionModel/models/soft_dtw_awe/net_49000.pt"
-    ##    device: "cuda"
-    ##    output_dim: 256
+  preproc_net:
+    config: "C:/Study/SpeechAcquisitionModel/models/soft_dtw_awe/config_net_18000.yaml"
+    preproc_net_fname: "C:/Study/SpeechAcquisitionModel/models/soft_dtw_awe/net_18000.pt"
+    device: "cuda"
+    output_dim: 256
   references:
     - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i.pkl"
 #    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u.pkl"

@@ -378,7 +378,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
                     writer.add_scalar('Noise_level', self.noise_level, self.step)
                 writer.add_scalar('Policy_loss', policy_loss, self.step)
                 writer.add_scalar('Model Dynamics Loss', md_loss, self.step)
-                print(f"policy_loss: {policy_loss:.2f} | md_loss: {md_loss:.2f}")
+                print(f"step:{self.step} | policy_loss: {policy_loss:.2f} | md_loss: {md_loss:.2f}")
                 # explicitly remove all tensor-related variables just to ensure well-behaved memory management
                 del policy_loss, md_loss, action
                 timer['utils'].stop()
@@ -520,6 +520,9 @@ class SequentialBackpropIntoPolicy(nn.Module):
                   last_path_points,
                   vt_predictions,
                   embeddings_predictions):
+
+        # agent
+
         fig = plt.figure()
         plt.matshow(episode_history['mfcc'].T, 0)
         plt.colorbar()
@@ -534,6 +537,8 @@ class SequentialBackpropIntoPolicy(nn.Module):
         plt.matshow(episode_history['vt'].T[:-6], 0)
         plt.colorbar()
         writer.add_figure('agent/VocalTract', fig, self.step)
+
+        # reference
 
         fig = plt.figure()
         plt.matshow(episode_history['ref']['mfcc'].squeeze().T, 0)
@@ -557,6 +562,8 @@ class SequentialBackpropIntoPolicy(nn.Module):
             writer.add_audio('agent/audio', video_data[1], sample_rate=video_data[2]['audio_fps'], global_step=self.step)
             writer.add_audio('ref/audio', episode_history['ref']['audio'].flatten(), sample_rate=video_data[2]['audio_fps'], global_step=self.step)
 
+        # DTW
+
         fig, ax = dtw_res.plot_path()
         writer.add_figure('DTW/Embeddings', fig, self.step)
 
@@ -569,6 +576,8 @@ class SequentialBackpropIntoPolicy(nn.Module):
         plt.plot(points[:, 0], points[:, 1])
         writer.add_figure('DTW/path', fig, self.step)
 
+        # predictions
+
         fig = plt.figure()
         plt.matshow(vt_predictions.T[:-6], 0)
         plt.colorbar()
@@ -578,6 +587,45 @@ class SequentialBackpropIntoPolicy(nn.Module):
         plt.matshow(embeddings_predictions.T, 0)
         plt.colorbar()
         writer.add_figure('predictions/Embeddings', fig, self.step)
+
+        # agent error
+
+        fig = plt.figure()
+        err_mfcc = episode_history['mfcc'] - episode_history['ref']['mfcc'].squeeze()[:episode_history['mfcc'].shape[0], :]
+        plt.matshow(err_mfcc.squeeze().T, 0)
+        plt.colorbar()
+        writer.add_figure('agent_error/MFCC', fig, self.step)
+
+        fig = plt.figure()
+        err_embeds = episode_history['embeds'] - episode_history['ref']['acoustics'][:episode_history['embeds'].shape[0], :]
+        plt.matshow(err_embeds.T, 0)
+        plt.colorbar()
+        writer.add_figure('agent_error/Embeddings', fig, self.step)
+
+        fig = plt.figure()
+        err_vt = episode_history['vt'].T[:-6] - episode_history['ref']['vt'].T[:-6]
+        plt.matshow(err_vt, 0)
+        plt.colorbar()
+        writer.add_figure('agent_error/VocalTract', fig, self.step)
+
+        # agent error totals
+
+        fig = plt.figure()
+        err_mfcc_sum = np.sum(abs(err_mfcc), axis=-1)
+        plt.plot(err_mfcc_sum)
+        writer.add_figure('agent_error/MFCC_sum', fig, self.step)
+
+        fig = plt.figure()
+        err_embeds_sum = np.sum(abs(err_embeds), axis=-1)
+        plt.plot(err_embeds_sum)
+        writer.add_figure('agent_error/Embeddings_sum', fig, self.step)
+
+        fig = plt.figure()
+        err_vt_sum = np.sum(abs(err_vt), axis=0)
+        plt.plot(err_vt_sum)
+        writer.add_figure('agent_error/VocalTract_sum', fig, self.step)
+
+
 
 
 
