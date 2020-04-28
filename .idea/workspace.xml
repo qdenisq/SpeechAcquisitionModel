@@ -342,26 +342,26 @@
     <state x="420" y="95" key="FileChooserDialogImpl/0.0.1280.680@0.0.1280.680" timestamp="1585362954225" />
     <state x="504" y="115" key="FileChooserDialogImpl/0.0.1536.824@0.0.1536.824" timestamp="1585798179412" />
     <state x="630" y="145" key="FileChooserDialogImpl/0.0.1920.1040@0.0.1920.1040" timestamp="1587369706248" />
-    <state width="1899" height="294" key="GridCell.Tab.0.bottom" timestamp="1588043045674">
+    <state width="1899" height="294" key="GridCell.Tab.0.bottom" timestamp="1588049607659">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1895" height="261" key="GridCell.Tab.0.bottom/0.0.1536.824@0.0.1536.824" timestamp="1586933843690" />
-    <state width="1899" height="294" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1588043045674" />
-    <state width="1899" height="294" key="GridCell.Tab.0.center" timestamp="1588043045674">
+    <state width="1899" height="294" key="GridCell.Tab.0.bottom/0.0.1920.1040@0.0.1920.1040" timestamp="1588049607659" />
+    <state width="1899" height="294" key="GridCell.Tab.0.center" timestamp="1588049607659">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1895" height="261" key="GridCell.Tab.0.center/0.0.1536.824@0.0.1536.824" timestamp="1586933843689" />
-    <state width="1899" height="294" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1588043045674" />
-    <state width="1899" height="294" key="GridCell.Tab.0.left" timestamp="1588043045674">
+    <state width="1899" height="294" key="GridCell.Tab.0.center/0.0.1920.1040@0.0.1920.1040" timestamp="1588049607659" />
+    <state width="1899" height="294" key="GridCell.Tab.0.left" timestamp="1588049607659">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1895" height="261" key="GridCell.Tab.0.left/0.0.1536.824@0.0.1536.824" timestamp="1586933843689" />
-    <state width="1899" height="294" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1588043045674" />
-    <state width="1899" height="294" key="GridCell.Tab.0.right" timestamp="1588043045674">
+    <state width="1899" height="294" key="GridCell.Tab.0.left/0.0.1920.1040@0.0.1920.1040" timestamp="1588049607659" />
+    <state width="1899" height="294" key="GridCell.Tab.0.right" timestamp="1588049607659">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
     <state width="1895" height="261" key="GridCell.Tab.0.right/0.0.1536.824@0.0.1536.824" timestamp="1586933843690" />
-    <state width="1899" height="294" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1588043045674" />
+    <state width="1899" height="294" key="GridCell.Tab.0.right/0.0.1920.1040@0.0.1920.1040" timestamp="1588049607659" />
     <state width="1899" height="261" key="GridCell.Tab.1.bottom" timestamp="1588042390701">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
@@ -970,13 +970,13 @@
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <condition expression="np.max(abs(next_state[:, :24] - state[:, :24])) &gt; 0.21" language="Python" mode="CODE_FRAGMENT" />
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
-          <line>331</line>
+          <line>334</line>
           <option name="timeStamp" value="1108" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <condition expression="np.max(abs(np.array(local_buffer[i]['next_states'])[:, :24] - np.array(local_buffer[i]['states'])[:, :24])) &gt; 0.21" language="Python" mode="CODE_FRAGMENT" />
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
-          <line>410</line>
+          <line>413</line>
           <option name="timeStamp" value="1109" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -986,7 +986,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
-          <line>325</line>
+          <line>328</line>
           <option name="timeStamp" value="1123" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
@@ -1011,7 +1011,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
           <url>file://$PROJECT_DIR$/src/reinforcement_v2/algo/backprop_md_softDTW.py</url>
-          <line>593</line>
+          <line>596</line>
           <option name="timeStamp" value="1140" />
         </line-breakpoint>
       </breakpoints>

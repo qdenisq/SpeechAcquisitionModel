@@ -195,11 +195,14 @@ class SequentialBackpropIntoPolicy(nn.Module):
                 ar_loss = torch.nn.SmoothL1Loss(reduction="sum")(predicted_seq_ar[-1].unsqueeze(0), ar_goal[i].unsqueeze(0))
                 # ar_loss = softDTW(predicted_seq_ar, ar_goal)
 
+                # action penalty
+                action_penalty = torch.sum(torch.abs(new_action[i]))
+                # print(action_penalty)
 
-
-
-                # policy_loss += ac_loss
+                policy_loss += ac_loss
                 policy_loss += ar_loss
+                policy_loss += 0.01 * action_penalty
+
 
                 # print(ac_loss)
                 # print(ar_loss)
