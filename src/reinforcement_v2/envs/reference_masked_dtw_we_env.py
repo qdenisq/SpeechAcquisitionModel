@@ -66,7 +66,7 @@ class VTLRefMaskedActionDTWEnv(VTLMaskedActionDTWEnv):
         return res
 
     def _step(self, action, render=True):
-
+        # action = self.
         state_out, reward, done, info = super(VTLRefMaskedActionDTWEnv, self)._step(action, render)
         if self.current_step >= int(self.max_episode_duration / self.timestep) - 1:
             ref_obs = np.zeros(self.state_dim - len(state_out))

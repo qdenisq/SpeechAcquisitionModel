@@ -41,7 +41,7 @@ def create_reference(env,
     state = env.reset(init_state_sampled)
     if not end_state:
         raise ValueError("end state is None")
-    states = []
+    states = [state]
     actions = []
     audios = []
     labels = []
@@ -92,7 +92,7 @@ def create_reference(env,
     states = np.stack(states)
     audios = np.stack(audios)
 
-    with open(os.path.join(directory, name + '.pkl'), 'wb') as f:
+    with open(os.path.join(directory, name + '_0.pkl'), 'wb') as f:
         pickle.dump({"audio": audios,
                      "tract_params": states[:, :24],
                      "glottis_params": states[:, 24:],
@@ -161,12 +161,12 @@ def create_datatset(**kwargs):
 
 
 if __name__ == '__main__':
-    kwargs = {
-        "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions_s2s",
-        "sound_names": ['a', 'i', 'u', 'o'],
-        "num_samples_per_sound": 100
-    }
-    create_datatset(**kwargs)
+    # kwargs = {
+        #     "dir": "C:/Study/SpeechAcquisitionModel/data/raw/Simple_transitions_s2s",
+        #     "sound_names": ['a', 'i', 'u', 'o'],
+        #     "num_samples_per_sound": 100
+        # }
+    # create_datatset(**kwargs)
 
 
     speaker_fname = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'JD2.speaker')
@@ -192,14 +192,16 @@ if __name__ == '__main__':
                                        end_state=end_state, name=name, directory=directory)
 
     preproc_params = {
-        "numcep": 12,
-        "winlen": 0.04,
-        "winstep": 0.04,
+        "numcep": 13,
+        "winlen": 0.02,
+        "winstep": 0.01,
         "sample_rate": 22050
     }
     sr = preproc_params['sample_rate']
     winlen = preproc_params['winlen']
-    preproc = AudioPreprocessorFbank(**preproc_params)
+    preproc = AudioPreprocessorMFCCDeltaDelta(**preproc_params)
+
+    preproc(audios)
 
     audio_sin_wave = np.sin(np.arange(0, len(audios.flatten())) * np.pi / int(sr * 0.1 * winlen))
 

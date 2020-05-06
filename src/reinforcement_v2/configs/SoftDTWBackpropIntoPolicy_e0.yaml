@@ -4,7 +4,6 @@ init_data_fname:
 pretrained_policy: #"../../../models/walk_ref_osim_AsyncSoftActorCritic_5.90.asac"
 collect_data: false
 log_mode: full
-use_alpha: true
 target_entropy: -70
 seed: 123456
 lr: 0.003
@@ -12,9 +11,20 @@ soft_tau: 0.005
 num_updates_per_step: 5
 soft_update_period: 1
 gamma: 0.96
-noise_init_level: 0.3
-noise_decay: 0.995
-noise_min: 0.05
+
+action_penalty: 0.005
+noise:
+  type: "state_action" # ou, none
+  max_sigma: 0.3
+  hidden_dim:
+    - 128
+    - 64
+
+#  noise_init_level: 0.3
+#  noise_decay: 0.995
+#  noise_min: 0.05
+
+
 env:
   env_id: ref_masked_dtw_we_vtl # vtl_base, dtw_we_vtl, masked_dtw_we_vtl
   random_offset: false
@@ -22,8 +32,8 @@ env:
   lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
   selected_reference_state:
     - "ACOUSTICS"
-#    - "HX"
-#    - "HY"
+    - "HX"
+    - "HY"
     - "JX"
     - "JA"
     - "LP"
@@ -37,15 +47,15 @@ env:
     - "TTY"
     - "TBX"
     - "TBY"
-#    - "TRX"
-#    - "TRY"
-#    - "TS1"
-#    - "TS2"
-#    - "TS3"
-#    - "TS4"
-#    - "MA1"
-#    - "MA2"
-#    - "MA3"
+    - "TRX"
+    - "TRY"
+    - "TS1"
+    - "TS2"
+    - "TS3"
+    - "TS4"
+    - "MA1"
+    - "MA2"
+    - "MA3"
   selected_actions:
     - "HX"
     - "HY"
@@ -84,7 +94,7 @@ env:
   renderBothSides: False
   renderMode: 2
 
-  audio_upper_bound: 100.0
+  audio_upper_bound: 1.0 # KEEP THIS AT 1.0
   preprocessing_params:
     name: AudioPreprocessorMFCCDeltaDelta
     numcep: 13
@@ -99,7 +109,7 @@ env:
     device: "cuda"
     output_dim: 256
   references:
-    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_i.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/a_i_0.pkl"
 #    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u.pkl"
 #    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_a_2.pkl"
   distance:

@@ -184,6 +184,8 @@ class VTLEnv(gym.Env):
         self.current_state = np.concatenate((state_out, audio_out))
         self.episode_states.append(self.current_state)
         self.episode_history['vt'].append(copy.deepcopy(state_out))
+        self.episode_history['action'].append(copy.deepcopy(action))
+
         return state_out, audio_out
 
     def step(self, action, render=True):
@@ -279,6 +281,8 @@ class VTLEnv(gym.Env):
 
     def get_episode_history(self, *args, **kwargs):
         self.episode_history['vt'] = np.array(self.episode_history['vt'])
+        self.episode_history['action'] = np.array(self.episode_history['action'])
+
         return self.episode_history
 
     def get_cf(self, sound_name):

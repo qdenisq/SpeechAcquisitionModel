@@ -22,7 +22,7 @@ from src.reinforcement_v2.common.replay_buffer import SequenceReplayBuffer
 from src.reinforcement_v2.common.nn import SoftQNetwork, PolicyNetwork, ModelDynamics, DeterministicPolicyNetwork
 
 from src.reinforcement_v2.common.tensorboard import DoubleSummaryWriter
-from src.reinforcement_v2.common.noise import OUNoise
+from src.reinforcement_v2.common.noise import OUNoise, StateActionNoise, create_noise
 from src.reinforcement_v2.utils.timer import Timer
 
 from src.soft_dtw_awe.model import SiameseDeepLSTMNet
@@ -75,18 +75,23 @@ class SequentialBackpropIntoPolicy(nn.Module):
         else:
             self.policy_net = DeterministicPolicyNetwork(**kwargs['policy_network']).to(self.device)
 
-        self.use_alpha = kwargs.get('use_alpha', True)
-        if not self.use_alpha:
-            self.noise = OUNoise(kwargs['policy_network']['action_dim'] * kwargs['env']['num_workers'],
-                                 kwargs['env']['seed'])
-            self.noise_decay = kwargs['noise_decay']  # decay after each 1000 steps
-            self.noise_level = 1.0
-            self.noise_min = kwargs['noise_min']
+        self.noise = create_noise(**kwargs['noise'])
 
+        # self.use_alpha = kwargs.get('use_alpha', True)
+        # if not self.use_alpha:
+        #     self.noise = OUNoise(kwargs['policy_network']['action_dim'] * kwargs['env']['num_workers'],
+        #                          kwargs['env']['seed'])
+        #     self.noise_decay = kwargs['noise_decay']  # decay after each 1000 steps
+        #     self.noise_level = 1.0
+        #     self.noise_min = kwargs['noise_min']
+        #     # TODO: Add adpative noise for exploration which might be proportinal to the predicted error of agent
+        #     #  and possibly should be inversly proportional to the error of model dynamics
         self.lr = kwargs['lr']
 
         self.policy_optimizer = optim.Adam(self.policy_net.parameters(), lr=self.lr)
         self.md_optimizer = optim.Adam(self.model_dynamics.parameters(), lr=self.lr)
+        if isinstance(self.noise, StateActionNoise):
+            self.exploration_optimizer = optim.Adam(self.noise.parameters(), lr=self.lr)
 
         # init replay buffer
         self.replay_buffer_size = kwargs['replay_buffer']['size']
@@ -129,6 +134,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
             predicted_next_agent_state = self.model_dynamics(agent_state, action)
 
             md_loss += torch.nn.SmoothL1Loss(reduction="sum")(agent_next_state, predicted_next_agent_state)
+
             # md_loss += torch.nn.SmoothL1Loss(reduction="sum")(agent_next_state[:, :-audio_dim-6], predicted_next_agent_state[:, :-audio_dim-6])
             # md_loss += torch.sum(torch.abs(agent_next_state[:, :-audio_dim-6] - predicted_next_agent_state[:, :-audio_dim-6]))
 
@@ -147,6 +153,8 @@ class SequentialBackpropIntoPolicy(nn.Module):
         self.policy_optimizer.zero_grad()
 
         policy_loss = torch.tensor(0.).float().to(self.device)
+
+        exploration_loss = torch.tensor(0.).float().to(self.device)
 
         for sample in batch:
             state = torch.FloatTensor(sample['states']).to(self.device)
@@ -167,6 +175,10 @@ class SequentialBackpropIntoPolicy(nn.Module):
             predicted_next_agent_state = self.model_dynamics_target(agent_state, new_action)
             predicted_next_agent_state_masked = predicted_next_agent_state[:, self.reference_mask]
             state_masked = state[:, self.agent_state_dim:]
+
+            if isinstance(self.noise, StateActionNoise):
+                noise_dist = self.noise(state, new_action.detach())
+                entropy = noise_dist.entropy()
 
             ar_goal = state_masked[:, :-audio_dim]
 
@@ -201,7 +213,15 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
                 policy_loss += ac_loss
                 policy_loss += ar_loss
-                policy_loss += 0.01 * action_penalty
+
+                if isinstance(self.noise, StateActionNoise):
+                    # update noise
+
+                    exploration_loss += torch.sum(torch.abs(entropy[i] - (1 - (ac_loss.detach() + ar_loss.detach())*0.5) * (-3.0))) # -2. target entropy
+
+
+
+                policy_loss += self.params['action_penalty'] * action_penalty
 
 
                 # print(ac_loss)
@@ -209,13 +229,18 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
             # policy_loss /= state.shape[0]
         policy_loss /= num_samples
+        exploration_loss /= num_samples
 
         policy_loss.backward()
         torch.nn.utils.clip_grad_norm_(self.policy_net.parameters(), 1)
         self.policy_optimizer.step()
 
+        if isinstance(self.noise, StateActionNoise):
+            exploration_loss.backward()
+            self.exploration_optimizer.step()
+
         self.train_step += 1
-        return self.train_step, policy_loss.detach().cpu(), md_loss.detach().cpu()
+        return self.train_step, policy_loss.detach().cpu(), md_loss.detach().cpu(), exploration_loss.detach().cpu()
 
     def soft_update(self, from_net, target_net, soft_tau):
         for target_param, param in zip(target_net.parameters(), from_net.parameters()):
@@ -269,7 +294,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
         batch_size = kwargs.get('batch_size', 256)
 
         self.params['gamma'] = self.gamma
-        self.params['use_alpha'] = self.use_alpha
+        # self.params['use_alpha'] = self.use_alpha
         self.params['train'] = {
             'validate_every': kwargs['validate_every'],
             'sync_every': kwargs['sync_every'],
@@ -301,9 +326,9 @@ class SequentialBackpropIntoPolicy(nn.Module):
                     local_buffer[i] = get_empty_episode_entry()
                     local_buffer[i]['goal'] = env.get_attr('cur_reference')[i]
 
-                if not self.use_alpha:
-                    self.noise.reset()
-                    self.noise_level = max(self.noise_min, self.noise_level * self.noise_decay)
+                # if not self.use_alpha:
+                #     self.noise.reset()
+                #     self.noise_level = max(self.noise_min, self.noise_level * self.noise_decay)
 
 
                 # ep_reward = np.zeros(kwargs['num_workers'])
@@ -317,10 +342,16 @@ class SequentialBackpropIntoPolicy(nn.Module):
             timer['algo'].start()
             action = self.policy_net.get_action(state)
             action = action.detach().cpu().numpy()
-            if not self.use_alpha:
-                action = action + self.noise.sample().reshape(*action.shape) * self.noise_level
-                # just for testing
-                # action *= 0
+
+            if self.noise:
+                action_delta = self.noise.sample(state, action)
+                action = action + action_delta
+            # if self.noise:
+            #     # action = action + self.noise.sample().reshape(*action.shape) * self.noise_level
+            #
+            #     action = action + self.noise(state, action)
+            #     # just for testing
+            #     # action *= 0
             action = np.clip(action, -1, 1)
 
             timer['algo'].stop()
@@ -373,15 +404,16 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
                 timer['algo'].start()
                 for _ in range(self.num_updates_per_step):
-                    _, policy_loss, md_loss = self.update(batch_size)
+                    _, policy_loss, md_loss, exploration_loss = self.update(batch_size)
                 timer['algo'].stop()
 
                 timer['utils'].start()
-                if not self.use_alpha:
-                    writer.add_scalar('Noise_level', self.noise_level, self.step)
+                # if not self.use_alpha:
+                #     writer.add_scalar('Noise_level', self.noise_level, self.step)
                 writer.add_scalar('Policy_loss', policy_loss, self.step)
                 writer.add_scalar('Model Dynamics Loss', md_loss, self.step)
-                print(f"step:{self.step} | policy_loss: {policy_loss:.2f} | md_loss: {md_loss:.2f}")
+                writer.add_scalar('Exploraation Loss', exploration_loss, self.step)
+                print(f"step:{self.step} | policy_loss: {policy_loss:.2f} | md_loss: {md_loss:.2f} | exploration_loss: {exploration_loss:.2f}")
                 # explicitly remove all tensor-related variables just to ensure well-behaved memory management
                 del policy_loss, md_loss, action
                 timer['utils'].stop()
@@ -397,7 +429,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
                 #TODO: study different stop conditions
                 last_path_point_diff = abs(info[w]['last_path_point'][0] - info[w]['last_path_point'][1])
                 steps_made = len(local_buffer[w]['actions'])
-                if (np.mean(info[w]['dtw_dist']) > 10000 or last_path_point_diff > 8) and steps_made >= 2 : # dtw > 7
+                if (np.mean(info[w]['dtw_dist']) > 10 or last_path_point_diff > 8) and steps_made >= 2 : # dtw > 7
                     # continue
                     done[w] = True
 
@@ -425,7 +457,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
                     writer.add_scalar(f"Elapsed time: {k}", v.elapsed_time, self.step)
                 self.add_weights_histogram(writer, self.step)
                 timer['utils'].stop()
-                    # break
+                # break
 
             # save best performing policy
             if self.step % 200 == 0:
@@ -606,7 +638,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
         writer.add_figure('agent_error/Embeddings', fig, self.step)
 
         fig = plt.figure()
-        err_vt = episode_history['vt'].T[:-6] - episode_history['ref']['vt'].T[:-6]
+        err_vt = episode_history['vt'].T[:-6] - episode_history['ref']['vt'][:-1].T[:-6]
         plt.matshow(err_vt, 0)
         plt.colorbar()
         writer.add_figure('agent_error/VocalTract', fig, self.step)
@@ -627,6 +659,33 @@ class SequentialBackpropIntoPolicy(nn.Module):
         err_vt_sum = np.sum(abs(err_vt), axis=0)
         plt.plot(err_vt_sum)
         writer.add_figure('agent_error/VocalTract_sum', fig, self.step)
+
+        # prediction error
+
+        fig = plt.figure()
+        err_vt_pred = vt_predictions[:, :-6] - episode_history['vt'][1:,:-6]
+        plt.matshow(err_vt_pred.T, 0)
+        plt.colorbar()
+        writer.add_figure('predictions_error/VocalTract', fig, self.step)
+
+        fig = plt.figure()
+        err_embeds_pred = embeddings_predictions[:-1, :] - episode_history['embeds'][1:, :]
+        plt.matshow(err_embeds_pred.T, 0)
+        plt.colorbar()
+        writer.add_figure('predictions_error/Embeddings', fig, self.step)
+
+        # prediction error totals
+
+        fig = plt.figure()
+        err_vt_pred_sum = np.sum(abs(err_vt_pred), axis=-1)
+        plt.plot(err_vt_pred_sum)
+        writer.add_figure('predictions_error/VocalTract_sum', fig, self.step)
+
+        fig = plt.figure()
+        err_embeds_pred_sum = np.sum(abs(err_embeds_pred), axis=-1)
+        plt.plot(err_embeds_pred_sum)
+        writer.add_figure('predictions_error/Embeddings_sum', fig, self.step)
+
 
 
 
@@ -666,6 +725,9 @@ if __name__ == '__main__':
     reference_mask = env.get_attr('reference_mask')[0]
     acoustics_dim = env.get_attr('audio_dim')[0]
 
+    kwargs['noise']['state_dim'] = state_dim
+    kwargs['noise']['action_dim'] = action_dim
+
     kwargs['action_dim'] = action_dim
     kwargs['agent_state_dim'] = agent_state_dim
     kwargs['state_dim'] = state_dim
@@ -683,10 +745,11 @@ if __name__ == '__main__':
         agent_fname = kwargs['agent_fname']
         print(f'Loading agent from "{agent_fname}"')
         agent = torch.load(kwargs['agent_fname'])
-        if not kwargs['use_alpha']:
-            agent.noise_level = kwargs['noise_init_level']
-            agent.noise = OUNoise(kwargs['soft_q_network']['action_dim'] * kwargs['env']['num_workers'],
-                                     kwargs['env']['seed'])
+
+        # if not kwargs['use_alpha']:
+        #     agent.noise_level = kwargs['noise_init_level']
+        #     agent.noise = OUNoise(kwargs['soft_q_network']['action_dim'] * kwargs['env']['num_workers'],
+        #                              kwargs['env']['seed'])
 
     else:
         # create agent
