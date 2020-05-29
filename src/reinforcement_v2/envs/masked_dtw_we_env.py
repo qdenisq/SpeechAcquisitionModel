@@ -37,7 +37,7 @@ class VTLMaskedActionDTWEnv(VTLDTWEnv):
 
         # unmask action
 
-        full_action = self.cur_reference['action'][self.current_step]
+        full_action = copy.deepcopy(self.cur_reference['action'][self.current_step])
         full_action[self.selected_actions_idx] = action
 
         res = super(VTLMaskedActionDTWEnv, self)._step(full_action, render)

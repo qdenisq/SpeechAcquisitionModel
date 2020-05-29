@@ -8,11 +8,11 @@ target_entropy: -70
 seed: 123456
 lr: 0.003
 soft_tau: 0.005
-num_updates_per_step: 5
+num_updates_per_step: 10
 soft_update_period: 1
 gamma: 0.96
 
-action_penalty: 0.005
+action_penalty: 0.01
 noise:
   type: "state_action" # ou, none
   max_sigma: 0.3
@@ -27,7 +27,7 @@ noise:
 
 env:
   env_id: ref_masked_dtw_we_vtl # vtl_base, dtw_we_vtl, masked_dtw_we_vtl
-  random_offset: false
+  random_offset: true
   speaker_fname: "C:/Study/SpeechAcquisitionModel/src/VTL/JD2.speaker"
   lib_path: "C:/Study/SpeechAcquisitionModel/src/VTL/VocalTractLab2.dll"
   selected_reference_state:
@@ -94,7 +94,7 @@ env:
   renderBothSides: False
   renderMode: 2
 
-  audio_upper_bound: 1.0 # KEEP THIS AT 1.0
+  audio_upper_bound: 1.0 # KEEP THIS AT 1.0 or maybe 2.0?
   preprocessing_params:
     name: AudioPreprocessorMFCCDeltaDelta
     numcep: 13
@@ -104,14 +104,79 @@ env:
     target_sample_rate: 8000
 
   preproc_net:
-    config: "C:/Study/SpeechAcquisitionModel/models/soft_dtw_awe/config_net_18000.yaml"
-    preproc_net_fname: "C:/Study/SpeechAcquisitionModel/models/soft_dtw_awe/net_18000.pt"
+    config: "C:/Study/SpeechAcquisitionModel/models/soft_dtw_awe/model_16/config.yaml"
+    preproc_net_fname: "C:/Study/SpeechAcquisitionModel/models/soft_dtw_awe/model_16/net_49000.pt"
     device: "cuda"
-    output_dim: 256
+    output_dim: 16
   references:
-    - "C:/Study/SpeechAcquisitionModel/data/a_i_0.pkl"
-#    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/a_u.pkl"
-#    - "C:/Study/SpeechAcquisitionModel/src/VTL/references/i_a_2.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_i_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_i_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_i_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_i_4_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_a_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_a_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_a_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_a_4_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_u_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_u_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_u_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_u_4_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_o_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_o_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_o_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/a_o_4_1.pkl"
+
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_i_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_i_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_i_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_i_4_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_a_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_a_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_a_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_a_4_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_u_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_u_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_u_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_u_4_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_o_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_o_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_o_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_o_4_1.pkl"
+
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_i_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_i_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_i_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_i_4_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_a_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_a_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_a_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_a_4_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_u_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_u_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_u_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_u_4_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_o_1_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_o_2_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_o_3_1.pkl"
+    - "C:/Study/SpeechAcquisitionModel/data/reference_data/u_o_4_1.pkl"
+
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_i_1.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_i_2.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_i_3.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_i_4.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_a_1.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_a_2.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_a_3.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_a_4.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_u_1.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_u_2.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_u_3.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_u_4.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_o_1.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_o_2.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_o_3.pkl"
+#    - "C:/Study/SpeechAcquisitionModel/data/reference_data/i_o_4.pkl"
+#
   distance:
 #    name: 'soft-DTW'
 #    open_end: True
@@ -125,7 +190,7 @@ env:
 
 train:
   max_steps: 3000000
-  batch_size: 8
+  batch_size: 32
   sync_every: 200
   validate_every: 200
 replay_buffer:
@@ -134,6 +199,7 @@ model_dynamics:
   hidden_dim:
   - 256
   - 256
+  - 128
 policy_network:
   hidden_dim:
   - 256

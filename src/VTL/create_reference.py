@@ -92,7 +92,7 @@ def create_reference(env,
     states = np.stack(states)
     audios = np.stack(audios)
 
-    with open(os.path.join(directory, name + '_0.pkl'), 'wb') as f:
+    with open(os.path.join(directory, name + '_1.pkl'), 'wb') as f:
         pickle.dump({"audio": audios,
                      "tract_params": states[:, :24],
                      "glottis_params": states[:, 24:],
@@ -177,19 +177,25 @@ if __name__ == '__main__':
 
     env = VTLEnv(lib_path, speaker_fname, timestep, max_episode_duration=ep_duration)
 
-    name = 'a_i'
     initial_sound_name = 'a'
     end_sound_name = 'i'
 
-    initial_state = env.get_cf(initial_sound_name)
-    end_state = env.get_cf(end_sound_name)
 
-    directory = r'C:\Study\SpeechAcquisitionModel\data'
+
+    directory = r'C:\Study\SpeechAcquisitionModel\data\reference_data'
+    sounds = ['a', 'i', 'u', 'o']
     # directory = 'N'
-
-    audios, _, _, _ = create_reference(env, ep_duration, timestep, initial_state=initial_state,
-                                       initial_sound_name=initial_sound_name, end_sound_name=end_sound_name,
-                                       end_state=end_state, name=name, directory=directory)
+    for s1 in sounds:
+        for s2 in sounds:
+            for i in range(10):
+                name = f'{s1}_{s2}_{str(i)}'
+                initial_sound_name = s1
+                end_sound_name = s2
+                initial_state = env.get_cf(initial_sound_name)
+                end_state = env.get_cf(end_sound_name)
+                audios, _, _, _ = create_reference(env, ep_duration, timestep, initial_state=initial_state,
+                                                   initial_sound_name=initial_sound_name, end_sound_name=end_sound_name,
+                                                   end_state=end_state, name=name, directory=directory)
 
     preproc_params = {
         "numcep": 13,

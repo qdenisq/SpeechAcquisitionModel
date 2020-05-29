@@ -97,11 +97,12 @@ class VectorizedWrapper(SubprocVecEnv):
         res = [self.remotes[i].recv() for i in remotes]
         return res
 
-    def reset(self, remotes=None):
+    def reset(self, *args, remotes=None, **kwargs):
         """Reset specified environments. If remotes is None, then all environments will be reseted"""
         if remotes is None:
             remotes = np.arange(len(self.remotes))
         for i in remotes:
-            self.remotes[i].send(('reset', None))
+            # self.remotes[i].send(('reset', None))
+            self.remotes[i].send(('env_method', ('reset', args, {**kwargs})))
         obs = [self.remotes[i].recv() for i in remotes]
         return _flatten_obs(obs, self.observation_space)

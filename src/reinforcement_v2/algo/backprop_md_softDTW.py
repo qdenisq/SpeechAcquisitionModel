@@ -163,7 +163,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
             # reward = torch.FloatTensor(reward).unsqueeze(1).to(self.device)
             done = torch.FloatTensor(np.float32(sample['done'])).unsqueeze(1).to(self.device)
 
-            ac_goal = torch.FloatTensor(sample['goal']['acoustics']).to(self.device) / 10.
+            ac_goal = torch.FloatTensor(sample['goal']['acoustics']).to(self.device)
 
 
             # TODO: add articulatory goal and loss
@@ -216,8 +216,8 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
                 if isinstance(self.noise, StateActionNoise):
                     # update noise
-
-                    exploration_loss += torch.sum(torch.abs(entropy[i] - (1 - (ac_loss.detach() + ar_loss.detach())*0.5) * (-3.0))) # -2. target entropy
+                    # k = 0
+                    exploration_loss += torch.sum(torch.abs(entropy[i] - (1 - (ac_loss.detach()*0.3 + ar_loss.detach())*0.5) * (-3.0))) # -2. target entropy
 
 
 
@@ -345,6 +345,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
             if self.noise:
                 action_delta = self.noise.sample(state, action)
+                # TODO: TEST
                 action = action + action_delta
             # if self.noise:
             #     # action = action + self.noise.sample().reshape(*action.shape) * self.noise_level
@@ -397,6 +398,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
             timer['utils'].start()
             writer.add_histogram("Action", action, self.step)
+            writer.add_histogram("Action_noise", action_delta, self.step)
             timer['utils'].stop()
 
             # if len(self.replay_buffer) > 3 * batch_size and self.frame_idx % 25 == 0:
@@ -429,7 +431,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
                 #TODO: study different stop conditions
                 last_path_point_diff = abs(info[w]['last_path_point'][0] - info[w]['last_path_point'][1])
                 steps_made = len(local_buffer[w]['actions'])
-                if (np.mean(info[w]['dtw_dist']) > 10 or last_path_point_diff > 8) and steps_made >= 2 : # dtw > 7
+                if (np.mean(info[w]['dtw_dist']) > 20 or last_path_point_diff > 8) and steps_made >= 2 : # dtw > 7
                     # continue
                     done[w] = True
 
@@ -448,7 +450,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
                         reward_running = 0.90 * reward_running + 0.10 * ep_reward[i]
                         rewards.append(ep_reward[i])
                         ep_reward[i] = 0.
-                        state[i] = env.reset([i])
+                        state[i] = env.reset(remotes=[i])
                         local_buffer[i]['goal'] = env.get_attr('cur_reference')[i]
                 env.render()
 
@@ -482,7 +484,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
         writer.close()
 
     def validate_and_summarize(self, env, writer, **kwargs):
-        state = env.reset()
+        state = env.reset(offset=1)
         env.render()
 
         episode_done = [False]*kwargs['num_workers']
@@ -544,7 +546,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
                                        last_path_points[worker_idx],
                                        vt_preds,
                                        embeds_preds)
-                        state[worker_idx] = env.reset([worker_idx])
+                        state[worker_idx] = env.reset(remotes=[worker_idx])
 
 
     def summarize(self,
@@ -663,13 +665,13 @@ class SequentialBackpropIntoPolicy(nn.Module):
         # prediction error
 
         fig = plt.figure()
-        err_vt_pred = vt_predictions[:, :-6] - episode_history['vt'][1:,:-6]
+        err_vt_pred = vt_predictions[:, :-6] - episode_history['vt'][2:, :-6]
         plt.matshow(err_vt_pred.T, 0)
         plt.colorbar()
         writer.add_figure('predictions_error/VocalTract', fig, self.step)
 
         fig = plt.figure()
-        err_embeds_pred = embeddings_predictions[:-1, :] - episode_history['embeds'][1:, :]
+        err_embeds_pred = embeddings_predictions[:, :] - episode_history['embeds'][4:, :]
         plt.matshow(err_embeds_pred.T, 0)
         plt.colorbar()
         writer.add_figure('predictions_error/Embeddings', fig, self.step)

@@ -221,12 +221,12 @@ class ModelDynamics(nn.Module):
             x = self.relu(linear(x))
 
         # predict state
-        acoustic_state_delta = torch.tanh(self.acoustic_state(x))
+        acoustic_state_delta = self.acoustic_state(x)
         # acoustic_state_delta = artic_x + actions_x
 
         states_delta = torch.cat((artic_state_delta, acoustic_state_delta), -1)
         # states_delta = self.tanh(torch.cat((artic_state_delta, acoustic_state_delta), -1))
-        out_states = torch.clamp(states[:, :self.__state_dim] + states_delta, min=-1, max=1)
+        out_states = states[:, :self.__state_dim] + states_delta
 
         return out_states
 

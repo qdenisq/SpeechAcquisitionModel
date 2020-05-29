@@ -53,13 +53,13 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
             else:
                 ref_item['acoustics'] = preprocessed.squeeze()
 
-            self.references.append(ref_item)
+            self.references.append(copy.deepcopy(ref_item))
 
         self.cur_reference = self.references[np.random.randint(0, len(self.references))]
 
         self.dist_params = copy.deepcopy(kwargs['distance'])
 
-    def reset(self, state_to_reset=None, **kwargs):
+    def reset(self, state_to_reset=None, offset=None, **kwargs):
         self.cur_reference = self.references[np.random.randint(0, len(self.references))]
 
         if state_to_reset is None:
@@ -67,14 +67,20 @@ class VTLDTWEnv(VTLEnvPreprocAudio):
                                              self.cur_reference['glottis_params'][0, :]))
 
         res = super().reset(state_to_reset, **kwargs)
+        # TODO:TEST make 1 step to get normal acoustic observation rather than zeros
+        action = self.cur_reference['action'][0][:self.action_dim]
+        res, *_ = VTLDTWEnv._step(self, action)
 
         if self.random_offset:
-            self.offset = np.random.randint(0, self.cur_reference['tract_params'].shape[0] - 2)
-            for i in range(self.offset):
+            if offset is None:
+                self.offset = np.random.randint(1, self.cur_reference['tract_params'].shape[0] - 2)
+            else:
+                self.offset = offset
+            for i in range(1, self.offset):
                 action = self.cur_reference['action'][i][:self.action_dim]
                 res, *_ = VTLDTWEnv._step(self, action)
 
-        self.episode_history['ref'] = self.cur_reference
+        self.episode_history['ref'] = copy.deepcopy(self.cur_reference)
         return res
 
     def _step(self, action, render=True):

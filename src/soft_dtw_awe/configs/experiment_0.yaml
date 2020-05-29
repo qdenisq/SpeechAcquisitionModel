@@ -64,7 +64,7 @@ model:
   batch_norm: True
   hidden_fc:
   - 256
-  - 256
+  - 16
   hidden_reccurent:
   - 256
   - 256
