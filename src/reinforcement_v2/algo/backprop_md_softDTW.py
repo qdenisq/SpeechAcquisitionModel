@@ -16,6 +16,9 @@ import torch.nn as nn
 import torch.optim as optim
 import torchvision
 
+import sys
+sys.path.append('.')
+
 from src.reinforcement_v2.envs.env import EnvironmentManager
 
 from src.reinforcement_v2.common.replay_buffer import SequenceReplayBuffer
@@ -66,8 +69,12 @@ class SequentialBackpropIntoPolicy(nn.Module):
         self.action_dim = kwargs['action_dim']
         self.reference_mask = kwargs['reference_mask']
 
-        self.model_dynamics = ModelDynamics(**kwargs['model_dynamics']).to(self.device)
-        self.model_dynamics_target = copy.deepcopy(self.model_dynamics)
+        if kwargs["pretrained_model_dynamics"] is not None:
+            self.model_dynamics = torch.load(kwargs["pretrained_model_dynamics"]).model_dynamics.to(self.device)
+            self.model_dynamics_target = copy.deepcopy(self.model_dynamics)
+        else:
+            self.model_dynamics = ModelDynamics(**kwargs['model_dynamics']).to(self.device)
+            self.model_dynamics_target = copy.deepcopy(self.model_dynamics)
 
         if kwargs["pretrained_policy"] is not None:
             self.policy_net = torch.load(kwargs['pretrained_policy']).policy_net
@@ -177,11 +184,11 @@ class SequentialBackpropIntoPolicy(nn.Module):
             state_masked = state[:, self.agent_state_dim:]
 
             if isinstance(self.noise, StateActionNoise):
-                noise_dist = self.noise(state, new_action.detach())
+                noise_dist = self.noise(state.cpu(), new_action.cpu().detach())
                 entropy = noise_dist.entropy()
 
             ar_goal = state_masked[:, :-audio_dim]
-
+            ac_goal = state_masked[:, -audio_dim:]
 
             softDTW = SoftDTW(open_end=True, dist='l1')
 
@@ -210,14 +217,15 @@ class SequentialBackpropIntoPolicy(nn.Module):
                 # action penalty
                 action_penalty = torch.sum(torch.abs(new_action[i]))
                 # print(action_penalty)
-
+                # print("ac", ac_loss)
+                # print("ar", ar_loss)
                 policy_loss += ac_loss
                 policy_loss += ar_loss
 
                 if isinstance(self.noise, StateActionNoise):
                     # update noise
                     # k = 0
-                    exploration_loss += torch.sum(torch.abs(entropy[i] - (1 - (ac_loss.detach()*0.3 + ar_loss.detach())*0.5) * (-3.0))) # -2. target entropy
+                    exploration_loss += torch.sum(torch.abs(entropy[i] - (1 - (ac_loss.cpu().detach()*0.3 + ar_loss.cpu().detach())*0.5) * (-3.0))) # -2. target entropy
 
 
 
@@ -282,7 +290,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
         timer = defaultdict(Timer)
         writer = DoubleSummaryWriter(log_dir=f'../../../runs/{self._env_name}_backprop_{self._dt}/',
-                                     light_log_dir=f'../../../runs_light/light_{self._env_name}_backprop_{self._dt}/',
+                                     light_log_dir=f'runs_light/light_{self._env_name}_backprop_{self._dt}/',
                                      mode=kwargs['log_mode'])
 
 
@@ -363,7 +371,9 @@ class SequentialBackpropIntoPolicy(nn.Module):
             # print("ERROR", np.max(np.clip(state[:, :24] + action / 5, -1, 1) - next_state[:, : 24]))
 
             # print(reward)
-            # dtw_dist = info['dtw_dist']
+            
+            dtw_dist = info[0]['dtw_dist']
+            reward = dtw_dist
             if kwargs['visualize']:
                 env.render()
 
@@ -525,7 +535,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
                     name = f'{self._env_name}_BackpropIntoPolicy_' + f'{self.step}'
                     save_dir = f'../../../runs/{self._env_name}_backprop_{self._dt}/'
                     fname = os.path.join(save_dir, name + ".mp4")
-                    fnames = env.dump_episode(fname=os.path.join(save_dir, name))
+                    fnames = env.dump_episode(fname=os.path.abspath(os.path.join(save_dir, name)))
 
                     episode_history = env.get_episode_history(remotes=[worker_idx])[0]
                     video_data = torchvision.io.read_video(fnames[0]+".mp4", start_pts=0, end_pts=None, pts_unit='sec')
@@ -671,7 +681,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
         writer.add_figure('predictions_error/VocalTract', fig, self.step)
 
         fig = plt.figure()
-        err_embeds_pred = embeddings_predictions[:, :] - episode_history['embeds'][4:, :]
+        err_embeds_pred = embeddings_predictions[:, :] - episode_history['embeds'][4::4, :]
         plt.matshow(err_embeds_pred.T, 0)
         plt.colorbar()
         writer.add_figure('predictions_error/Embeddings', fig, self.step)
@@ -696,7 +706,7 @@ class SequentialBackpropIntoPolicy(nn.Module):
 
 
 if __name__ == '__main__':
-    with open('../configs/SoftDTWBackpropIntoPolicy_e0.yaml', 'r') as data_file:
+    with open(r'D:\projects\SpeechAcquisitionModel\src\reinforcement_v2\configs/SoftDTWBackpropIntoPolicy_e0_new.yaml', 'r') as data_file:
         kwargs = yaml.safe_load(data_file)
     pprint(kwargs)
 

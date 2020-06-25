@@ -46,8 +46,8 @@ class StateActionNoise(nn.Module):
         return dists
 
     def sample(self, states, actions):
-        states = torch.from_numpy(states).float()
-        actions = torch.from_numpy(actions).float()
+        states = torch.from_numpy(states).cpu().float()
+        actions = torch.from_numpy(actions).cpu().float()
         dists = self(states, actions)
         return dists.sample().detach().cpu().numpy()
 

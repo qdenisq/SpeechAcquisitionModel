@@ -133,7 +133,8 @@ class DeterministicPolicyNetwork(nn.Module):
 
         for l in self.linears:
             x = l(x)
-            x = F.tanh(x)
+            x = F.relu(x)
+
 
         out = torch.tanh(self.out(x))
 

@@ -8,6 +8,7 @@ ddpg/results/
 runs/
 runs_light/
 .idea/
+env
 
 **.iml
 **.png

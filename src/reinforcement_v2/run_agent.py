@@ -24,8 +24,8 @@ from src.reinforcement_v2.algo.backprop_md_softDTW import SequentialBackpropInto
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Runs trained agent')
-    parser.add_argument('--config', default=r'C:\Study\SpeechAcquisitionModel\runs\ref_masked_dtw_we_vtl_backprop_04_27_2020_07_32_PM\md_backprop.yaml', help='config to build environment')
-    parser.add_argument('--agent', default=r'C:\Study\SpeechAcquisitionModel\models\ref_masked_dtw_we_vtl_backprop_04_27_2020_07_32_PM\ref_masked_dtw_we_vtl_BackpropIntoPolicy_200.bp', help='path to the saved agent')
+    parser.add_argument('--config', default=r"D:\projects\SpeechAcquisitionModel\runs\skip_frames_ref_masked_dtw_we_vtl_backprop_06_25_2020_04_43_PM\md_backprop.yaml", help='config to build environment')
+    parser.add_argument('--agent', default=r"D:\projects\SpeechAcquisitionModel\models\skip_frames_ref_masked_dtw_we_vtl_backprop_06_25_2020_04_43_PM\skip_frames_ref_masked_dtw_we_vtl_BackpropIntoPolicy_5600.bp", help='path to the saved agent')
 
     args = parser.parse_args()
 
@@ -46,7 +46,7 @@ if __name__ == '__main__':
     env_id = env_kwargs.pop('env_id')
     env = env_mgr.make(env_id, *env_args, **env_kwargs)
 
-    for i in range(2):
+    for i in range(10):
 
         state = env.reset()
         env.render()
